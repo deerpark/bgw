@@ -1,0 +1,254 @@
+/* ──────────────────────────────────────────────────────────────
+ * 부개원 한의원 — Design Tokens
+ * Tier 1 (palette) → Tier 2 (semantic) → Tier 3 (component)
+ * 코드에서 그대로 :root에 import하여 사용
+ * ────────────────────────────────────────────────────────────── */
+
+:root {
+  /* ─── Tier 1 · Primitive Color ─── */
+
+  /* Brown — primary brand */
+  --brown-50:  #FAF6F1;
+  --brown-100: #F1E8DB;
+  --brown-200: #E2D2BB;
+  --brown-300: #C9B08C;
+  --brown-400: #A6855E;
+  --brown-500: #80633F;
+  --brown-600: #5F4A2F;
+  --brown-700: #492E14;
+  --brown-800: #3A2613;
+  --brown-900: #2A1B0E;
+  --brown-950: #1A1109;
+
+  /* Vermilion — 단청 인장 accent */
+  --vermilion-50:  #FBF1F1;
+  --vermilion-100: #F6DEDE;
+  --vermilion-200: #ECB8B8;
+  --vermilion-300: #DD8C8E;
+  --vermilion-400: #CE3D45;
+  --vermilion-500: #B0303A;
+  --vermilion-600: #8E222C;
+  --vermilion-700: #6B1A22;
+  --vermilion-800: #4A1219;
+  --vermilion-900: #2C0B0F;
+
+  /* Cream — 한지 surface */
+  --cream-50:  #FFFDF9;
+  --cream-100: #FBF6EC;
+  --cream-200: #F4ECD9;
+  --cream-300: #E9DBBE;
+
+  /* Sage — 한약재 그린 */
+  --sage-50:  #F2F6F2;
+  --sage-100: #DDE7DD;
+  --sage-200: #B8CDB8;
+  --sage-300: #8AAE8C;
+  --sage-400: #5E8C61;
+  --sage-500: #466B49;
+  --sage-600: #344F36;
+
+  /* Neutral — warm gray */
+  --neutral-50:  #FAF8F5;
+  --neutral-100: #F2EEE8;
+  --neutral-200: #E2DCD2;
+  --neutral-300: #C7BFB2;
+  --neutral-400: #9B9182;
+  --neutral-500: #6E6557;
+  --neutral-600: #4F483D;
+  --neutral-700: #3A3530;
+  --neutral-800: #25221E;
+  --neutral-900: #14120F;
+
+  /* System */
+  --system-success: #4F8C5E;
+  --system-warning: #C99632;
+  --system-danger:  #B0303A;
+  --system-info:    #4F6B8C;
+
+  /* ─── Tier 2 · Semantic (Light) ─── */
+
+  --bg-base:    var(--cream-50);
+  --bg-subtle:  var(--cream-100);
+  --bg-muted:   var(--neutral-100);
+  --surface:    #FFFFFF;
+  --surface-alt: var(--cream-100);
+
+  --ink-primary:   var(--brown-800);
+  --ink-secondary: var(--brown-600);
+  --ink-muted:     var(--neutral-500);
+  --ink-inverse:   var(--cream-50);
+
+  --border-subtle:  var(--neutral-200);
+  --border-default: var(--neutral-300);
+  --border-strong:  var(--brown-700);
+
+  --brand:         var(--brown-700);
+  --brand-hover:   var(--brown-800);
+  --brand-pressed: var(--brown-900);
+  --brand-soft:    var(--brown-100);
+
+  --accent:       var(--vermilion-500);
+  --accent-hover: var(--vermilion-600);
+  --accent-soft:  var(--vermilion-100);
+
+  --category-diet:        var(--sage-500);
+  --category-diet-soft:   var(--sage-100);
+  --category-immune:      var(--vermilion-500);
+  --category-immune-soft: var(--vermilion-100);
+
+  --focus-ring: var(--vermilion-400);
+  --success:    var(--system-success);
+  --warning:    var(--system-warning);
+  --danger:     var(--system-danger);
+  --info:       var(--system-info);
+
+  /* ─── Spacing (4px base) ─── */
+  --space-0: 0;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-14: 56px;
+  --space-16: 64px;
+  --space-20: 80px;
+  --space-24: 96px;
+  --space-32: 128px;
+  --space-40: 160px;
+  --space-48: 192px;
+  --space-64: 256px;
+
+  /* ─── Radius ─── */
+  --radius-none: 0;
+  --radius-xs:   4px;
+  --radius-sm:   8px;
+  --radius-md:   12px;
+  --radius-lg:   16px;
+  --radius-xl:   24px;
+  --radius-2xl:  32px;
+  --radius-full: 9999px;
+
+  /* ─── Shadow (warm brown) ─── */
+  --shadow-xs: 0 1px 2px rgba(73, 46, 20, 0.06);
+  --shadow-sm: 0 2px 8px rgba(73, 46, 20, 0.06);
+  --shadow-md: 0 8px 20px rgba(73, 46, 20, 0.08);
+  --shadow-lg: 0 16px 40px rgba(73, 46, 20, 0.10);
+  --shadow-xl: 0 24px 60px rgba(73, 46, 20, 0.14);
+  --shadow-inner: inset 0 1px 2px rgba(73, 46, 20, 0.08);
+
+  /* ─── Typography ─── */
+  --font-sans: "Pretendard Variable", "Pretendard", "IBM Plex Sans KR",
+               -apple-system, BlinkMacSystemFont, system-ui,
+               "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+  --font-display: "IBM Plex Sans KR", "Pretendard", sans-serif;
+  --font-serif: "Noto Serif KR", "Nanum Myeongjo", serif;
+  --font-mono: "JetBrains Mono", "D2Coding", "Menlo", monospace;
+
+  --text-xs:    12px;
+  --text-sm:    14px;
+  --text-base:  16px;
+  --text-lg:    18px;
+  --text-xl:    20px;
+  --text-2xl:   24px;
+  --text-3xl:   30px;
+  --text-4xl:   36px;
+  --text-5xl:   clamp(40px, 4vw + 1rem, 56px);
+  --text-6xl:   clamp(48px, 5vw + 1.25rem, 72px);
+
+  --leading-tight:  1.2;
+  --leading-snug:   1.35;
+  --leading-normal: 1.55;
+  --leading-loose:  1.75;
+
+  --tracking-tight:  -0.02em;
+  --tracking-normal: 0;
+  --tracking-wide:   0.02em;
+  --tracking-koh1:   -0.04em;
+
+  /* ─── Motion ─── */
+  --ease-standard:   cubic-bezier(0.2, 0, 0, 1);
+  --ease-emphasized: cubic-bezier(0.2, 0, 0, 1.2);
+  --ease-decelerate: cubic-bezier(0, 0, 0, 1);
+  --ease-accelerate: cubic-bezier(0.3, 0, 1, 1);
+
+  --duration-instant: 80ms;
+  --duration-fast:    160ms;
+  --duration-base:    240ms;
+  --duration-slow:    320ms;
+  --duration-slower:  480ms;
+
+  /* ─── Container ─── */
+  --container-sm:    640px;
+  --container-md:    768px;
+  --container-lg:    1024px;
+  --container-xl:    1200px;
+  --container-2xl:   1280px;
+  --container-prose: 72ch;
+}
+
+/* ─── Tier 2 · Semantic (Dark) ─── */
+.dark, [data-theme="dark"] {
+  --bg-base:     var(--neutral-900);
+  --bg-subtle:   var(--neutral-800);
+  --bg-muted:    var(--neutral-700);
+  --surface:     #1A1814;
+  --surface-alt: var(--brown-900);
+
+  --ink-primary:   var(--cream-100);
+  --ink-secondary: var(--neutral-300);
+  --ink-muted:     var(--neutral-400);
+  --ink-inverse:   var(--neutral-900);
+
+  --border-subtle:  var(--neutral-700);
+  --border-default: var(--neutral-600);
+  --border-strong:  var(--brown-300);
+
+  --brand:         var(--brown-300);
+  --brand-hover:   var(--brown-200);
+  --brand-pressed: var(--brown-100);
+  --brand-soft:    rgba(73, 46, 20, 0.32);
+
+  --accent:       var(--vermilion-300);
+  --accent-hover: var(--vermilion-200);
+  --accent-soft:  rgba(204, 61, 69, 0.18);
+
+  --category-diet-soft:   rgba(70, 107, 73, 0.22);
+  --category-immune-soft: rgba(176, 48, 58, 0.18);
+
+  --focus-ring: var(--vermilion-300);
+}
+
+/* prefers-color-scheme automatic */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg-base:     var(--neutral-900);
+    --bg-subtle:   var(--neutral-800);
+    --bg-muted:    var(--neutral-700);
+    --surface:     #1A1814;
+    --surface-alt: var(--brown-900);
+
+    --ink-primary:   var(--cream-100);
+    --ink-secondary: var(--neutral-300);
+    --ink-muted:     var(--neutral-400);
+    --ink-inverse:   var(--neutral-900);
+
+    --border-subtle:  var(--neutral-700);
+    --border-default: var(--neutral-600);
+    --border-strong:  var(--brown-300);
+
+    --brand:         var(--brown-300);
+    --brand-hover:   var(--brown-200);
+    --brand-pressed: var(--brown-100);
+    --brand-soft:    rgba(73, 46, 20, 0.32);
+
+    --accent:       var(--vermilion-300);
+    --accent-hover: var(--vermilion-200);
+    --accent-soft:  rgba(204, 61, 69, 0.18);
+
+    --focus-ring: var(--vermilion-300);
+  }
+}

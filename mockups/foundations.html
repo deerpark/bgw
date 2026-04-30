@@ -1,0 +1,422 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Foundations — 부개원 한의원 디자인 시스템</title>
+  <link rel="stylesheet" href="./_base.css" />
+  <style>
+    .page { padding: 80px 32px 120px; max-width: 1280px; margin: 0 auto; }
+    .toolbar {
+      position: sticky; top: 0; z-index: 30;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 14px 24px;
+      background: rgba(255,253,249,0.85);
+      backdrop-filter: saturate(180%) blur(18px);
+      border-bottom: 0.5px solid var(--border-subtle);
+      margin: -80px -32px 64px;
+    }
+    .toolbar__back { font-size: 12px; color: var(--ink-secondary); text-decoration: none; }
+    .toolbar__back:hover { color: var(--ink-primary); }
+
+    .theme-toggle {
+      display: inline-flex; padding: 4px;
+      background: var(--bg-muted); border-radius: var(--radius-full);
+      font-size: 12px;
+    }
+    .theme-toggle button {
+      border: 0; background: transparent; padding: 6px 14px; border-radius: var(--radius-full);
+      color: var(--ink-secondary); cursor: pointer;
+    }
+    .theme-toggle button[aria-pressed="true"] {
+      background: var(--surface); color: var(--ink-primary); box-shadow: var(--shadow-xs);
+    }
+
+    .page-title {
+      font-family: var(--font-display);
+      font-size: 56px; font-weight: 700; letter-spacing: -0.04em;
+      line-height: 1.1; margin: 0 0 12px;
+    }
+    .page-sub { color: var(--ink-secondary); max-width: 60ch; margin: 0 0 64px; line-height: 1.75; }
+
+    .section { margin-bottom: 80px; }
+    .section h2 {
+      display: flex; align-items: baseline; gap: 16px;
+      font-size: 28px; letter-spacing: -0.02em; margin: 0 0 6px;
+    }
+    .section h2 .num {
+      font-family: var(--font-mono); font-size: 12px; color: var(--brand);
+      letter-spacing: 0.12em; font-weight: 500;
+    }
+    .section .sub { color: var(--ink-secondary); margin: 0 0 32px; max-width: 60ch; line-height: 1.75; }
+
+    /* --- Colors --- */
+    .ramp { display: grid; grid-template-columns: 200px 1fr; gap: 24px; margin-bottom: 24px; align-items: flex-start; }
+    .ramp h3 { margin: 0 0 4px; font-size: 14px; letter-spacing: 0.04em; }
+    .ramp p  { margin: 0; font-size: 12px; color: var(--ink-muted); line-height: 1.6; }
+    .ramp__chips {
+      display: grid; grid-template-columns: repeat(11, 1fr); gap: 8px;
+    }
+    .swatch {
+      display: flex; flex-direction: column; gap: 6px; min-width: 0;
+    }
+    .swatch__chip {
+      height: 80px; border-radius: 12px; border: 0.5px solid rgba(73,46,20,0.12);
+    }
+    .swatch__name { font-family: var(--font-mono); font-size: 10px; color: var(--ink-secondary); }
+    .swatch__hex  { font-family: var(--font-mono); font-size: 10px; color: var(--ink-muted); }
+
+    .semantic-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+    }
+    .sem-card {
+      background: var(--surface); border: 0.5px solid var(--border-subtle);
+      border-radius: 12px; padding: 16px;
+    }
+    .sem-card .swatch__chip { height: 56px; }
+    .sem-card .row { display: flex; justify-content: space-between; margin-top: 10px; align-items: baseline; }
+    .sem-card .row code { font-family: var(--font-mono); font-size: 11px; color: var(--ink-primary); }
+    .sem-card .row span { font-size: 11px; color: var(--ink-muted); }
+
+    /* --- Typography --- */
+    .typo-table {
+      background: var(--surface); border: 0.5px solid var(--border-subtle);
+      border-radius: 16px; overflow: hidden;
+    }
+    .typo-row {
+      display: grid; grid-template-columns: 200px 200px 1fr;
+      gap: 24px; padding: 20px 24px;
+      border-top: 0.5px solid var(--border-subtle);
+      align-items: center;
+    }
+    .typo-row:first-child { border-top: 0; }
+    .typo-row__token { font-family: var(--font-mono); font-size: 14px; color: var(--ink-primary); }
+    .typo-row__spec { font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted); line-height: 1.6; }
+    .typo-row__sample { color: var(--ink-primary); }
+
+    /* --- Spacing --- */
+    .space-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; }
+    .space-card { background: var(--surface); border: 0.5px solid var(--border-subtle); border-radius: 16px; padding: 24px; }
+    .space-card h3 { margin: 0 0 16px; font-size: 16px; }
+    .space-row { display: flex; align-items: center; gap: 16px; padding: 6px 0; }
+    .space-row__label { font-family: var(--font-mono); font-size: 11px; width: 80px; color: var(--ink-secondary); }
+    .space-row__bar { background: var(--brand); height: 14px; border-radius: 7px; }
+    .space-row__val { font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted); margin-left: auto; }
+
+    /* --- Radius --- */
+    .radius-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 16px; }
+    .radius-cell {
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
+      padding: 16px;
+      background: var(--surface);
+      border: 0.5px solid var(--border-subtle);
+      border-radius: 16px;
+    }
+    .radius-cell .sample {
+      width: 80px; height: 60px;
+      background: var(--brand-soft);
+      border: 1.5px solid var(--brand);
+    }
+    .radius-cell .name {
+      font-family: var(--font-mono);
+      font-size: 11px; color: var(--ink-secondary);
+    }
+
+    /* --- Shadow --- */
+    .shadow-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; }
+    .shadow-card {
+      background: var(--surface); border-radius: 16px; padding: 24px;
+      display: flex; flex-direction: column; gap: 16px; align-items: flex-start;
+      border: 0.5px solid var(--border-subtle);
+    }
+    .shadow-card .sample {
+      width: 100%; height: 80px; background: var(--bg-base);
+      border-radius: 12px;
+    }
+    .shadow-card code { font-family: var(--font-mono); font-size: 11px; }
+
+    /* --- Motion --- */
+    .motion-card { background: var(--surface); border: 0.5px solid var(--border-subtle); border-radius: 16px; padding: 28px; }
+    .motion-list { display: grid; grid-template-columns: 200px 1fr 200px; gap: 16px; padding: 14px 0; border-top: 0.5px solid var(--border-subtle); align-items: center; }
+    .motion-list:first-of-type { border-top: 0; }
+    .motion-list__token { font-family: var(--font-mono); font-size: 13px; }
+    .motion-list__desc { font-size: 13px; color: var(--ink-secondary); }
+    .motion-list__sample { display: flex; align-items: center; justify-content: flex-end; }
+    .motion-dot {
+      width: 28px; height: 28px; background: var(--accent); border-radius: 50%;
+      animation: dot 2.4s var(--ease-standard) infinite;
+    }
+    @keyframes dot {
+      0%, 100% { transform: translateX(-60px); opacity: 1; }
+      50% { transform: translateX(60px); opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+  <div class="toolbar">
+    <a class="toolbar__back" href="./index.html">← Mockups</a>
+    <div class="theme-toggle" role="tablist" aria-label="테마">
+      <button data-theme="light" aria-pressed="true">Light</button>
+      <button data-theme="dark"  aria-pressed="false">Dark</button>
+    </div>
+  </div>
+
+  <span class="t-eyebrow ink-secondary">FOUNDATIONS</span>
+  <h1 class="page-title">디자인 토큰</h1>
+  <p class="page-sub">로고에서 추출한 진한 브라운(700)과 단청 인장 적색(400)을 메인 축으로, 한지 크림과 한약재 세이지가 보조하는 토큰 시스템입니다. 코드와 1:1로 매핑되며, 라이트/다크 모드가 자동 분기됩니다.</p>
+
+  <!-- 01 Color Primitives -->
+  <section class="section">
+    <h2><span class="num">01</span> <span>Color · Primitive</span></h2>
+    <p class="sub">11 단계의 메인 브라운, 10 단계의 단청 적색, 4 단계 크림, 7 단계 세이지, 10 단계 뉴트럴.</p>
+
+    <div class="ramp">
+      <div>
+        <h3>Brown</h3>
+        <p>로고 워드마크 베이스. 700이 메인 브랜드 컬러.</p>
+      </div>
+      <div class="ramp__chips">
+        <div class="swatch"><div class="swatch__chip" style="background:#FAF6F1"></div><span class="swatch__name">brown/50</span><span class="swatch__hex">#FAF6F1</span></div>
+        <div class="swatch"><div class="swatch__chip" style="background:#F1E8DB"></div><span class="swatch__name">brown/100</span><span class="swatch__hex">#F1E8DB</span></div>
+        <div class="swatch"><div class="swatch__chip" style="background:#E2D2BB"></div><span class="swatch__name">brown/200</span><span class="swatch__hex">#E2D2BB</span></div>
+        <div class="swatch"><div class="swatch__chip" style="background:#C9B08C"></div><span class="swatch__name">brown/300</span><span class="swatch__hex">#C9B08C</span></div>
+        <div class="swatch"><div class="swatch__chip" style="background:#A6855E"></div><span class="swatch__name">brown/400</span><span class="swatch__hex">#A6855E</span></div>
+        <div class="swatch"><div class="swatch__chip" style="background:#80633F"></div><span class="swatch__name">brown/500</span><span class="swatch__hex">#80633F</span></div>
+        <div class="swatch"><div class="swatch__chip" style="background:#5F4A2F"></div><span class="swatch__name">brown/600</span><span class="swatch__hex">#5F4A2F</span></div>
+        <div class="swatch"><div class="swatch__chip" style="background:#492E14"></div><span class="swatch__name">brown/700 ★</span><span class="swatch__hex">#492E14</span></div>
+        <div class="swatch"><div class="swatch__chip" style="background:#3A2613"></div><span class="swatch__name">brown/800</span><span class="swatch__hex">#3A2613</span></div>
+        <div class="swatch"><div class="swatch__chip" style="background:#2A1B0E"></div><span class="swatch__name">brown/900</span><span class="swatch__hex">#2A1B0E</span></div>
+        <div class="swatch"><div class="swatch__chip" style="background:#1A1109"></div><span class="swatch__name">brown/950</span><span class="swatch__hex">#1A1109</span></div>
+      </div>
+    </div>
+
+    <div class="ramp">
+      <div>
+        <h3>Vermilion</h3>
+        <p>로고의 단청 인장 적색. 400이 핵심 액센트(비대면 진료 접수 CTA).</p>
+      </div>
+      <div class="ramp__chips" style="grid-template-columns: repeat(10, 1fr);">
+        <div class="swatch"><div class="swatch__chip" style="background:#FBF1F1"></div><span class="swatch__name">vermilion/50</span><span class="swatch__hex">#FBF1F1</span></div>
+        <div class="swatch"><div class="swatch__chip" style="background:#F6DEDE"></div><span class="swatch__name">vermilion/100</span><span class="swatch__hex">#F6DEDE</span></div>
+        <div class="swatch"><div class="swatch__chip" style="background:#ECB8B8"></div><span class="swatch__name">vermilion/200</span><span class="swatch__hex">#ECB8B8</span></div>
+        <div class="swatch"><div class="swatch__chip" style="background:#DD8C8E"></div><span class="swatch__name">vermilion/300</span><span class="swatch__hex">#DD8C8E</span></div>
+        <div class="swatch"><div class="swatch__chip" style="background:#CE3D45"></div><span class="swatch__name">vermilion/400 ★</span><span class="swatch__hex">#CE3D45</span></div>
+        <div class="swatch"><div class="swatch__chip" style="background:#B0303A"></div><span class="swatch__name">vermilion/500</span><span class="swatch__hex">#B0303A</span></div>
+        <div class="swatch"><div class="swatch__chip" style="background:#8E222C"></div><span class="swatch__name">vermilion/600</span><span class="swatch__hex">#8E222C</span></div>
+        <div class="swatch"><div class="swatch__chip" style="background:#6B1A22"></div><span class="swatch__name">vermilion/700</span><span class="swatch__hex">#6B1A22</span></div>
+        <div class="swatch"><div class="swatch__chip" style="background:#4A1219"></div><span class="swatch__name">vermilion/800</span><span class="swatch__hex">#4A1219</span></div>
+        <div class="swatch"><div class="swatch__chip" style="background:#2C0B0F"></div><span class="swatch__name">vermilion/900</span><span class="swatch__hex">#2C0B0F</span></div>
+      </div>
+    </div>
+
+    <div class="ramp">
+      <div>
+        <h3>Cream · Sage</h3>
+        <p>한지 크림 surface 4단계 + 한약재 세이지 7단계 (다이어트 카테고리 액센트).</p>
+      </div>
+      <div class="ramp__chips" style="grid-template-columns: repeat(11, 1fr);">
+        <div class="swatch"><div class="swatch__chip" style="background:#FFFDF9"></div><span class="swatch__name">cream/50</span><span class="swatch__hex">#FFFDF9</span></div>
+        <div class="swatch"><div class="swatch__chip" style="background:#FBF6EC"></div><span class="swatch__name">cream/100</span><span class="swatch__hex">#FBF6EC</span></div>
+        <div class="swatch"><div class="swatch__chip" style="background:#F4ECD9"></div><span class="swatch__name">cream/200</span><span class="swatch__hex">#F4ECD9</span></div>
+        <div class="swatch"><div class="swatch__chip" style="background:#E9DBBE"></div><span class="swatch__name">cream/300</span><span class="swatch__hex">#E9DBBE</span></div>
+        <div class="swatch"><div class="swatch__chip" style="background:#F2F6F2"></div><span class="swatch__name">sage/50</span><span class="swatch__hex">#F2F6F2</span></div>
+        <div class="swatch"><div class="swatch__chip" style="background:#DDE7DD"></div><span class="swatch__name">sage/100</span><span class="swatch__hex">#DDE7DD</span></div>
+        <div class="swatch"><div class="swatch__chip" style="background:#B8CDB8"></div><span class="swatch__name">sage/200</span><span class="swatch__hex">#B8CDB8</span></div>
+        <div class="swatch"><div class="swatch__chip" style="background:#8AAE8C"></div><span class="swatch__name">sage/300</span><span class="swatch__hex">#8AAE8C</span></div>
+        <div class="swatch"><div class="swatch__chip" style="background:#5E8C61"></div><span class="swatch__name">sage/400</span><span class="swatch__hex">#5E8C61</span></div>
+        <div class="swatch"><div class="swatch__chip" style="background:#466B49"></div><span class="swatch__name">sage/500 ★</span><span class="swatch__hex">#466B49</span></div>
+        <div class="swatch"><div class="swatch__chip" style="background:#344F36"></div><span class="swatch__name">sage/600</span><span class="swatch__hex">#344F36</span></div>
+      </div>
+    </div>
+
+    <div class="ramp">
+      <div>
+        <h3>Neutral</h3>
+        <p>따뜻한 회색. 본문·보더·메타 텍스트.</p>
+      </div>
+      <div class="ramp__chips" style="grid-template-columns: repeat(10, 1fr);">
+        <div class="swatch"><div class="swatch__chip" style="background:#FAF8F5"></div><span class="swatch__name">neutral/50</span><span class="swatch__hex">#FAF8F5</span></div>
+        <div class="swatch"><div class="swatch__chip" style="background:#F2EEE8"></div><span class="swatch__name">neutral/100</span><span class="swatch__hex">#F2EEE8</span></div>
+        <div class="swatch"><div class="swatch__chip" style="background:#E2DCD2"></div><span class="swatch__name">neutral/200</span><span class="swatch__hex">#E2DCD2</span></div>
+        <div class="swatch"><div class="swatch__chip" style="background:#C7BFB2"></div><span class="swatch__name">neutral/300</span><span class="swatch__hex">#C7BFB2</span></div>
+        <div class="swatch"><div class="swatch__chip" style="background:#9B9182"></div><span class="swatch__name">neutral/400</span><span class="swatch__hex">#9B9182</span></div>
+        <div class="swatch"><div class="swatch__chip" style="background:#6E6557"></div><span class="swatch__name">neutral/500</span><span class="swatch__hex">#6E6557</span></div>
+        <div class="swatch"><div class="swatch__chip" style="background:#4F483D"></div><span class="swatch__name">neutral/600</span><span class="swatch__hex">#4F483D</span></div>
+        <div class="swatch"><div class="swatch__chip" style="background:#3A3530"></div><span class="swatch__name">neutral/700</span><span class="swatch__hex">#3A3530</span></div>
+        <div class="swatch"><div class="swatch__chip" style="background:#25221E"></div><span class="swatch__name">neutral/800</span><span class="swatch__hex">#25221E</span></div>
+        <div class="swatch"><div class="swatch__chip" style="background:#14120F"></div><span class="swatch__name">neutral/900</span><span class="swatch__hex">#14120F</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 Color Semantic -->
+  <section class="section">
+    <h2><span class="num">02</span> <span>Color · Semantic</span></h2>
+    <p class="sub">컴포넌트는 시멘틱 토큰만 사용. 라이트·다크 토글로 동작 확인.</p>
+    <div class="semantic-grid">
+      <div class="sem-card"><div class="swatch__chip" style="background:var(--bg-base)"></div><div class="row"><code>--bg-base</code><span>page background</span></div></div>
+      <div class="sem-card"><div class="swatch__chip" style="background:var(--surface)"></div><div class="row"><code>--surface</code><span>card surface</span></div></div>
+      <div class="sem-card"><div class="swatch__chip" style="background:var(--brand)"></div><div class="row"><code>--brand</code><span>primary CTA</span></div></div>
+      <div class="sem-card"><div class="swatch__chip" style="background:var(--accent)"></div><div class="row"><code>--accent</code><span>비대면 접수 CTA</span></div></div>
+      <div class="sem-card"><div class="swatch__chip" style="background:var(--brand-soft)"></div><div class="row"><code>--brand-soft</code><span>secondary fill</span></div></div>
+      <div class="sem-card"><div class="swatch__chip" style="background:var(--accent-soft)"></div><div class="row"><code>--accent-soft</code><span>accent fill</span></div></div>
+      <div class="sem-card"><div class="swatch__chip" style="background:var(--category-diet)"></div><div class="row"><code>--category-diet</code><span>다이어트 라인</span></div></div>
+      <div class="sem-card"><div class="swatch__chip" style="background:var(--category-immune)"></div><div class="row"><code>--category-immune</code><span>면역 라인</span></div></div>
+      <div class="sem-card"><div class="swatch__chip" style="background:var(--ink-primary)"></div><div class="row"><code>--ink-primary</code><span>본문</span></div></div>
+      <div class="sem-card"><div class="swatch__chip" style="background:var(--ink-secondary)"></div><div class="row"><code>--ink-secondary</code><span>보조 텍스트</span></div></div>
+      <div class="sem-card"><div class="swatch__chip" style="background:var(--ink-muted)"></div><div class="row"><code>--ink-muted</code><span>메타·캡션</span></div></div>
+      <div class="sem-card"><div class="swatch__chip" style="background:var(--border-default)"></div><div class="row"><code>--border-default</code><span>1px stroke</span></div></div>
+    </div>
+  </section>
+
+  <!-- 03 Typography -->
+  <section class="section">
+    <h2><span class="num">03</span> <span>Typography</span></h2>
+    <p class="sub">한글 본문은 Pretendard Variable, 디스플레이는 IBM Plex Sans KR, 영문/숫자는 Inter, 한자/명조 보조는 Noto Serif KR.</p>
+    <div class="typo-table">
+      <div class="typo-row">
+        <code class="typo-row__token">display-1</code>
+        <code class="typo-row__spec">72 / 700 / 110% / -4%</code>
+        <div class="typo-row__sample t-display-1" style="font-size: 56px;">체질을 살피는 한방</div>
+      </div>
+      <div class="typo-row">
+        <code class="typo-row__token">display-2</code>
+        <code class="typo-row__spec">56 / 700 / 110% / -4%</code>
+        <div class="typo-row__sample t-display-2" style="font-size: 44px;">오시지 않아도 시작하세요</div>
+      </div>
+      <div class="typo-row">
+        <code class="typo-row__token">heading-1</code>
+        <code class="typo-row__spec">36 / 700 / 135% / -2%</code>
+        <div class="typo-row__sample t-h1">부개 감비환 안내</div>
+      </div>
+      <div class="typo-row">
+        <code class="typo-row__token">heading-2</code>
+        <code class="typo-row__spec">30 / 700 / 135% / -2%</code>
+        <div class="typo-row__sample t-h2">비대면 진료 절차</div>
+      </div>
+      <div class="typo-row">
+        <code class="typo-row__token">heading-3</code>
+        <code class="typo-row__spec">24 / 600 / 135%</code>
+        <div class="typo-row__sample t-h3">한의원 소개</div>
+      </div>
+      <div class="typo-row">
+        <code class="typo-row__token">body-lg</code>
+        <code class="typo-row__spec">18 / 400 / 175%</code>
+        <div class="typo-row__sample t-body-lg">체질에 맞춘 한약을 자택으로 받으세요. 한의사 1:1 유선 진료 후 처방됩니다.</div>
+      </div>
+      <div class="typo-row">
+        <code class="typo-row__token">body</code>
+        <code class="typo-row__spec">16 / 400 / 155%</code>
+        <div class="typo-row__sample t-body">본문 텍스트는 16px가 기본이며 줄높이 1.55배로 한글 가독성을 우선합니다. 긴 글은 1.75배까지 늘려 읽기 호흡을 만듭니다.</div>
+      </div>
+      <div class="typo-row">
+        <code class="typo-row__token">caption</code>
+        <code class="typo-row__spec">12 / 500 / 150% / +2%</code>
+        <div class="typo-row__sample t-caption">caption · 보조 안내 문구</div>
+      </div>
+      <div class="typo-row">
+        <code class="typo-row__token">eyebrow</code>
+        <code class="typo-row__spec">12 / 600 / 12% / UPPERCASE / Inter</code>
+        <div class="typo-row__sample t-eyebrow ink-accent">DIET CARE · IMMUNE CARE</div>
+      </div>
+      <div class="typo-row">
+        <code class="typo-row__token">quote (Serif)</code>
+        <code class="typo-row__spec">24 / 500 / 135% / Noto Serif KR</code>
+        <div class="typo-row__sample t-quote">체질을 살피는 한방의 깊이.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 Spacing & Radius & Shadow -->
+  <section class="section">
+    <h2><span class="num">04</span> <span>Spacing · Radius · Elevation</span></h2>
+    <p class="sub">4px 베이스 스페이싱 / 8단계 라운딩 / 5단계 따뜻한 브라운 톤 그림자.</p>
+
+    <div class="space-grid">
+      <div class="space-card">
+        <h3>Spacing</h3>
+        <div class="space-row"><span class="space-row__label">space/1</span><div class="space-row__bar" style="width:4px"></div><span class="space-row__val">4px</span></div>
+        <div class="space-row"><span class="space-row__label">space/2</span><div class="space-row__bar" style="width:8px"></div><span class="space-row__val">8px</span></div>
+        <div class="space-row"><span class="space-row__label">space/3</span><div class="space-row__bar" style="width:12px"></div><span class="space-row__val">12px</span></div>
+        <div class="space-row"><span class="space-row__label">space/4</span><div class="space-row__bar" style="width:16px"></div><span class="space-row__val">16px</span></div>
+        <div class="space-row"><span class="space-row__label">space/6</span><div class="space-row__bar" style="width:24px"></div><span class="space-row__val">24px</span></div>
+        <div class="space-row"><span class="space-row__label">space/8</span><div class="space-row__bar" style="width:32px"></div><span class="space-row__val">32px</span></div>
+        <div class="space-row"><span class="space-row__label">space/12</span><div class="space-row__bar" style="width:48px"></div><span class="space-row__val">48px</span></div>
+        <div class="space-row"><span class="space-row__label">space/16</span><div class="space-row__bar" style="width:64px"></div><span class="space-row__val">64px</span></div>
+        <div class="space-row"><span class="space-row__label">space/24</span><div class="space-row__bar" style="width:96px"></div><span class="space-row__val">96px</span></div>
+      </div>
+
+      <div class="space-card">
+        <h3>Radius</h3>
+        <div class="radius-grid">
+          <div class="radius-cell"><div class="sample" style="border-radius:0"></div><span class="name">none · 0</span></div>
+          <div class="radius-cell"><div class="sample" style="border-radius:4px"></div><span class="name">xs · 4</span></div>
+          <div class="radius-cell"><div class="sample" style="border-radius:8px"></div><span class="name">sm · 8</span></div>
+          <div class="radius-cell"><div class="sample" style="border-radius:12px"></div><span class="name">md · 12</span></div>
+          <div class="radius-cell"><div class="sample" style="border-radius:16px"></div><span class="name">lg · 16</span></div>
+          <div class="radius-cell"><div class="sample" style="border-radius:24px"></div><span class="name">xl · 24</span></div>
+          <div class="radius-cell"><div class="sample" style="border-radius:32px"></div><span class="name">2xl · 32</span></div>
+          <div class="radius-cell"><div class="sample" style="border-radius:9999px"></div><span class="name">full</span></div>
+        </div>
+      </div>
+
+      <div class="space-card">
+        <h3>Elevation · Warm shadow</h3>
+        <div class="shadow-grid">
+          <div class="shadow-card"><div class="sample" style="box-shadow: var(--shadow-xs);"></div><code>shadow/xs</code></div>
+          <div class="shadow-card"><div class="sample" style="box-shadow: var(--shadow-sm);"></div><code>shadow/sm</code></div>
+          <div class="shadow-card"><div class="sample" style="box-shadow: var(--shadow-md);"></div><code>shadow/md</code></div>
+          <div class="shadow-card"><div class="sample" style="box-shadow: var(--shadow-lg);"></div><code>shadow/lg</code></div>
+          <div class="shadow-card"><div class="sample" style="box-shadow: var(--shadow-xl);"></div><code>shadow/xl</code></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 Motion -->
+  <section class="section">
+    <h2><span class="num">05</span> <span>Motion</span></h2>
+    <p class="sub">짧고 부드러운 진입, 인지를 돕는 호버 리프트, 탭 시 미세 축소. <code>prefers-reduced-motion</code> 시 즉시 표시.</p>
+    <div class="motion-card">
+      <div class="motion-list">
+        <code class="motion-list__token">duration/fast · 160ms</code>
+        <span class="motion-list__desc">호버 색 전환, 작은 토글</span>
+        <span class="motion-list__sample">···</span>
+      </div>
+      <div class="motion-list">
+        <code class="motion-list__token">duration/base · 240ms</code>
+        <span class="motion-list__desc">카드 hover lift, 섹션 진입</span>
+        <span class="motion-list__sample"><span class="motion-dot"></span></span>
+      </div>
+      <div class="motion-list">
+        <code class="motion-list__token">duration/slow · 320ms</code>
+        <span class="motion-list__desc">스크롤 sticky CTA 등장</span>
+        <span class="motion-list__sample">···</span>
+      </div>
+      <div class="motion-list">
+        <code class="motion-list__token">ease/standard</code>
+        <span class="motion-list__desc">cubic-bezier(0.2, 0, 0, 1) — 기본</span>
+        <span class="motion-list__sample">···</span>
+      </div>
+      <div class="motion-list">
+        <code class="motion-list__token">ease/emphasized</code>
+        <span class="motion-list__desc">cubic-bezier(0.2, 0, 0, 1.2) — 강조 진입</span>
+        <span class="motion-list__sample">···</span>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+  const root = document.documentElement;
+  const buttons = document.querySelectorAll(".theme-toggle button");
+  buttons.forEach(b => b.addEventListener("click", () => {
+    buttons.forEach(x => x.setAttribute("aria-pressed", "false"));
+    b.setAttribute("aria-pressed", "true");
+    root.setAttribute("data-theme", b.dataset.theme);
+  }));
+</script>
+</body>
+</html>

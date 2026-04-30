@@ -1,0 +1,606 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>관리자 — 접수 관리 · 부개원 한의원</title>
+  <link rel="stylesheet" href="./_base.css" />
+  <link rel="stylesheet" href="./_assets.css" />
+  <style>
+    body { background: var(--neutral-100); }
+    .canvas-toolbar { position: sticky; top: 0; z-index: 30; display: flex; justify-content: space-between; align-items: center; padding: 14px 24px; background: rgba(255,253,249,0.85); backdrop-filter: saturate(180%) blur(18px); border-bottom: 0.5px solid var(--border-subtle); }
+    .canvas-board { padding: 32px; min-width: 100vw; display: flex; flex-direction: column; gap: 32px; align-items: center; }
+    .frame-label { display: flex; gap: 16px; align-items: baseline; font-family: var(--font-mono); font-size: 12px; color: var(--ink-muted); margin-bottom: 12px; padding-left: 6px; max-width: 1440px; width: 100%; }
+    .frame-label .name { color: var(--ink-primary); font-weight: 500; font-family: var(--font-sans); font-size: 13px; }
+
+    /* Admin app frame */
+    .admin {
+      width: 1440px; min-height: 900px;
+      background: var(--bg-base);
+      border-radius: 16px; overflow: hidden;
+      box-shadow: var(--shadow-lg);
+      display: grid;
+      grid-template-columns: 240px 1fr;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      background: var(--brown-900); color: var(--cream-200);
+      padding: 24px 0;
+      display: flex; flex-direction: column;
+    }
+    .sidebar__brand {
+      padding: 0 24px 24px;
+      display: flex; align-items: center; gap: 10px;
+      border-bottom: 0.5px solid rgba(250,246,241,0.08);
+    }
+    .sidebar__brand .logo {
+      width: 32px; height: 32px; border-radius: 50%;
+      border: 1.5px solid var(--cream-50); color: var(--cream-50);
+      display: grid; place-items: center;
+      font-family: var(--font-serif); font-weight: 700; font-size: 14px;
+    }
+    .sidebar__brand strong { font-family: var(--font-display); font-size: 14px; letter-spacing: -0.02em; color: var(--cream-50); }
+    .sidebar__brand small { display: block; font-size: 9px; color: var(--brown-400); letter-spacing: 0.18em; text-transform: uppercase; }
+
+    .sidebar__nav { padding: 14px 12px; display: flex; flex-direction: column; gap: 2px; flex: 1; }
+    .sidebar__nav h4 { font-size: 10px; letter-spacing: 0.16em; color: var(--brown-400); margin: 14px 12px 6px; font-weight: 600; }
+    .sidebar__nav a {
+      display: flex; align-items: center; gap: 10px;
+      padding: 9px 12px;
+      border-radius: 8px;
+      color: var(--cream-200); font-size: 13px;
+      transition: background 160ms;
+    }
+    .sidebar__nav a:hover { background: rgba(250,246,241,0.06); color: var(--cream-50); }
+    .sidebar__nav a.active { background: rgba(206,61,69,0.18); color: var(--cream-50); }
+    .sidebar__nav a .icon { width: 18px; opacity: 0.7; flex-shrink: 0; }
+    .sidebar__nav a .badge {
+      margin-left: auto;
+      background: var(--accent); color: var(--cream-50);
+      padding: 1px 7px; border-radius: 999px;
+      font-size: 10px; font-weight: 600;
+    }
+
+    .sidebar__user {
+      padding: 14px 20px; border-top: 0.5px solid rgba(250,246,241,0.08);
+      display: flex; gap: 10px; align-items: center;
+    }
+    .sidebar__user .av {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: var(--vermilion-500); color: var(--cream-50);
+      display: grid; place-items: center;
+      font-weight: 600; font-size: 12px;
+    }
+    .sidebar__user p { margin: 0; font-size: 12px; color: var(--cream-100); font-weight: 500; }
+    .sidebar__user p small { display: block; color: var(--brown-400); font-size: 10px; }
+
+    /* Main */
+    .main {
+      display: grid;
+      grid-template-rows: auto 1fr;
+      overflow: hidden;
+    }
+
+    .topbar {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 18px 32px;
+      border-bottom: 0.5px solid var(--border-subtle);
+      background: var(--bg-base);
+    }
+    .topbar h1 { margin: 0; font-size: 22px; letter-spacing: -0.02em; font-weight: 700; }
+    .topbar h1 small { font-weight: 400; color: var(--ink-muted); margin-left: 12px; font-size: 12px; }
+    .topbar .actions { display: flex; gap: 8px; align-items: center; }
+    .search {
+      position: relative; width: 280px;
+    }
+    .search input {
+      width: 100%; height: 36px; padding: 0 12px 0 36px;
+      background: var(--bg-subtle); border: 0.5px solid var(--border-subtle);
+      border-radius: 999px; font-size: 13px; font-family: inherit;
+    }
+    .search::before {
+      content: "⌕"; position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+      color: var(--ink-muted); font-size: 16px;
+    }
+
+    /* KPI */
+    .kpis {
+      display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px;
+      padding: 24px 32px 0;
+    }
+    .kpi {
+      background: var(--surface); border: 0.5px solid var(--border-subtle);
+      border-radius: 12px; padding: 16px 18px;
+    }
+    .kpi__label { font-size: 11px; letter-spacing: 0.06em; color: var(--ink-muted); margin: 0; }
+    .kpi__value {
+      font-family: var(--font-display); font-size: 28px; font-weight: 700; letter-spacing: -0.02em;
+      margin: 4px 0 4px; color: var(--ink-primary);
+    }
+    .kpi__delta { font-size: 11px; font-weight: 500; }
+    .kpi__delta.up { color: var(--success); }
+    .kpi__delta.down { color: var(--danger); }
+    .kpi--accent { background: var(--vermilion-50); border-color: var(--accent-soft); }
+    .kpi--accent .kpi__value { color: var(--accent); }
+
+    /* Filters */
+    .filters {
+      display: flex; gap: 12px; align-items: center; flex-wrap: wrap;
+      padding: 20px 32px;
+    }
+    .filter-pill {
+      padding: 6px 14px; border-radius: 999px;
+      background: var(--surface); border: 0.5px solid var(--border-default);
+      font-size: 12px; color: var(--ink-secondary);
+      cursor: pointer; display: inline-flex; gap: 6px; align-items: center;
+    }
+    .filter-pill.active { background: var(--brand); color: var(--cream-50); border-color: var(--brand); }
+    .filter-pill .count { font-size: 10px; opacity: 0.7; }
+
+    /* Table layout */
+    .table-wrap {
+      padding: 0 32px 32px;
+      display: grid;
+      grid-template-columns: 1fr 480px;
+      gap: 24px;
+    }
+    .table {
+      background: var(--surface);
+      border: 0.5px solid var(--border-subtle);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .table__head, .table__row {
+      display: grid;
+      grid-template-columns: 100px 96px 1fr 110px 130px 110px 80px;
+      align-items: center;
+      padding: 0 16px;
+      gap: 12px;
+    }
+    .table__head {
+      height: 44px;
+      background: var(--bg-subtle);
+      border-bottom: 0.5px solid var(--border-subtle);
+      font-size: 11px; font-weight: 600; letter-spacing: 0.04em;
+      color: var(--ink-muted); text-transform: uppercase;
+    }
+    .table__row {
+      min-height: 64px;
+      border-bottom: 0.5px solid var(--border-subtle);
+      font-size: 13px;
+      cursor: pointer;
+      transition: background 120ms;
+    }
+    .table__row:hover { background: var(--bg-subtle); }
+    .table__row.is-selected { background: var(--vermilion-50); border-left: 3px solid var(--accent); padding-left: 13px; }
+    .table__row .source {
+      display: inline-flex; gap: 4px; align-items: center;
+      padding: 3px 8px; border-radius: 999px;
+      background: var(--bg-muted); font-size: 11px;
+      color: var(--ink-secondary); font-weight: 500;
+    }
+    .table__row .source.naver { background: #E1F0DB; color: #2A6E2A; }
+    .table__row .source.kakao { background: #FFF6CC; color: #6B5500; }
+    .table__row .source.phone { background: var(--brown-100); color: var(--brown-700); }
+    .table__row .source.web   { background: var(--vermilion-100); color: var(--vermilion-700); }
+
+    .status-pill {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 3px 9px; border-radius: 999px;
+      font-size: 11px; font-weight: 600; letter-spacing: 0.02em;
+    }
+    .status-pill::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+    .status-new        { background: var(--vermilion-100); color: var(--vermilion-600); }
+    .status-contacted  { background: #FFF6CC; color: #6B5500; }
+    .status-consulted  { background: #E1ECFA; color: #265B98; }
+    .status-prescribed { background: var(--sage-100); color: var(--sage-600); }
+    .status-shipped    { background: var(--brown-100); color: var(--brown-700); }
+    .status-completed  { background: var(--neutral-200); color: var(--ink-secondary); }
+    .status-canceled   { background: var(--neutral-100); color: var(--ink-muted); text-decoration: line-through; }
+
+    .name-cell { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+    .name-cell strong { font-size: 14px; color: var(--ink-primary); font-weight: 500; }
+    .name-cell small { color: var(--ink-muted); font-size: 11px; font-family: var(--font-mono); }
+
+    .product-tags { display: flex; gap: 4px; flex-wrap: wrap; }
+    .ptag {
+      padding: 2px 7px; border-radius: 4px;
+      background: var(--sage-100); color: var(--sage-600);
+      font-size: 10px; font-weight: 500;
+    }
+    .ptag--immune { background: var(--vermilion-100); color: var(--vermilion-600); }
+
+    .time-cell { font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted); }
+    .time-cell strong { color: var(--ink-primary); display: block; font-weight: 500; }
+
+    .row-action {
+      width: 28px; height: 28px; border-radius: 6px;
+      background: var(--bg-muted); color: var(--ink-secondary);
+      display: grid; place-items: center;
+      cursor: pointer;
+    }
+
+    /* Drawer */
+    .drawer {
+      background: var(--surface);
+      border: 0.5px solid var(--border-subtle);
+      border-radius: 12px;
+      overflow: hidden;
+      display: flex; flex-direction: column;
+      max-height: 760px;
+    }
+    .drawer__head {
+      padding: 20px 24px;
+      border-bottom: 0.5px solid var(--border-subtle);
+    }
+    .drawer__head .row { display: flex; justify-content: space-between; align-items: flex-start; }
+    .drawer__head h2 { margin: 4px 0 4px; font-size: 22px; letter-spacing: -0.02em; font-weight: 700; }
+    .drawer__head .row code { font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted); }
+    .drawer__close { font-size: 18px; color: var(--ink-muted); cursor: pointer; padding: 4px; }
+    .drawer__chips { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+
+    .drawer__body { padding: 24px; overflow-y: auto; flex: 1; }
+    .drawer__section { margin-bottom: 24px; }
+    .drawer__section h3 {
+      font-size: 11px; letter-spacing: 0.1em; color: var(--ink-secondary);
+      margin: 0 0 12px; font-weight: 600; text-transform: uppercase;
+      display: flex; gap: 8px; align-items: center;
+    }
+    .drawer__section h3::after { content: ""; flex: 1; height: 0.5px; background: var(--border-subtle); }
+    .info-grid { display: grid; grid-template-columns: 100px 1fr; gap: 10px 16px; font-size: 13px; }
+    .info-grid dt { color: var(--ink-muted); }
+    .info-grid dd { margin: 0; color: var(--ink-primary); font-weight: 500; }
+
+    .qa-block { background: var(--bg-subtle); border-radius: 10px; padding: 14px 16px; margin-bottom: 8px; }
+    .qa-block .q { font-size: 11px; color: var(--ink-muted); margin: 0 0 4px; letter-spacing: 0.02em; }
+    .qa-block .a { font-size: 13px; color: var(--ink-primary); margin: 0; line-height: 1.7; }
+
+    .timeline { list-style: none; padding: 0; margin: 0; position: relative; }
+    .timeline::before {
+      content: ""; position: absolute; left: 9px; top: 6px; bottom: 6px;
+      width: 1px; background: var(--border-subtle);
+    }
+    .timeline li {
+      position: relative; padding-left: 32px; padding-bottom: 16px;
+      font-size: 12px; color: var(--ink-secondary);
+    }
+    .timeline li::before {
+      content: ""; position: absolute; left: 4px; top: 4px;
+      width: 12px; height: 12px; border-radius: 50%;
+      background: var(--surface); border: 2px solid var(--border-default);
+    }
+    .timeline li.done::before { background: var(--success); border-color: var(--success); }
+    .timeline li.now::before  { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-soft); }
+    .timeline li strong { display: block; color: var(--ink-primary); font-weight: 500; font-size: 13px; }
+    .timeline li time { font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted); }
+
+    .drawer__actions {
+      padding: 16px 24px; border-top: 0.5px solid var(--border-subtle);
+      background: var(--bg-subtle);
+      display: flex; gap: 8px; flex-wrap: wrap;
+    }
+    .drawer__actions .btn { flex: 1; min-width: 140px; }
+  </style>
+</head>
+<body>
+<div class="canvas-toolbar">
+  <a href="./index.html" style="font-size:12px;color:var(--ink-secondary);text-decoration:none;">← Mockups</a>
+  <span class="t-eyebrow ink-secondary">SCREEN P-07 · ADMIN · INTAKES MANAGEMENT</span>
+  <span style="font-family:var(--font-mono);font-size:11px;color:var(--ink-muted);">/admin/intakes · staff/admin only</span>
+</div>
+
+<div class="canvas-board">
+
+  <div class="frame-label" style="max-width:1440px;width:100%;">
+    <span class="name">관리자 · 접수 관리 (Intakes)</span>
+    <span>1440 × 900</span>
+    <span>리스트 + 상세 drawer 동시 노출 · 채널·상태 필터 · 운영자 액션</span>
+  </div>
+
+  <div class="admin">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar__brand">
+        <span class="logo">梄</span>
+        <div>
+          <strong>BGW Admin</strong>
+          <small>BUGAEWON · STAFF</small>
+        </div>
+      </div>
+      <nav class="sidebar__nav">
+        <h4>Operate</h4>
+        <a><span class="icon">▦</span> 대시보드</a>
+        <a class="active"><span class="icon">📥</span> 접수 관리 <span class="badge">12</span></a>
+        <a><span class="icon">☎</span> 통화 큐</a>
+        <a><span class="icon">📦</span> 발송 관리</a>
+
+        <h4>Content</h4>
+        <a><span class="icon">💊</span> 한약·진료과목</a>
+        <a><span class="icon">🪧</span> 배너 / 공지</a>
+        <a><span class="icon">📝</span> 블로그</a>
+
+        <h4>Insights</h4>
+        <a><span class="icon">📊</span> 통계</a>
+        <a><span class="icon">📡</span> 채널 유입</a>
+
+        <h4>System</h4>
+        <a><span class="icon">⚙</span> 설정</a>
+      </nav>
+      <div class="sidebar__user">
+        <div class="av">윤</div>
+        <p>윤정호 원장<small>admin@bugaewon.kr</small></p>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <div class="main">
+      <div class="topbar">
+        <h1>접수 관리 <small>오늘 12건 · 미처리 5건 · 평균 처리 1시간 18분</small></h1>
+        <div class="actions">
+          <div class="search"><input placeholder="이름·전화번호·접수번호로 검색" /></div>
+          <button class="btn btn--secondary btn--sm">CSV 내보내기</button>
+          <button class="btn btn--primary btn--sm">＋ 수기 접수 추가</button>
+        </div>
+      </div>
+
+      <!-- KPIs -->
+      <div class="kpis">
+        <div class="kpi kpi--accent">
+          <p class="kpi__label">오늘 신규 접수</p>
+          <p class="kpi__value">12</p>
+          <p class="kpi__delta up">▲ 어제 대비 +3</p>
+        </div>
+        <div class="kpi">
+          <p class="kpi__label">미처리 (1시간 ↑)</p>
+          <p class="kpi__value">2</p>
+          <p class="kpi__delta down">⚠ 즉시 통화 권장</p>
+        </div>
+        <div class="kpi">
+          <p class="kpi__label">통화 완료 / 진료 중</p>
+          <p class="kpi__value">5</p>
+          <p class="kpi__delta">처방 대기</p>
+        </div>
+        <div class="kpi">
+          <p class="kpi__label">처방 → 발송</p>
+          <p class="kpi__value">8</p>
+          <p class="kpi__delta">7일 누적</p>
+        </div>
+        <div class="kpi">
+          <p class="kpi__label">평균 처리 시간</p>
+          <p class="kpi__value">1<span style="font-size:18px;font-weight:500;">h </span>18<span style="font-size:18px;font-weight:500;">m</span></p>
+          <p class="kpi__delta up">▲ 영업시간 내</p>
+        </div>
+      </div>
+
+      <!-- Filters -->
+      <div class="filters">
+        <span class="filter-pill active">전체 <span class="count">42</span></span>
+        <span class="filter-pill">신규 <span class="count">12</span></span>
+        <span class="filter-pill">통화 완료 <span class="count">5</span></span>
+        <span class="filter-pill">진료 중 <span class="count">3</span></span>
+        <span class="filter-pill">처방 대기 <span class="count">4</span></span>
+        <span class="filter-pill">발송 <span class="count">8</span></span>
+        <span class="filter-pill">완료 <span class="count">10</span></span>
+        <span style="margin-left:auto;display:flex;gap:8px;">
+          <span class="filter-pill">📡 채널 ▾</span>
+          <span class="filter-pill">📅 오늘 ▾</span>
+        </span>
+      </div>
+
+      <!-- Table + Drawer -->
+      <div class="table-wrap">
+        <div class="table">
+          <div class="table__head">
+            <span>채널</span>
+            <span>접수번호</span>
+            <span>환자</span>
+            <span>관심 한약</span>
+            <span>상태</span>
+            <span>접수 시각</span>
+            <span></span>
+          </div>
+
+          <div class="table__row is-selected">
+            <span class="source naver">🟢 네이버</span>
+            <span style="font-family:var(--font-mono);font-size:12px;color:var(--ink-muted);">#26-0430-014</span>
+            <div class="name-cell"><strong>김다현</strong><small>F · 32세 · 010-****-3344</small></div>
+            <div class="product-tags"><span class="ptag">감비환</span><span class="ptag">디톡스</span></div>
+            <span><span class="status-pill status-new">신규</span></span>
+            <div class="time-cell"><strong>11:48</strong>2시간 전</div>
+            <span class="row-action">⋯</span>
+          </div>
+
+          <div class="table__row">
+            <span class="source kakao">💬 카카오</span>
+            <span style="font-family:var(--font-mono);font-size:12px;color:var(--ink-muted);">#26-0430-013</span>
+            <div class="name-cell"><strong>이현우</strong><small>M · 28세 · 010-****-1122</small></div>
+            <div class="product-tags"><span class="ptag">감비탕</span></div>
+            <span><span class="status-pill status-contacted">통화 예정</span></span>
+            <div class="time-cell"><strong>11:32</strong>14:00 통화</div>
+            <span class="row-action">⋯</span>
+          </div>
+
+          <div class="table__row">
+            <span class="source phone">☎ 전화</span>
+            <span style="font-family:var(--font-mono);font-size:12px;color:var(--ink-muted);">#26-0430-012</span>
+            <div class="name-cell"><strong>박지연</strong><small>F · 41세 · 010-****-7788</small></div>
+            <div class="product-tags"><span class="ptag ptag--immune">공진단</span></div>
+            <span><span class="status-pill status-consulted">진료 중</span></span>
+            <div class="time-cell"><strong>11:05</strong>윤원장</div>
+            <span class="row-action">⋯</span>
+          </div>
+
+          <div class="table__row">
+            <span class="source naver">🟢 네이버</span>
+            <span style="font-family:var(--font-mono);font-size:12px;color:var(--ink-muted);">#26-0430-011</span>
+            <div class="name-cell"><strong>최민지</strong><small>F · 26세 · 010-****-5566</small></div>
+            <div class="product-tags"><span class="ptag">감비환</span></div>
+            <span><span class="status-pill status-prescribed">처방 완료</span></span>
+            <div class="time-cell"><strong>10:42</strong>발송 대기</div>
+            <span class="row-action">⋯</span>
+          </div>
+
+          <div class="table__row">
+            <span class="source naver">🟢 네이버</span>
+            <span style="font-family:var(--font-mono);font-size:12px;color:var(--ink-muted);">#26-0430-010</span>
+            <div class="name-cell"><strong>장은서</strong><small>F · 35세 · 010-****-9911</small></div>
+            <div class="product-tags"><span class="ptag">감비환</span><span class="ptag">감비탕</span></div>
+            <span><span class="status-pill status-shipped">발송</span></span>
+            <div class="time-cell"><strong>09:58</strong>운송장 ○○○</div>
+            <span class="row-action">⋯</span>
+          </div>
+
+          <div class="table__row">
+            <span class="source web">🌐 자체</span>
+            <span style="font-family:var(--font-mono);font-size:12px;color:var(--ink-muted);">#26-0430-009</span>
+            <div class="name-cell"><strong>정수아</strong><small>F · 29세 · 010-****-2244</small></div>
+            <div class="product-tags"><span class="ptag">디톡스</span></div>
+            <span><span class="status-pill status-shipped">발송</span></span>
+            <div class="time-cell"><strong>09:31</strong>CJ대한통운</div>
+            <span class="row-action">⋯</span>
+          </div>
+
+          <div class="table__row">
+            <span class="source kakao">💬 카카오</span>
+            <span style="font-family:var(--font-mono);font-size:12px;color:var(--ink-muted);">#26-0430-008</span>
+            <div class="name-cell"><strong>한지훈</strong><small>M · 38세 · 010-****-3322</small></div>
+            <div class="product-tags"><span class="ptag ptag--immune">녹용보약</span></div>
+            <span><span class="status-pill status-completed">완료</span></span>
+            <div class="time-cell"><strong>어제</strong>2일 전 발송</div>
+            <span class="row-action">⋯</span>
+          </div>
+
+          <div class="table__row">
+            <span class="source naver">🟢 네이버</span>
+            <span style="font-family:var(--font-mono);font-size:12px;color:var(--ink-muted);">#26-0430-007</span>
+            <div class="name-cell"><strong>오서연</strong><small>F · 24세 · 010-****-1111</small></div>
+            <div class="product-tags"><span class="ptag">감비환</span></div>
+            <span><span class="status-pill status-canceled">취소</span></span>
+            <div class="time-cell"><strong>어제</strong>임신 확인</div>
+            <span class="row-action">⋯</span>
+          </div>
+
+          <div style="display:flex;justify-content:space-between;padding:14px 16px;font-size:12px;color:var(--ink-muted);background:var(--bg-subtle);border-top:0.5px solid var(--border-subtle);">
+            <span>1–8 / 42 건 표시</span>
+            <span style="display:flex;gap:6px;">‹  1  2  3  4  5  ›</span>
+          </div>
+        </div>
+
+        <!-- Drawer (selected intake detail) -->
+        <aside class="drawer">
+          <div class="drawer__head">
+            <div class="row">
+              <div>
+                <code>#26-0430-014</code>
+                <h2>김다현 <small style="font-size:14px;color:var(--ink-muted);font-weight:400;margin-left:6px;">F · 32세</small></h2>
+              </div>
+              <span class="drawer__close">✕</span>
+            </div>
+            <div class="drawer__chips">
+              <span class="status-pill status-new">신규 접수</span>
+              <span class="source naver" style="display:inline-flex;gap:4px;align-items:center;padding:3px 8px;border-radius:999px;background:#E1F0DB;color:#2A6E2A;font-size:11px;font-weight:500;">🟢 네이버폼</span>
+              <span class="badge badge--diet">DIET · 감비환·디톡스</span>
+              <span style="font-size:11px;color:var(--ink-muted);">📍 서울 강남구</span>
+            </div>
+          </div>
+
+          <div class="drawer__body">
+            <div class="drawer__section">
+              <h3>기본 정보</h3>
+              <dl class="info-grid">
+                <dt>이름</dt><dd>김다현</dd>
+                <dt>휴대전화</dt><dd>010-1234-3344 <span style="margin-left:6px;color:var(--ink-muted);font-size:11px;">통화 가능 평일 12:00–15:00</span></dd>
+                <dt>생년월일</dt><dd>1994-03-15 (만 32세)</dd>
+                <dt>성별</dt><dd>여성</dd>
+              </dl>
+            </div>
+
+            <div class="drawer__section">
+              <h3>다이어트 정보</h3>
+              <dl class="info-grid">
+                <dt>키 / 체중</dt><dd>165 cm / 62.5 kg <span style="color:var(--ink-muted);">(BMI 22.9)</span></dd>
+                <dt>목표</dt><dd>55 kg</dd>
+                <dt>관심 한약</dt><dd><span class="ptag">감비환</span> <span class="ptag" style="margin-left:4px;">디톡스</span></dd>
+                <dt>식사</dt><dd>아침 거름 · 야식 잦음</dd>
+                <dt>운동</dt><dd>주 1–2회</dd>
+              </dl>
+
+              <div class="qa-block" style="margin-top:14px;">
+                <p class="q">Q. 주요 고민</p>
+                <p class="a">하체 위주로 살이 잘 찌고, 야근하면서 야식을 자주 먹게 됨. 식욕 조절이 어려움. 출장이 많아서 매일 탕약 챙기기는 힘들 것 같음.</p>
+              </div>
+              <div class="qa-block">
+                <p class="q">Q. 다이어트 시도 경험</p>
+                <p class="a">지난 6개월간 헬스 + 식단 조절 진행. 처음엔 빠졌으나 정체기 후 요요 옴. 양약 다이어트는 시도한 적 없음.</p>
+              </div>
+            </div>
+
+            <div class="drawer__section">
+              <h3>건강 상태 ⚠ 한의사 확인 필요</h3>
+              <dl class="info-grid">
+                <dt>복용 중</dt><dd style="color:var(--vermilion-600);">신지로이드 50mcg (갑상선기능저하)</dd>
+                <dt>알레르기</dt><dd>없음</dd>
+                <dt>진단 질환</dt><dd>갑상선 질환</dd>
+                <dt>임신/수유</dt><dd>해당 없음</dd>
+              </dl>
+            </div>
+
+            <div class="drawer__section">
+              <h3>배송지 / 결제</h3>
+              <dl class="info-grid">
+                <dt>받는 분</dt><dd>김다현</dd>
+                <dt>주소</dt><dd>서울특별시 강남구 ○○로 ○○ 빌딩 ○○○○호 (06133)</dd>
+                <dt>요청사항</dt><dd>부재 시 경비실에 맡겨주세요</dd>
+              </dl>
+            </div>
+
+            <div class="drawer__section">
+              <h3>처리 타임라인</h3>
+              <ul class="timeline">
+                <li class="done">
+                  <strong>접수 도착 · 네이버폼</strong>
+                  <time>2026-04-30 11:48</time>
+                </li>
+                <li class="now">
+                  <strong>통화 예약 안내 발송 (대기)</strong>
+                  <time>운영자 처리 필요</time>
+                </li>
+                <li>
+                  <strong>한의사 1:1 유선 진료</strong>
+                  <time>—</time>
+                </li>
+                <li>
+                  <strong>처방·조제</strong>
+                  <time>—</time>
+                </li>
+                <li>
+                  <strong>택배 발송</strong>
+                  <time>—</time>
+                </li>
+              </ul>
+            </div>
+
+            <div class="drawer__section">
+              <h3>UTM · 유입 분석</h3>
+              <dl class="info-grid">
+                <dt>유입</dt><dd>네이버 검색광고 · 키워드 "감비환"</dd>
+                <dt>랜딩</dt><dd>/diet/gambihwan</dd>
+                <dt>CTA 위치</dt><dd>제품 상세 sticky</dd>
+                <dt>UA</dt><dd style="font-family:var(--font-mono);font-size:11px;">iPhone Safari · iOS 17</dd>
+              </dl>
+            </div>
+          </div>
+
+          <div class="drawer__actions">
+            <button class="btn btn--accent btn--lg">📞 통화 시작</button>
+            <button class="btn btn--secondary">💬 카톡 보내기</button>
+            <button class="btn btn--outline">상태 변경 ▾</button>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

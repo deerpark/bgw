@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Components — 부개원 한의원 디자인 시스템</title>
+  <link rel="stylesheet" href="./_base.css" />
+  <style>
+    .page { padding: 80px 32px 120px; max-width: 1280px; margin: 0 auto; }
+    .toolbar { position: sticky; top: 0; z-index: 30; display: flex; justify-content: space-between; align-items: center; padding: 14px 24px; background: rgba(255,253,249,0.85); backdrop-filter: saturate(180%) blur(18px); border-bottom: 0.5px solid var(--border-subtle); margin: -80px -32px 64px; }
+    .toolbar a { font-size: 12px; color: var(--ink-secondary); text-decoration: none; }
+    .page-title { font-family: var(--font-display); font-size: 56px; font-weight: 700; letter-spacing: -0.04em; line-height: 1.1; margin: 0 0 12px; }
+    .page-sub { color: var(--ink-secondary); max-width: 60ch; margin: 0 0 64px; line-height: 1.75; }
+    .section { margin-bottom: 80px; }
+    .section h2 { display: flex; align-items: baseline; gap: 16px; font-size: 28px; letter-spacing: -0.02em; margin: 0 0 6px; }
+    .section h2 .num { font-family: var(--font-mono); font-size: 12px; color: var(--brand); letter-spacing: 0.12em; font-weight: 500; }
+    .section .sub { color: var(--ink-secondary); margin: 0 0 32px; max-width: 60ch; line-height: 1.75; }
+    .demo-grid { display: grid; gap: 16px; grid-template-columns: 1fr; }
+    .demo-card {
+      background: var(--surface); border: 0.5px solid var(--border-subtle);
+      border-radius: 16px; padding: 28px; display: flex; flex-direction: column; gap: 16px;
+    }
+    .demo-card h3 { margin: 0; font-size: 16px; letter-spacing: -0.02em; }
+    .demo-card .specs { font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted); }
+    .demo-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; padding: 16px; background: var(--bg-subtle); border-radius: 10px; }
+    .demo-label { font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted); width: 100%; margin-bottom: -4px; }
+  </style>
+</head>
+<body>
+<div class="page">
+  <div class="toolbar">
+    <a href="./index.html">← Mockups</a>
+    <span class="t-eyebrow ink-secondary">F-02 · COMPONENTS</span>
+    <a href="./foundations.html">Foundations →</a>
+  </div>
+
+  <span class="t-eyebrow ink-secondary">COMPONENTS</span>
+  <h1 class="page-title">UI 프리미티브</h1>
+  <p class="page-sub">실제 페이지에서는 콘텍스트와 함께 동작합니다 (메인·다이어트 허브·제품 상세 페이지 참조). 이 페이지는 변형(variant)을 한자리에서 비교하기 위한 레퍼런스입니다.</p>
+
+  <section class="section">
+    <h2><span class="num">01</span> Buttons</h2>
+    <p class="sub">기본 모양은 pill (radius/full). Primary는 brand brown, 핵심 전환은 vermilion accent.</p>
+    <div class="demo-card">
+      <h3>Variants</h3>
+      <span class="specs">btn--primary · btn--accent · btn--secondary · btn--outline · btn--ghost · btn--link</span>
+      <div class="demo-row">
+        <button class="btn btn--primary">Primary</button>
+        <button class="btn btn--accent">비대면 진료 접수 →</button>
+        <button class="btn btn--secondary">보조 행동</button>
+        <button class="btn btn--outline">Outline</button>
+        <button class="btn btn--ghost">Ghost</button>
+      </div>
+      <h3 style="margin-top:8px;">Sizes</h3>
+      <span class="specs">btn--sm 36 · btn--md 44 (default) · btn--lg 52 · btn--xl 60</span>
+      <div class="demo-row">
+        <button class="btn btn--accent btn--sm">SM</button>
+        <button class="btn btn--accent">MD</button>
+        <button class="btn btn--accent btn--lg">LG</button>
+        <button class="btn btn--accent btn--xl">XL — Hero CTA</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2><span class="num">02</span> Badges & Tags</h2>
+    <div class="demo-card">
+      <div class="demo-row">
+        <span class="badge badge--brand">BRAND</span>
+        <span class="badge badge--accent">ACCENT</span>
+        <span class="badge badge--diet">DIET</span>
+        <span class="badge badge--immune">IMMUNE</span>
+        <span class="badge badge--neutral">진료과목</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2><span class="num">03</span> Cards</h2>
+    <div class="demo-grid" style="grid-template-columns: repeat(3, 1fr);">
+      <div class="card">
+        <h3 style="margin:0 0 8px;font-size:18px;letter-spacing:-0.02em;">기본 카드</h3>
+        <p style="font-size:13px;color:var(--ink-secondary);margin:0;line-height:1.7;">surface 배경 · radius-lg · shadow-sm · border-subtle 0.5px</p>
+      </div>
+      <div class="card card--hover">
+        <h3 style="margin:0 0 8px;font-size:18px;letter-spacing:-0.02em;">호버 카드</h3>
+        <p style="font-size:13px;color:var(--ink-secondary);margin:0;line-height:1.7;">hover 시 -2px lift + shadow-md</p>
+      </div>
+      <div class="card card--feature">
+        <h3 style="margin:0 0 8px;font-size:18px;letter-spacing:-0.02em;">Feature 카드</h3>
+        <p style="font-size:13px;color:var(--ink-secondary);margin:0;line-height:1.7;">surface-alt 배경 + radius-xl + 큰 패딩. Hero/Spotlight용.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2><span class="num">04</span> Medical Disclaimer (의무 고지)</h2>
+    <p class="sub">모든 한약 상세 페이지 하단에 자동 노출되어야 하는 컴포넌트.</p>
+    <div class="medical-disclaimer">
+      <strong>※ 한의사 진료 후 처방 안내</strong><br/>
+      본 한약은 한의사의 진료 후 체질·증상·복약 이력에 따라 개별 처방되며, 개인에 따라 효과 및 반응은 다를 수 있습니다.<br/>
+      임신·수유 중이거나 만성 질환이 있는 경우 반드시 사전에 알려주시기 바랍니다.<br/>
+      본 페이지는 의료광고 자율심의 기준을 준수하여 작성되었습니다.
+    </div>
+  </section>
+
+  <section class="section">
+    <h2><span class="num">05</span> Floating CTA Dock (Mobile)</h2>
+    <p class="sub">모바일 하단 sticky. 카카오·비대면 접수·전화 3분할.</p>
+    <div style="max-width: 390px; padding: 24px; background: var(--bg-base); border-radius: 16px; border: 0.5px solid var(--border-subtle);">
+      <div style="height: 80px; background: var(--bg-subtle); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--ink-muted); font-size: 12px; margin-bottom: 12px;">콘텐츠 영역</div>
+      <div class="cta-dock" style="position: static;">
+        <div class="cta-dock-item">카톡 상담</div>
+        <div class="cta-dock-item cta-dock-item--accent">비대면 접수</div>
+        <div class="cta-dock-item">전화 걸기</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2><span class="num">06</span> Logo Mark · Stamp</h2>
+    <p class="sub">로고의 한자 모티프와 단청 인장(富梄開印).</p>
+    <div class="demo-card">
+      <div class="demo-row" style="background: transparent; gap: 32px;">
+        <div style="display: flex; gap: 12px; align-items: center;">
+          <span class="logo-mark" style="color: var(--brown-700); font-family: var(--font-serif);">梄</span>
+          <strong style="font-family: var(--font-display); font-weight: 700; letter-spacing: -0.02em;">부개원 한의원</strong>
+        </div>
+        <span class="stamp">富梄開印</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2><span class="num">07</span> Header & Footer</h2>
+    <p class="sub">전체 모습은 home.html · diet-hub.html에서 확인.</p>
+    <div class="demo-card" style="padding: 0; overflow: hidden;">
+      <div style="background:rgba(255,253,249,0.92);height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;border-bottom:0.5px solid var(--border-subtle);">
+        <div style="display:flex;align-items:center;gap:10px;"><span class="logo-mark" style="color:var(--brown-700);width:28px;height:28px;font-size:14px;font-family:var(--font-serif);">梄</span><strong style="font-family:var(--font-display);font-size:14px;letter-spacing:-0.02em;">부개원 한의원</strong></div>
+        <nav style="display:flex;gap:18px;font-size:12px;color:var(--ink-secondary);"><a>다이어트</a><a>면역한약</a><a>한의원 소개</a><a>비대면 진료</a></nav>
+        <button class="btn btn--accent btn--sm">비대면 진료 접수</button>
+      </div>
+    </div>
+  </section>
+</div>
+</body>
+</html>

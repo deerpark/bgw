@@ -1,0 +1,161 @@
+/* 부개원 한의원 — Visual Asset Library
+ * SVG 일러스트, 한지 텍스처, 단청 패턴, 그리고 이미지 placeholder 스타일.
+ * @import "./_tokens.css" 후 사용 가능.
+ */
+
+/* ─── 한지 텍스처 (배경) ──────────────────────────── */
+.tex-hanji {
+  background-color: var(--cream-100);
+  background-image:
+    radial-gradient(at 20% 30%, rgba(73,46,20,0.04), transparent 40%),
+    radial-gradient(at 80% 70%, rgba(206,61,69,0.03), transparent 50%),
+    repeating-linear-gradient(0deg,
+      rgba(73,46,20,0.012) 0 1px, transparent 1px 4px),
+    repeating-linear-gradient(90deg,
+      rgba(73,46,20,0.012) 0 1px, transparent 1px 6px);
+}
+
+.tex-hanji-dark {
+  background-color: var(--brown-900);
+  background-image:
+    radial-gradient(at 20% 30%, rgba(206,61,69,0.06), transparent 40%),
+    radial-gradient(at 80% 70%, rgba(255,253,249,0.02), transparent 50%),
+    repeating-linear-gradient(0deg, rgba(255,253,249,0.014) 0 1px, transparent 1px 4px),
+    repeating-linear-gradient(90deg, rgba(255,253,249,0.014) 0 1px, transparent 1px 6px);
+}
+
+/* ─── 단청 패턴 (한국 전통 기하) ────────────────── */
+.pattern-dancheong {
+  background-color: transparent;
+  background-image:
+    repeating-linear-gradient(45deg,
+      rgba(206,61,69,0.04) 0 8px, transparent 8px 16px,
+      rgba(73,46,20,0.04) 16px 24px, transparent 24px 32px);
+}
+
+.pattern-circles {
+  background-image:
+    radial-gradient(circle at 1px 1px, rgba(73,46,20,0.18) 1.4px, transparent 1.5px);
+  background-size: 14px 14px;
+}
+
+.pattern-grid {
+  background-image:
+    linear-gradient(rgba(73,46,20,0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(73,46,20,0.06) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+/* ─── 사진 placeholder · 한의원 톤 보정 ─────────── */
+.photo-ph {
+  position: relative;
+  overflow: hidden;
+  background:
+    linear-gradient(135deg, var(--brown-300), var(--cream-200) 60%, var(--cream-100));
+  border-radius: var(--radius-lg);
+}
+.photo-ph::after {
+  content: attr(data-label);
+  position: absolute; left: 16px; bottom: 16px;
+  background: rgba(255,253,249,0.84);
+  backdrop-filter: blur(6px);
+  color: var(--brown-700);
+  padding: 5px 12px;
+  border-radius: var(--radius-xs);
+  font-size: 11px;
+  font-family: var(--font-mono);
+  letter-spacing: 0.04em;
+}
+.photo-ph--clinic    { background: linear-gradient(135deg, var(--brown-400), var(--cream-200) 70%); }
+.photo-ph--treatment { background: linear-gradient(135deg, var(--sage-300), var(--cream-100) 70%); }
+.photo-ph--herb      { background: linear-gradient(135deg, var(--sage-400), var(--brown-200) 70%); }
+.photo-ph--detail    { background: linear-gradient(135deg, var(--brown-700), var(--brown-400) 70%); }
+.photo-ph--blog      { background: linear-gradient(135deg, var(--vermilion-200), var(--cream-200)); }
+.photo-ph--portrait  {
+  background:
+    radial-gradient(ellipse at 50% 30%, var(--brown-200), transparent 60%),
+    linear-gradient(180deg, var(--neutral-100) 0%, var(--cream-200) 100%);
+}
+
+/* ─── 책장 모티프 (원장 사진 옆 한방 도서) ────── */
+.bookshelf {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 3px;
+  height: 100%;
+  padding: 16px 12px;
+}
+.book {
+  border-radius: 2px;
+  position: relative;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: 12px;
+  color: rgba(255,253,249,0.65);
+  writing-mode: vertical-rl;
+  letter-spacing: 0.4em;
+  padding: 12px 0;
+  transform: rotate(180deg);
+  text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+}
+.book::before {
+  content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+  background: linear-gradient(180deg, rgba(0,0,0,0.18), transparent 30%, rgba(0,0,0,0.18));
+}
+.book--brown   { background: linear-gradient(180deg, var(--brown-700), var(--brown-900)); }
+.book--maroon  { background: linear-gradient(180deg, var(--vermilion-700), var(--vermilion-900)); }
+.book--cream   { background: linear-gradient(180deg, var(--cream-300), var(--brown-300)); color: var(--brown-800); text-shadow: none; }
+.book--green   { background: linear-gradient(180deg, var(--sage-500), var(--sage-600)); }
+.book--gold    { background: linear-gradient(180deg, #B8924A, #80633F); }
+.book--black   { background: linear-gradient(180deg, var(--neutral-700), var(--neutral-900)); }
+
+/* ─── Hero overlay (한약 향기 그라디언트) ────── */
+.hero-overlay {
+  position: absolute; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(circle at 20% 30%, rgba(206,61,69,0.10), transparent 40%),
+    radial-gradient(circle at 80% 70%, rgba(70,107,73,0.08), transparent 50%);
+}
+
+/* ─── Decorative borders ────────────────────────── */
+.deco-ribbon {
+  position: relative;
+  padding-left: 18px;
+}
+.deco-ribbon::before {
+  content: ""; position: absolute; left: 0; top: 8px; bottom: 8px;
+  width: 3px; background: var(--accent);
+  border-radius: 999px;
+}
+
+/* ─── Stamp variants ────────────────────────────── */
+.stamp-vert {
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--vermilion-500);
+  color: var(--cream-50);
+  padding: 12px 10px;
+  border-radius: 6px;
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0;
+  line-height: 1.25;
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+  box-shadow: var(--shadow-md);
+}
+
+.stamp-square {
+  display: inline-grid; place-items: center;
+  width: 56px; height: 56px;
+  background: var(--vermilion-500);
+  color: var(--cream-50);
+  border-radius: 8px;
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: 11px;
+  line-height: 1.2;
+  text-align: center;
+  box-shadow: var(--shadow-md);
+}

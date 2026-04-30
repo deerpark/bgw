@@ -1,0 +1,484 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>다이어트 허브 — 부개원 한의원</title>
+  <link rel="stylesheet" href="./_base.css" />
+  <style>
+    body { background: linear-gradient(180deg, #FAF6F1 0%, #F1E8DB 100%); }
+    .canvas-toolbar { position: sticky; top: 0; z-index: 30; display: flex; justify-content: space-between; align-items: center; padding: 14px 24px; background: rgba(255,253,249,0.85); backdrop-filter: saturate(180%) blur(18px); border-bottom: 0.5px solid var(--border-subtle); }
+    .canvas-board { display: grid; grid-template-columns: 1440px 390px; gap: 64px; padding: 64px 32px 120px; align-items: flex-start; justify-content: center; min-width: 100vw; }
+    .frame-label { display: flex; gap: 16px; align-items: baseline; font-family: var(--font-mono); font-size: 12px; color: var(--ink-muted); margin-bottom: 12px; padding-left: 6px; }
+    .frame-label .name { color: var(--ink-primary); font-weight: 500; font-family: var(--font-sans); font-size: 13px; }
+
+    .page-d { width: 1440px; background: var(--bg-base); border-radius: 16px; overflow: hidden; box-shadow: var(--shadow-lg); }
+
+    .breadcrumb { padding: 16px 48px; font-size: 13px; color: var(--ink-muted); background: var(--bg-base); border-bottom: 0.5px solid var(--border-subtle); }
+    .breadcrumb a { color: var(--ink-secondary); }
+    .breadcrumb .current { color: var(--ink-primary); }
+    .breadcrumb .sep { padding: 0 8px; color: var(--neutral-300); }
+
+    /* Hero */
+    .hub-hero {
+      padding: 96px 48px 80px;
+      background: linear-gradient(180deg, var(--cream-50) 0%, var(--cream-100) 100%);
+      position: relative;
+    }
+    .hub-hero__inner { max-width: 880px; margin: 0 auto; text-align: center; }
+    .hub-hero__chr-row { display: flex; justify-content: center; gap: 24px; margin-bottom: 28px; }
+    .hub-hero__chr {
+      width: 64px; height: 64px; border-radius: 50%;
+      background: var(--surface);
+      border: 1px solid var(--border-subtle);
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-serif); font-weight: 700; font-size: 26px;
+      color: var(--sage-600);
+    }
+    .hub-hero__chr.center { background: var(--sage-500); color: var(--cream-50); border: 0; box-shadow: var(--shadow-md); }
+    .hub-hero__eyebrow {
+      display: inline-block; padding: 6px 14px;
+      background: var(--sage-100); color: var(--sage-600);
+      border-radius: 999px;
+      font-size: 11px; letter-spacing: 0.12em; font-weight: 600;
+      margin-bottom: 20px;
+    }
+    .hub-hero__title {
+      font-family: var(--font-display); font-size: 56px; font-weight: 700;
+      letter-spacing: -0.04em; line-height: 1.15; color: var(--ink-primary);
+      margin: 0 0 18px;
+    }
+    .hub-hero__sub { font-size: 19px; color: var(--ink-secondary); line-height: 1.75; max-width: 720px; margin: 0 auto 28px; }
+
+    /* Compare table */
+    .compare {
+      max-width: 1280px; margin: 0 auto;
+      background: var(--surface); border-radius: 32px;
+      box-shadow: var(--shadow-md);
+      overflow: hidden;
+      border: 0.5px solid var(--border-subtle);
+    }
+    .compare__head {
+      display: grid; grid-template-columns: 240px repeat(3, 1fr);
+      background: var(--brown-700);
+      color: var(--cream-50);
+    }
+    .compare__head > div {
+      padding: 36px 28px;
+      border-right: 0.5px solid rgba(250,246,241,0.1);
+    }
+    .compare__head > div:last-child { border-right: 0; }
+    .compare__head .label-cell h3 {
+      font-family: var(--font-display); font-size: 22px; letter-spacing: -0.02em;
+      font-weight: 700; margin: 0 0 4px;
+    }
+    .compare__head .label-cell p { font-size: 13px; color: var(--brown-200); margin: 0; line-height: 1.6; }
+    .compare__head .product { display: flex; flex-direction: column; align-items: flex-start; }
+    .compare__head .product .chr {
+      width: 48px; height: 48px; border-radius: 14px;
+      background: rgba(255,253,249,0.16); color: var(--cream-50);
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-serif); font-weight: 700; font-size: 22px;
+      margin-bottom: 12px;
+    }
+    .compare__head .product h4 { margin: 0 0 4px; font-size: 19px; letter-spacing: -0.02em; }
+    .compare__head .product small { color: var(--brown-300); font-size: 11px; letter-spacing: 0.08em; }
+    .compare__head .product p { font-size: 13px; color: var(--cream-200); margin-top: 12px; line-height: 1.55; }
+
+    .compare__row {
+      display: grid; grid-template-columns: 240px repeat(3, 1fr);
+      border-top: 0.5px solid var(--border-subtle);
+    }
+    .compare__row > div {
+      padding: 22px 28px;
+      border-right: 0.5px solid var(--border-subtle);
+      font-size: 14px; line-height: 1.65;
+      color: var(--ink-primary);
+    }
+    .compare__row > div:last-child { border-right: 0; }
+    .compare__row .label {
+      background: var(--bg-subtle);
+      font-size: 12px; color: var(--ink-secondary);
+      letter-spacing: 0.04em; font-weight: 500;
+      display: flex; align-items: center;
+    }
+    .compare__row .check { color: var(--sage-500); font-weight: 600; }
+    .compare__cta-row {
+      display: grid; grid-template-columns: 240px repeat(3, 1fr);
+      background: var(--bg-subtle);
+      border-top: 0.5px solid var(--border-subtle);
+    }
+    .compare__cta-row > div {
+      padding: 22px 28px;
+      border-right: 0.5px solid var(--border-subtle);
+    }
+    .compare__cta-row > div:last-child { border-right: 0; }
+
+    /* When-to-use grid */
+    .sec { padding: 96px 48px; }
+    .sec__head { max-width: 720px; margin-bottom: 48px; }
+    .sec__eyebrow { font-size: 11px; letter-spacing: 0.12em; font-weight: 600; color: var(--brand); text-transform: uppercase; }
+    .sec__title { font-family: var(--font-display); font-size: 40px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.2; color: var(--ink-primary); margin: 12px 0 12px; }
+    .sec__sub { font-size: 17px; line-height: 1.75; color: var(--ink-secondary); margin: 0; max-width: 60ch; }
+
+    .when-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; max-width: 1280px; margin: 0 auto; }
+    .when-card { background: var(--surface); border: 0.5px solid var(--border-subtle); border-radius: 20px; padding: 28px; }
+    .when-card__num { font-family: var(--font-serif); font-size: 36px; font-weight: 700; color: var(--sage-500); line-height: 1; margin-bottom: 16px; }
+    .when-card h4 { font-size: 18px; letter-spacing: -0.02em; margin: 0 0 8px; }
+    .when-card p { font-size: 14px; color: var(--ink-secondary); line-height: 1.7; margin: 0; }
+
+    /* FAQ accordion */
+    .faq { max-width: 880px; margin: 0 auto; }
+    .faq-item {
+      background: var(--surface); border: 0.5px solid var(--border-subtle);
+      border-radius: 16px; margin-bottom: 12px;
+      overflow: hidden;
+    }
+    .faq-q {
+      padding: 22px 28px;
+      display: flex; justify-content: space-between; align-items: center;
+      cursor: pointer;
+      font-size: 16px; font-weight: 500; letter-spacing: -0.02em;
+    }
+    .faq-q .marker { color: var(--brand); font-size: 20px; transition: transform 200ms var(--ease-standard); }
+    details[open] .faq-q .marker { transform: rotate(45deg); }
+    details summary::-webkit-details-marker { display: none; }
+    .faq-a { padding: 0 28px 24px; color: var(--ink-secondary); font-size: 14px; line-height: 1.85; }
+
+    /* Mobile */
+    .page-m { width: 390px; background: var(--bg-base); border-radius: 36px; overflow: hidden; box-shadow: var(--shadow-xl); border: 8px solid var(--neutral-900); position: relative; }
+    .page-m__notch { height: 28px; background: var(--neutral-900); }
+    .nav-m { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; background: rgba(255,253,249,0.92); backdrop-filter: blur(14px); border-bottom: 0.5px solid var(--border-subtle); }
+    .breadcrumb-m { padding: 12px 20px; font-size: 12px; color: var(--ink-muted); border-bottom: 0.5px solid var(--border-subtle); }
+    .hub-hero-m { padding: 32px 20px 28px; text-align: center; background: linear-gradient(180deg, var(--cream-50), var(--cream-100)); }
+    .hub-hero-m__chr { display: flex; justify-content: center; gap: 12px; margin-bottom: 18px; }
+    .hub-hero-m__chr div { width: 44px; height: 44px; border-radius: 50%; background: var(--surface); border: 1px solid var(--border-subtle); display: flex; align-items: center; justify-content: center; font-family: var(--font-serif); font-weight: 700; font-size: 19px; color: var(--sage-600); }
+    .hub-hero-m__chr div.c { background: var(--sage-500); color: var(--cream-50); border: 0; }
+    .hub-hero-m__title { font-family: var(--font-display); font-size: 26px; line-height: 1.2; letter-spacing: -0.04em; margin: 0 0 12px; font-weight: 700; }
+    .hub-hero-m__sub { font-size: 13px; color: var(--ink-secondary); line-height: 1.7; margin: 0; }
+    .compare-m { padding: 32px 20px; }
+    .compare-m__card { background: var(--surface); border: 0.5px solid var(--border-subtle); border-radius: 18px; padding: 22px; margin-bottom: 12px; border-left: 3px solid var(--category-diet); }
+    .compare-m__card h4 { display: flex; gap: 10px; align-items: center; margin: 0 0 12px; font-size: 17px; letter-spacing: -0.02em; }
+    .compare-m__card h4 .chr { width: 32px; height: 32px; border-radius: 8px; background: var(--sage-100); color: var(--sage-600); display: flex; align-items: center; justify-content: center; font-family: var(--font-serif); font-weight: 700; font-size: 15px; }
+    .compare-m__attr { display: flex; justify-content: space-between; padding: 6px 0; font-size: 12px; }
+    .compare-m__attr .k { color: var(--ink-muted); }
+    .compare-m__attr .v { color: var(--ink-primary); font-weight: 500; text-align: right; }
+    .compare-m__cta { margin-top: 14px; }
+
+    .faq-m { padding: 32px 20px 16px; }
+    .faq-m__item { background: var(--surface); border: 0.5px solid var(--border-subtle); border-radius: 12px; padding: 16px 18px; margin-bottom: 10px; }
+    .faq-m__q { font-size: 14px; letter-spacing: -0.02em; font-weight: 500; }
+
+    .disclaimer-bar { padding: 10px 20px; background: var(--cream-200); font-size: 11px; color: var(--brown-700); text-align: center; }
+    .page-m .cta-dock { position: absolute; bottom: 0; left: 0; right: 0; background: rgba(255,253,249,0.95); }
+
+    .footer-d {
+      background: var(--brown-900); color: var(--cream-200);
+      padding: 56px 48px 32px; font-size: 13px;
+    }
+    .footer-d__row { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
+    .footer-d__row a { color: var(--cream-200); }
+  </style>
+</head>
+<body>
+
+<div class="canvas-toolbar">
+  <a class="toolbar__back" href="./index.html" style="font-size:12px;color:var(--ink-secondary);text-decoration:none;">← Mockups</a>
+  <span class="t-eyebrow ink-secondary">SCREEN P-02 · DIET HUB · DESKTOP + MOBILE</span>
+  <span style="font-family:var(--font-mono);font-size:11px;color:var(--ink-muted);">/diet · ISR 1h</span>
+</div>
+
+<div class="canvas-board">
+
+  <!-- DESKTOP -->
+  <div>
+    <div class="frame-label">
+      <span class="name">다이어트 허브 (Diet Hub) · Desktop</span>
+      <span>1440 × auto</span>
+      <span>Hero · 3종 비교 테이블 · 어떤 분께 · FAQ · CTA</span>
+    </div>
+
+    <div class="page-d">
+      <!-- Top strip + Header (간소) -->
+      <div style="background:var(--brown-900);color:var(--cream-200);text-align:center;padding:8px 16px;font-size:12px;">
+        ☎ 032-361-9991 · 평일 09:00–20:00 · 비대면 진료 접수는 네이버폼이 가장 빠릅니다 →
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:0 48px;height:80px;background:rgba(255,253,249,0.92);backdrop-filter:blur(18px);border-bottom:0.5px solid var(--border-subtle);">
+        <div style="display:flex;align-items:center;gap:12px;"><span class="logo-mark" style="font-family:var(--font-serif);color:var(--brown-700);">梄</span><strong style="font-family:var(--font-display);font-weight:700;letter-spacing:-0.02em;">부개원 한의원</strong></div>
+        <nav style="display:flex;gap:28px;font-size:14px;color:var(--ink-secondary);font-weight:500;">
+          <a style="color:var(--brand);font-weight:600;">다이어트</a><a>면역한약</a><a>진료과목</a><a>한의원 소개</a><a>비대면 진료</a>
+        </nav>
+        <button class="btn btn--accent btn--sm">비대면 진료 접수 →</button>
+      </div>
+
+      <div class="breadcrumb">
+        <a>홈</a><span class="sep">/</span><span class="current">다이어트</span>
+      </div>
+
+      <!-- Hero -->
+      <section class="hub-hero">
+        <div class="hub-hero__inner">
+          <div class="hub-hero__chr-row">
+            <div class="hub-hero__chr">減</div>
+            <div class="hub-hero__chr center">湯</div>
+            <div class="hub-hero__chr">淨</div>
+          </div>
+          <span class="hub-hero__eyebrow">DIET CARE · 한방 다이어트</span>
+          <h1 class="hub-hero__title">한방 다이어트,<br/>무리하지 않는 방향으로.</h1>
+          <p class="hub-hero__sub">식욕·체질·기력을 함께 살피는 부개원 한방 다이어트 3종을 한자리에서 비교해 보세요. 어떤 한약이 맞을지는 한의사 진료 후 결정됩니다.</p>
+          <div style="display:flex;gap:10px;justify-content:center;">
+            <button class="btn btn--accent btn--lg">비대면 진료 접수 →</button>
+            <button class="btn btn--outline btn--lg">절차 자세히 보기</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Compare table -->
+      <section style="padding: 0 48px 96px;">
+        <div class="compare">
+          <div class="compare__head">
+            <div class="label-cell">
+              <h3>3종 비교</h3>
+              <p>한약 형태·복용 편의·권장 대상이 어떻게 다른지 한눈에 살펴보세요.</p>
+            </div>
+            <div class="product">
+              <span class="chr">減</span>
+              <h4>부개 감비환</h4>
+              <small>BUGAE GAMBIHWAN · 富梄 減肥丸</small>
+              <p>휴대 간편한 환제 형태로 일상에 부드럽게 녹아드는 한방 다이어트.</p>
+            </div>
+            <div class="product">
+              <span class="chr">湯</span>
+              <h4>부개 감비탕</h4>
+              <small>BUGAE GAMBITANG · 富梄 減肥湯</small>
+              <p>체질·증상에 맞춰 약재 비율을 정밀 조정 가능한 탕제 한약.</p>
+            </div>
+            <div class="product">
+              <span class="chr">淨</span>
+              <h4>부개 디톡스</h4>
+              <small>BUGAE DETOX · 富梄 淨化</small>
+              <p>노폐물 배출과 속 비움 케어 — 시작 단계나 회복기에 적합.</p>
+            </div>
+          </div>
+
+          <div class="compare__row">
+            <div class="label">형태</div>
+            <div>환제 (작은 알약)</div>
+            <div>탕약 (달인 한약)</div>
+            <div>탕약 / 환제 혼합 처방 가능</div>
+          </div>
+          <div class="compare__row">
+            <div class="label">복용 편의</div>
+            <div><span class="check">★ ★ ★</span> 매우 간편 · 휴대 가능</div>
+            <div><span class="check">★ ★</span> 데워 드시기 권장</div>
+            <div><span class="check">★ ★ ★</span> 단기 집중 복용</div>
+          </div>
+          <div class="compare__row">
+            <div class="label">처방 정밀도</div>
+            <div>표준 베이스에 일부 조정</div>
+            <div><span class="check">★ ★ ★</span> 가장 정밀 (1:1 맞춤)</div>
+            <div>회복기 / 시작기 베이스 조정</div>
+          </div>
+          <div class="compare__row">
+            <div class="label">중점 케어</div>
+            <div>식욕 조절 · 기초대사</div>
+            <div>체질 · 호르몬 · 식욕 · 대사 동반</div>
+            <div>노폐물 배출 · 부기 · 소화</div>
+          </div>
+          <div class="compare__row">
+            <div class="label">권장 대상</div>
+            <div>외식·야근 잦은 직장인</div>
+            <div>꾸준한 복용이 가능한 분, 근본 케어 희망</div>
+            <div>다이어트 시작 단계 / 식이 회복기</div>
+          </div>
+          <div class="compare__row">
+            <div class="label">복용 기간 (예시)</div>
+            <div>1–3개월</div>
+            <div>2–6개월 (단계적)</div>
+            <div>2–4주 단기</div>
+          </div>
+          <div class="compare__row">
+            <div class="label">상세 견적</div>
+            <div style="color:var(--ink-muted);">진료 후 안내</div>
+            <div style="color:var(--ink-muted);">진료 후 안내</div>
+            <div style="color:var(--ink-muted);">진료 후 안내</div>
+          </div>
+
+          <div class="compare__cta-row">
+            <div></div>
+            <div><button class="btn btn--secondary" style="width:100%;">감비환 자세히 →</button></div>
+            <div><button class="btn btn--secondary" style="width:100%;">감비탕 자세히 →</button></div>
+            <div><button class="btn btn--secondary" style="width:100%;">디톡스 자세히 →</button></div>
+          </div>
+        </div>
+
+        <p style="text-align:center;margin: 32px auto 0; max-width: 720px; color: var(--ink-muted); font-size: 13px; line-height: 1.85;">
+          ※ 위 표의 형태·기간·중점 케어는 일반적인 안내이며, 정확한 처방은 한의사가 체질·증상·복약 이력을 살핀 뒤 결정됩니다.
+        </p>
+      </section>
+
+      <!-- When to use -->
+      <section class="sec sec--alt" style="background: var(--surface-alt); padding: 96px 48px;">
+        <div class="sec__head" style="margin-left:auto;margin-right:auto;text-align:center;">
+          <span class="sec__eyebrow">02 · 어떤 분께 권장하나요</span>
+          <h2 class="sec__title">상황과 목표에 맞춰<br/>가장 잘 맞는 처방을 찾아보세요.</h2>
+        </div>
+        <div class="when-grid">
+          <div class="when-card">
+            <div class="when-card__num">01</div>
+            <h4>매일 외식·야근으로 식이가 흔들려요</h4>
+            <p>정기적인 식이 관리가 어려운 직장인이라면, 휴대 가능한 <strong>부개 감비환</strong>이 부담이 적습니다.</p>
+          </div>
+          <div class="when-card">
+            <div class="when-card__num">02</div>
+            <h4>근본 체질부터 차분히 바꾸고 싶어요</h4>
+            <p>호르몬·대사·식욕을 함께 다루는 정밀 처방이 필요하다면, <strong>부개 감비탕</strong>이 추천됩니다.</p>
+          </div>
+          <div class="when-card">
+            <div class="when-card__num">03</div>
+            <h4>먼저 속을 비우고 시작하고 싶어요</h4>
+            <p>부기·소화 문제 동반이거나 다이어트 시작 단계에는 <strong>부개 디톡스</strong>로 정비하세요.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- FAQ -->
+      <section class="sec">
+        <div class="sec__head" style="margin-left:auto;margin-right:auto;text-align:center;">
+          <span class="sec__eyebrow">03 · 자주 묻는 질문</span>
+          <h2 class="sec__title">시작 전에 가장 많이 물으시는 것들.</h2>
+        </div>
+        <div class="faq">
+          <details class="faq-item" open>
+            <summary class="faq-q">
+              <span>비대면 진료가 정말 안전한가요?</span><span class="marker">+</span>
+            </summary>
+            <p class="faq-a">한국에서는 한시적 비대면 진료 등 관련 제도에 따라 한의사가 유선 또는 영상으로 환자의 체질·증상·복약 이력을 충분히 확인한 뒤 처방을 결정합니다. 부개원 한의원은 1:1 유선 진료를 통해 환자별로 충분한 시간을 두고 안전하게 진료해 드립니다.</p>
+          </details>
+          <details class="faq-item">
+            <summary class="faq-q">
+              <span>다른 약을 복용 중인데 함께 가능한가요?</span><span class="marker">+</span>
+            </summary>
+            <p class="faq-a">현재 복용 중인 처방약·영양제·보조제가 있다면 진료 시 모두 알려주시면 됩니다. 한의사가 상호작용 가능성을 살핀 뒤 한약 처방 가부와 시점을 안내해 드립니다.</p>
+          </details>
+          <details class="faq-item">
+            <summary class="faq-q">
+              <span>부작용이 있나요?</span><span class="marker">+</span>
+            </summary>
+            <p class="faq-a">한약은 약재의 조합이므로 체질에 따라 변의 양상 변화나 가벼운 소화기 증상이 있을 수 있습니다. 부개원 한의원은 진료 시 체질·복약 이력을 확인하여 부작용 가능성을 최소화합니다. 임신·수유 중이거나 만성질환이 있는 경우 반드시 사전에 알려주세요.</p>
+          </details>
+          <details class="faq-item">
+            <summary class="faq-q">
+              <span>운동을 꼭 같이 해야 하나요?</span><span class="marker">+</span>
+            </summary>
+            <p class="faq-a">한약은 식욕 조절·대사 개선을 돕도록 설계되지만, 식습관과 가벼운 활동을 병행하시면 더욱 자연스러운 변화를 기대할 수 있습니다. 무리한 운동을 권장하지 않으며, 처방과 함께 일상에서 가능한 정도의 가이드를 안내해 드립니다.</p>
+          </details>
+          <details class="faq-item">
+            <summary class="faq-q">
+              <span>비용은 얼마인가요?</span><span class="marker">+</span>
+            </summary>
+            <p class="faq-a">한약은 처방의 약재 구성·기간에 따라 비용이 달라지므로, 정확한 견적은 진료 시 안내해 드립니다. 무리한 권유 없이 환자의 상황과 예산을 함께 고려해 결정해 드립니다.</p>
+          </details>
+        </div>
+      </section>
+
+      <!-- Final CTA -->
+      <section style="padding:96px 48px;background:var(--brown-700);color:var(--cream-50);text-align:center;">
+        <span class="t-eyebrow" style="color:var(--vermilion-300);">START YOUR DIET CARE</span>
+        <h2 style="font-family:var(--font-display);font-size:40px;letter-spacing:-0.04em;line-height:1.2;margin:14px auto 14px;max-width:680px;font-weight:700;">한의사 진료 후 처방되는 한방 다이어트</h2>
+        <p style="max-width:560px;margin:0 auto 28px;color:var(--cream-200);font-size:16px;line-height:1.75;">가장 편한 채널로 시작하세요.</p>
+        <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+          <button class="btn btn--accent btn--xl">비대면 진료 접수 →</button>
+          <button class="btn btn--xl" style="background:transparent;color:var(--cream-50);border:1.5px solid var(--cream-200);">카카오 채널 상담</button>
+        </div>
+        <p style="margin-top:48px;font-size:11px;color:var(--brown-300);max-width:600px;margin-left:auto;margin-right:auto;line-height:1.7;">
+          ※ 한약은 한의사의 진료 후 체질·증상·복약 이력에 따라 개별 처방되며, 개인에 따라 효과 및 반응은 다를 수 있습니다. 본 페이지는 의료광고 자율심의 기준을 준수합니다.
+        </p>
+      </section>
+
+      <!-- Mini Footer -->
+      <footer class="footer-d">
+        <div class="footer-d__row">
+          <span style="display:flex;gap:10px;align-items:center;"><span class="logo-mark" style="color:var(--cream-50);">梄</span><strong style="color:var(--cream-50);">부개원 한의원</strong></span>
+          <span style="color:var(--cream-200);">인천 부평구 부개동 부흥로 414, 모아빌딩 401호 · 032-361-9991</span>
+          <span style="display:flex;gap:18px;font-size:11px;color:var(--brown-300);"><a>개인정보처리방침</a><a>이용약관</a><a>의료광고 자율심의 통과</a></span>
+        </div>
+      </footer>
+    </div>
+  </div>
+
+  <!-- MOBILE -->
+  <div>
+    <div class="frame-label">
+      <span class="name">다이어트 허브 · Mobile</span>
+      <span>390 × auto</span>
+    </div>
+
+    <div class="page-m">
+      <div class="page-m__notch"></div>
+      <div class="nav-m">
+        <div style="display:flex;gap:8px;align-items:center;"><span class="logo-mark" style="color:var(--brown-700);width:28px;height:28px;font-size:13px;">梄</span><strong style="font-size:14px;letter-spacing:-0.02em;">다이어트</strong></div>
+        <span style="font-size:18px;color:var(--ink-primary);">≡</span>
+      </div>
+      <div class="breadcrumb-m">
+        <a>홈</a> / <span style="color:var(--ink-primary);">다이어트</span>
+      </div>
+      <section class="hub-hero-m">
+        <div class="hub-hero-m__chr">
+          <div>減</div><div class="c">湯</div><div>淨</div>
+        </div>
+        <span style="display:inline-block;padding:5px 10px;background:var(--sage-100);color:var(--sage-600);border-radius:999px;font-size:10px;letter-spacing:0.12em;font-weight:600;margin-bottom:14px;">DIET CARE</span>
+        <h1 class="hub-hero-m__title">한방 다이어트,<br/>무리하지 않는 방향으로.</h1>
+        <p class="hub-hero-m__sub">식욕·체질·기력을 함께 살피는 부개원 한방 다이어트 3종.</p>
+      </section>
+
+      <section class="compare-m">
+        <h3 style="font-size:14px;color:var(--ink-secondary);letter-spacing:0.04em;margin:0 0 16px;">3종 비교</h3>
+        <div class="compare-m__card">
+          <h4><span class="chr">減</span>부개 감비환</h4>
+          <div class="compare-m__attr"><span class="k">형태</span><span class="v">환제</span></div>
+          <div class="compare-m__attr"><span class="k">중점</span><span class="v">식욕·기초대사</span></div>
+          <div class="compare-m__attr"><span class="k">권장</span><span class="v">외식 잦은 직장인</span></div>
+          <div class="compare-m__cta"><button class="btn btn--secondary btn--sm" style="width:100%;">자세히 보기 →</button></div>
+        </div>
+        <div class="compare-m__card">
+          <h4><span class="chr">湯</span>부개 감비탕</h4>
+          <div class="compare-m__attr"><span class="k">형태</span><span class="v">탕약</span></div>
+          <div class="compare-m__attr"><span class="k">중점</span><span class="v">체질·호르몬·대사</span></div>
+          <div class="compare-m__attr"><span class="k">권장</span><span class="v">근본 체질 케어</span></div>
+          <div class="compare-m__cta"><button class="btn btn--secondary btn--sm" style="width:100%;">자세히 보기 →</button></div>
+        </div>
+        <div class="compare-m__card">
+          <h4><span class="chr">淨</span>부개 디톡스</h4>
+          <div class="compare-m__attr"><span class="k">형태</span><span class="v">단기 집중</span></div>
+          <div class="compare-m__attr"><span class="k">중점</span><span class="v">노폐물 배출·부기</span></div>
+          <div class="compare-m__attr"><span class="k">권장</span><span class="v">시작 / 회복기</span></div>
+          <div class="compare-m__cta"><button class="btn btn--secondary btn--sm" style="width:100%;">자세히 보기 →</button></div>
+        </div>
+      </section>
+
+      <section class="faq-m">
+        <h3 style="font-size:14px;color:var(--ink-secondary);letter-spacing:0.04em;margin:0 0 16px;">자주 묻는 질문</h3>
+        <div class="faq-m__item"><div class="faq-m__q">비대면 진료가 정말 안전한가요?</div></div>
+        <div class="faq-m__item"><div class="faq-m__q">다른 약과 함께 복용 가능한가요?</div></div>
+        <div class="faq-m__item"><div class="faq-m__q">부작용이 있나요?</div></div>
+        <div class="faq-m__item"><div class="faq-m__q">비용은 얼마인가요?</div></div>
+      </section>
+
+      <section style="padding: 32px 20px;background:var(--brown-700);color:var(--cream-50);text-align:center;">
+        <h2 style="font-family:var(--font-display);font-size:22px;letter-spacing:-0.03em;line-height:1.25;margin:0 0 10px;">한의사 진료 후 처방되는 한방 다이어트</h2>
+        <p style="font-size:13px;color:var(--cream-200);margin:0 0 16px;line-height:1.7;">가장 편한 채널로 시작하세요.</p>
+        <button class="btn btn--accent btn--lg" style="width:100%;">비대면 진료 접수 →</button>
+      </section>
+
+      <div class="disclaimer-bar">※ 한의사 진료 후 처방되며, <strong>접수 안내</strong>만 제공합니다.</div>
+      <div class="cta-dock">
+        <div class="cta-dock-item">카톡 상담</div>
+        <div class="cta-dock-item cta-dock-item--accent">비대면 접수</div>
+        <div class="cta-dock-item">전화 걸기</div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

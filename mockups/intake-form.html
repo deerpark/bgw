@@ -1,0 +1,567 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>비대면 진료 접수 — 부개원 한의원</title>
+  <link rel="stylesheet" href="./_base.css" />
+  <link rel="stylesheet" href="./_assets.css" />
+  <style>
+    body { background: linear-gradient(180deg, #FAF6F1 0%, #F1E8DB 100%); }
+    .canvas-toolbar { position: sticky; top: 0; z-index: 30; display: flex; justify-content: space-between; align-items: center; padding: 14px 24px; background: rgba(255,253,249,0.85); backdrop-filter: saturate(180%) blur(18px); border-bottom: 0.5px solid var(--border-subtle); }
+    .canvas-board { display: grid; grid-template-columns: 1024px 390px; gap: 64px; padding: 64px 32px 120px; align-items: flex-start; justify-content: center; min-width: 100vw; }
+    .frame-label { display: flex; gap: 16px; align-items: baseline; font-family: var(--font-mono); font-size: 12px; color: var(--ink-muted); margin-bottom: 12px; padding-left: 6px; }
+    .frame-label .name { color: var(--ink-primary); font-weight: 500; font-family: var(--font-sans); font-size: 13px; }
+
+    /* DESKTOP FORM */
+    .form-d { width: 1024px; background: var(--bg-base); border-radius: 16px; overflow: hidden; box-shadow: var(--shadow-lg); }
+
+    .form-hero {
+      background: var(--brown-700);
+      color: var(--cream-100);
+      padding: 48px 56px 56px;
+      position: relative;
+      overflow: hidden;
+    }
+    .form-hero::before {
+      content: ""; position: absolute; inset: 0;
+      background:
+        radial-gradient(at 100% 0%, rgba(206,61,69,0.18), transparent 50%),
+        radial-gradient(at 0% 100%, rgba(70,107,73,0.12), transparent 50%);
+    }
+    .form-hero__inner { position: relative; z-index: 2; }
+    .form-hero__chip { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; background: rgba(255,253,249,0.12); color: var(--cream-50); border-radius: 999px; font-size: 11px; letter-spacing: 0.12em; font-weight: 600; }
+    .form-hero h1 { font-family: var(--font-display); font-size: 38px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.2; color: var(--cream-50); margin: 18px 0 10px; }
+    .form-hero p { font-size: 15px; line-height: 1.85; color: var(--brown-200); margin: 0; max-width: 60ch; }
+    .form-hero__meta { display: flex; gap: 32px; margin-top: 24px; padding-top: 24px; border-top: 0.5px solid rgba(250,246,241,0.1); font-size: 12px; color: var(--brown-300); }
+    .form-hero__meta strong { color: var(--cream-50); font-weight: 500; display: block; font-size: 13px; }
+
+    /* Progress */
+    .progress {
+      display: flex; align-items: stretch; padding: 0; background: var(--cream-100);
+      border-bottom: 0.5px solid var(--border-subtle);
+    }
+    .progress__step {
+      flex: 1; padding: 16px 14px;
+      display: flex; align-items: center; gap: 10px;
+      border-right: 0.5px solid var(--border-subtle);
+      font-size: 12px; color: var(--ink-muted);
+    }
+    .progress__step:last-child { border-right: 0; }
+    .progress__step .num {
+      width: 24px; height: 24px; border-radius: 50%;
+      background: var(--neutral-300); color: var(--cream-50);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 600; font-size: 11px;
+    }
+    .progress__step--active { background: var(--surface); color: var(--ink-primary); font-weight: 500; }
+    .progress__step--active .num { background: var(--brand); }
+    .progress__step--done .num { background: var(--success); }
+    .progress__step--done .num::after { content: ""; display: block; width: 8px; height: 4px; border-bottom: 1.5px solid var(--cream-50); border-left: 1.5px solid var(--cream-50); transform: rotate(-45deg) translate(1px, -1px); }
+
+    /* Form body */
+    .form-body { padding: 56px 80px; }
+    .form-step__head { margin-bottom: 32px; }
+    .form-step__num {
+      display: inline-block; padding: 5px 12px;
+      background: var(--brand-soft); color: var(--brand);
+      border-radius: 999px; font-size: 11px; font-weight: 600; letter-spacing: 0.08em;
+    }
+    .form-step__title { font-family: var(--font-display); font-size: 28px; font-weight: 700; letter-spacing: -0.03em; margin: 12px 0 6px; }
+    .form-step__sub { color: var(--ink-secondary); font-size: 14px; line-height: 1.7; margin: 0; max-width: 60ch; }
+
+    .field { margin-bottom: 24px; }
+    .field__label {
+      display: flex; gap: 6px; align-items: baseline;
+      font-size: 14px; font-weight: 500;
+      letter-spacing: -0.02em;
+      margin: 0 0 8px;
+      color: var(--ink-primary);
+    }
+    .field__label .req { color: var(--vermilion-500); font-size: 11px; font-weight: 600; }
+    .field__hint { font-size: 12px; color: var(--ink-muted); margin: 0 0 8px; line-height: 1.65; }
+    .field__row { display: grid; gap: 12px; grid-template-columns: 1fr 1fr; }
+    .field__row--3 { grid-template-columns: repeat(3, 1fr); }
+
+    .input, .select, .textarea {
+      width: 100%; height: 48px;
+      padding: 0 16px;
+      background: var(--surface);
+      border: 0.5px solid var(--border-default);
+      border-radius: var(--radius-sm);
+      font-size: 15px; font-family: inherit;
+      color: var(--ink-primary);
+      transition: border 160ms var(--ease-standard), box-shadow 160ms var(--ease-standard);
+    }
+    .textarea { padding: 12px 16px; height: auto; min-height: 96px; line-height: 1.65; }
+    .input:focus, .select:focus, .textarea:focus {
+      outline: none;
+      border-color: var(--brand);
+      box-shadow: 0 0 0 3px var(--accent-soft);
+    }
+    .input::placeholder, .textarea::placeholder { color: var(--ink-muted); }
+
+    .input-suffix { position: relative; }
+    .input-suffix .input { padding-right: 40px; }
+    .input-suffix .suffix {
+      position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+      color: var(--ink-muted); font-size: 13px; pointer-events: none;
+    }
+
+    /* Checkbox / Radio cards */
+    .check-grid { display: grid; gap: 8px; grid-template-columns: repeat(2, 1fr); }
+    .check-grid--3 { grid-template-columns: repeat(3, 1fr); }
+    .check-card {
+      display: flex; gap: 12px; align-items: flex-start;
+      padding: 14px 16px;
+      background: var(--surface);
+      border: 0.5px solid var(--border-default);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 160ms var(--ease-standard);
+    }
+    .check-card:hover { border-color: var(--brand); }
+    .check-card.is-active { border-color: var(--brand); background: var(--brand-soft); }
+    .check-card.is-active::before { color: var(--brand); }
+    .check-card input { position: absolute; opacity: 0; pointer-events: none; }
+    .check-card .ck {
+      width: 18px; height: 18px; border-radius: 4px;
+      border: 1.5px solid var(--border-default);
+      background: var(--surface);
+      flex-shrink: 0; margin-top: 2px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .check-card.is-active .ck { background: var(--brand); border-color: var(--brand); }
+    .check-card.is-active .ck::after { content: ""; width: 6px; height: 3px; border-bottom: 1.5px solid var(--cream-50); border-left: 1.5px solid var(--cream-50); transform: rotate(-45deg) translate(1px, -1px); }
+    .check-card .body { flex: 1; min-width: 0; }
+    .check-card .name { font-size: 14px; font-weight: 500; margin: 0 0 2px; }
+    .check-card .desc { font-size: 12px; color: var(--ink-muted); margin: 0; line-height: 1.55; }
+
+    /* Pill choices (single-select) */
+    .pills { display: flex; flex-wrap: wrap; gap: 6px; }
+    .pill {
+      padding: 8px 14px; border-radius: 999px;
+      background: var(--surface);
+      border: 0.5px solid var(--border-default);
+      font-size: 13px; color: var(--ink-secondary);
+      cursor: pointer;
+      transition: all 160ms var(--ease-standard);
+    }
+    .pill:hover { border-color: var(--brand); }
+    .pill.is-active { background: var(--brand); color: var(--cream-50); border-color: var(--brand); }
+
+    /* Consent */
+    .consent { margin-top: 32px; padding: 20px 24px; background: var(--bg-subtle); border-radius: var(--radius-md); border: 0.5px solid var(--border-subtle); }
+    .consent h4 { font-size: 13px; letter-spacing: -0.02em; margin: 0 0 12px; font-weight: 600; }
+    .consent label { display: flex; gap: 10px; align-items: flex-start; padding: 8px 0; font-size: 13px; line-height: 1.7; cursor: pointer; }
+    .consent .req { color: var(--vermilion-500); font-size: 11px; font-weight: 600; flex-shrink: 0; }
+    .consent .opt { color: var(--ink-muted); font-size: 11px; flex-shrink: 0; }
+    .consent label .ck { width: 16px; height: 16px; border-radius: 3px; border: 1.5px solid var(--border-default); flex-shrink: 0; margin-top: 2px; }
+    .consent label.is-active .ck { background: var(--brand); border-color: var(--brand); position: relative; }
+    .consent label.is-active .ck::after { content: ""; position: absolute; left: 3px; top: 1px; width: 5px; height: 9px; border-bottom: 1.5px solid var(--cream-50); border-right: 1.5px solid var(--cream-50); transform: rotate(45deg); }
+    .consent a { color: var(--brand); text-decoration: underline; }
+
+    /* Footer actions */
+    .form-actions {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 24px 56px; border-top: 0.5px solid var(--border-subtle);
+      background: var(--bg-subtle);
+    }
+    .form-actions .meta { font-size: 12px; color: var(--ink-muted); }
+
+    /* Disclaimer block */
+    .legal { margin-top: 40px; padding: 20px 24px; background: var(--cream-100); border-radius: var(--radius-md); border-left: 3px solid var(--accent); }
+    .legal p { margin: 0 0 6px; font-size: 12px; color: var(--ink-secondary); line-height: 1.85; }
+    .legal p:last-child { margin: 0; }
+    .legal strong { color: var(--ink-primary); font-weight: 500; }
+
+    /* MOBILE */
+    .form-m { width: 390px; background: var(--bg-base); border-radius: 36px; overflow: hidden; box-shadow: var(--shadow-xl); border: 8px solid var(--neutral-900); position: relative; }
+    .form-m__notch { height: 28px; background: var(--neutral-900); }
+    .form-m .form-hero { padding: 32px 22px; }
+    .form-m .form-hero h1 { font-size: 24px; }
+    .form-m .form-hero p { font-size: 13px; }
+    .form-m .form-hero__meta { display: none; }
+    .form-m .progress { padding: 0; overflow-x: auto; }
+    .form-m .progress__step { padding: 12px 10px; min-width: 110px; font-size: 11px; gap: 8px; flex-shrink: 0; }
+    .form-m .form-body { padding: 32px 22px; }
+    .form-m .form-step__title { font-size: 22px; }
+    .form-m .field__row { grid-template-columns: 1fr; }
+    .form-m .field__row--3 { grid-template-columns: 1fr; }
+    .form-m .check-grid, .form-m .check-grid--3 { grid-template-columns: 1fr; }
+    .form-m .form-actions { padding: 16px 22px; flex-direction: column; gap: 10px; align-items: stretch; }
+    .form-m .legal { margin-top: 24px; padding: 14px 16px; }
+    .form-m .legal p { font-size: 11px; }
+  </style>
+</head>
+<body>
+
+<div class="canvas-toolbar">
+  <a href="./index.html" style="font-size:12px;color:var(--ink-secondary);text-decoration:none;">← Mockups</a>
+  <span class="t-eyebrow ink-secondary">SCREEN P-06 · INTAKE FORM · 자체 폼 · 네이버 폼 미러링</span>
+  <span style="font-family:var(--font-mono);font-size:11px;color:var(--ink-muted);">/intake</span>
+</div>
+
+<div class="canvas-board">
+
+  <!-- DESKTOP -->
+  <div>
+    <div class="frame-label">
+      <span class="name">자체 비대면 진료 접수 폼 · Desktop</span>
+      <span>1024 × auto</span>
+      <span>네이버 폼 "부개 감비환 바로 처방 받기"의 동등 구현</span>
+    </div>
+
+    <div class="form-d">
+      <!-- Hero -->
+      <div class="form-hero">
+        <div class="form-hero__inner">
+          <span class="form-hero__chip">📝 NON-CONTACT INTAKE · 비대면 진료 접수</span>
+          <h1>부개 감비환 바로 처방 받기</h1>
+          <p>한의사가 환자분의 체질·증상·복약 이력을 살핀 뒤 처방하실 수 있도록, 아래 정보를 작성해 주세요. 평일 영업시간 내 ○시간 안에 한의원에서 통화 예약 안내를 드립니다.</p>
+          <div class="form-hero__meta">
+            <div><span>예상 소요</span><strong>약 4분</strong></div>
+            <div><span>다음 단계</span><strong>한의사 1:1 유선 진료</strong></div>
+            <div><span>처방 후</span><strong>자택 택배 발송</strong></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Progress -->
+      <div class="progress">
+        <div class="progress__step progress__step--done"><div class="num"></div>동의</div>
+        <div class="progress__step progress__step--active"><div class="num">2</div>기본 정보</div>
+        <div class="progress__step"><div class="num">3</div>다이어트 정보</div>
+        <div class="progress__step"><div class="num">4</div>건강 상태</div>
+        <div class="progress__step"><div class="num">5</div>배송 · 통화</div>
+        <div class="progress__step"><div class="num">6</div>확인</div>
+      </div>
+
+      <!-- Step 2: Basic info -->
+      <div class="form-body">
+        <div class="form-step__head">
+          <span class="form-step__num">02 · BASIC INFO</span>
+          <h2 class="form-step__title">기본 정보를 알려주세요</h2>
+          <p class="form-step__sub">진료 시작 전 환자 식별을 위한 기본 정보입니다.</p>
+        </div>
+
+        <div class="field">
+          <label class="field__label">이름 <span class="req">필수</span></label>
+          <p class="field__hint">실명을 입력해 주세요. 진료 후 처방전에 사용됩니다.</p>
+          <input class="input" placeholder="홍길동" />
+        </div>
+
+        <div class="field__row">
+          <div class="field">
+            <label class="field__label">휴대전화 <span class="req">필수</span></label>
+            <p class="field__hint">한의원에서 진료 통화를 드릴 번호.</p>
+            <input class="input" placeholder="010-1234-5678" inputmode="numeric" />
+          </div>
+          <div class="field">
+            <label class="field__label">생년월일 <span class="req">필수</span></label>
+            <p class="field__hint">YYYY-MM-DD</p>
+            <input class="input" placeholder="1990-03-15" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field__label">성별 <span class="req">필수</span></label>
+          <div class="pills">
+            <span class="pill is-active">여성</span>
+            <span class="pill">남성</span>
+            <span class="pill">기타 / 응답 안 함</span>
+          </div>
+        </div>
+
+        <!-- Step 3 inline preview -->
+        <div class="form-step__head" style="margin-top: 56px; padding-top: 40px; border-top: 0.5px solid var(--border-subtle);">
+          <span class="form-step__num">03 · DIET INFO</span>
+          <h2 class="form-step__title">다이어트 관련 정보</h2>
+          <p class="form-step__sub">한약 처방 결정에 직접 영향을 주는 신체·생활 정보입니다.</p>
+        </div>
+
+        <div class="field__row--3 field__row">
+          <div class="field">
+            <label class="field__label">키 <span class="req">필수</span></label>
+            <div class="input-suffix"><input class="input" placeholder="165" inputmode="numeric" /><span class="suffix">cm</span></div>
+          </div>
+          <div class="field">
+            <label class="field__label">현재 체중 <span class="req">필수</span></label>
+            <div class="input-suffix"><input class="input" placeholder="62.5" inputmode="numeric" /><span class="suffix">kg</span></div>
+          </div>
+          <div class="field">
+            <label class="field__label">목표 체중 <span class="opt" style="color:var(--ink-muted);font-size:11px;">선택</span></label>
+            <div class="input-suffix"><input class="input" placeholder="55" inputmode="numeric" /><span class="suffix">kg</span></div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field__label">관심 한약 (복수 선택 가능) <span class="req">필수</span></label>
+          <p class="field__hint">한의사 진료 후 어떤 한약이 적합한지 함께 결정합니다.</p>
+          <div class="check-grid check-grid--3">
+            <label class="check-card is-active">
+              <input type="checkbox" checked /><span class="ck"></span>
+              <div class="body">
+                <p class="name">부개 감비환</p>
+                <p class="desc">휴대 간편한 환제 다이어트</p>
+              </div>
+            </label>
+            <label class="check-card">
+              <input type="checkbox" /><span class="ck"></span>
+              <div class="body">
+                <p class="name">부개 감비탕</p>
+                <p class="desc">체질에 맞춘 정밀 처방 탕약</p>
+              </div>
+            </label>
+            <label class="check-card">
+              <input type="checkbox" /><span class="ck"></span>
+              <div class="body">
+                <p class="name">부개 디톡스</p>
+                <p class="desc">노폐물·속 비움 단기 케어</p>
+              </div>
+            </label>
+            <label class="check-card">
+              <input type="checkbox" /><span class="ck"></span>
+              <div class="body">
+                <p class="name">잘 모르겠음</p>
+                <p class="desc">진료 시 함께 결정</p>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field__label">하루 식사 패턴 <span class="req">필수</span></label>
+          <div class="pills">
+            <span class="pill">규칙적 (3끼)</span>
+            <span class="pill is-active">아침 거름</span>
+            <span class="pill">야식 잦음</span>
+            <span class="pill">불규칙</span>
+            <span class="pill">간헐적 단식 중</span>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field__label">운동 빈도 <span class="req">필수</span></label>
+          <div class="pills">
+            <span class="pill">거의 안 함</span>
+            <span class="pill is-active">주 1–2회</span>
+            <span class="pill">주 3–4회</span>
+            <span class="pill">주 5회 이상</span>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field__label">다이어트 시도 경험 <span class="opt" style="color:var(--ink-muted);font-size:11px;">선택</span></label>
+          <p class="field__hint">최근 6개월 이내 시도하신 다이어트 방법이 있다면 알려주세요. (식단 조절, 운동, 약, 한약 등)</p>
+          <textarea class="textarea" placeholder="예) 식단 조절 + 헬스 3개월 진행, 양약 다이어트 1회 경험"></textarea>
+        </div>
+
+        <div class="field">
+          <label class="field__label">주요 고민 <span class="req">필수</span></label>
+          <p class="field__hint">살이 찌는 부위, 함께 다스리고 싶은 증상(부기, 변비, 식욕 등)을 자유롭게 적어주세요.</p>
+          <textarea class="textarea" placeholder="예) 하체 위주로 살이 잘 찌고, 야근하면서 야식을 자주 먹게 됨. 식욕 조절이 어려움."></textarea>
+        </div>
+
+        <!-- Step 4 inline preview -->
+        <div class="form-step__head" style="margin-top: 56px; padding-top: 40px; border-top: 0.5px solid var(--border-subtle);">
+          <span class="form-step__num">04 · HEALTH</span>
+          <h2 class="form-step__title">건강 상태 (안전한 처방을 위해)</h2>
+          <p class="form-step__sub">아래 정보가 부정확하면 한약 부작용 위험이 커질 수 있어요. 정직하게 작성 부탁드립니다.</p>
+        </div>
+
+        <div class="field">
+          <label class="field__label">현재 복용 중인 약 / 영양제 <span class="req">필수</span></label>
+          <p class="field__hint">처방약 · 일반의약품 · 비타민 · 건강기능식품 모두 포함해 주세요. 없다면 "없음"이라고 적어주세요.</p>
+          <textarea class="textarea" placeholder="예) 갑상선기능저하증 약 (신지로이드 50mcg), 비타민 D · 철분제"></textarea>
+        </div>
+
+        <div class="field">
+          <label class="field__label">알레르기 <span class="opt" style="color:var(--ink-muted);font-size:11px;">선택</span></label>
+          <input class="input" placeholder="예) 갑각류, 견과류, 페니실린 등" />
+        </div>
+
+        <div class="field">
+          <label class="field__label">앓고 있거나 진단받은 질환 (복수 선택 가능)</label>
+          <div class="check-grid check-grid--3">
+            <label class="check-card"><span class="ck"></span><div class="body"><p class="name">고혈압</p></div></label>
+            <label class="check-card"><span class="ck"></span><div class="body"><p class="name">당뇨</p></div></label>
+            <label class="check-card is-active"><span class="ck"></span><div class="body"><p class="name">갑상선 질환</p></div></label>
+            <label class="check-card"><span class="ck"></span><div class="body"><p class="name">심장 질환</p></div></label>
+            <label class="check-card"><span class="ck"></span><div class="body"><p class="name">신장 질환</p></div></label>
+            <label class="check-card"><span class="ck"></span><div class="body"><p class="name">간 질환</p></div></label>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field__label">임신·수유 여부 <span class="req">필수</span></label>
+          <div class="pills">
+            <span class="pill">해당 없음</span>
+            <span class="pill">임신 중</span>
+            <span class="pill">수유 중</span>
+            <span class="pill">임신 계획 중</span>
+          </div>
+        </div>
+
+        <!-- Step 5 inline preview -->
+        <div class="form-step__head" style="margin-top: 56px; padding-top: 40px; border-top: 0.5px solid var(--border-subtle);">
+          <span class="form-step__num">05 · DELIVERY</span>
+          <h2 class="form-step__title">통화 가능 시간 · 배송지</h2>
+          <p class="form-step__sub">한의사 진료 후 처방이 결정되면 위 주소로 안전하게 발송됩니다.</p>
+        </div>
+
+        <div class="field">
+          <label class="field__label">통화 가능 시간 <span class="req">필수</span></label>
+          <div class="pills">
+            <span class="pill">평일 09:00–12:00</span>
+            <span class="pill is-active">평일 12:00–15:00</span>
+            <span class="pill">평일 15:00–19:00</span>
+            <span class="pill">토요일 오전</span>
+            <span class="pill">상담 후 결정</span>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field__label">우편번호 <span class="req">필수</span></label>
+          <div style="display:flex;gap:8px;">
+            <input class="input" placeholder="06133" style="max-width: 200px;" />
+            <button class="btn btn--secondary">주소 검색</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field__label">기본 주소 <span class="req">필수</span></label>
+          <input class="input" placeholder="서울특별시 강남구 ○○로" />
+        </div>
+        <div class="field">
+          <label class="field__label">상세 주소 <span class="req">필수</span></label>
+          <input class="input" placeholder="○○○○호" />
+        </div>
+        <div class="field">
+          <label class="field__label">배송 요청사항 <span class="opt" style="color:var(--ink-muted);font-size:11px;">선택</span></label>
+          <input class="input" placeholder="예) 부재 시 경비실에 맡겨주세요" />
+        </div>
+
+        <!-- Consent -->
+        <div class="consent">
+          <h4>정보 이용 동의</h4>
+          <label class="is-active"><span class="ck"></span><span class="req">필수</span><span>(필수) 개인정보 수집·이용 동의 — 진료·처방·발송을 위한 개인정보 수집·이용에 동의합니다. <a>전문 보기</a></span></label>
+          <label class="is-active"><span class="ck"></span><span class="req">필수</span><span>(필수) 비대면 진료 이용 동의 — 한의사의 유선 비대면 진료를 통해 처방받는 데에 동의합니다. <a>전문 보기</a></span></label>
+          <label class="is-active"><span class="ck"></span><span class="req">필수</span><span>(필수) 의료법에 따른 진료 정보 보존 동의 — 진료기록은 의료법에 따라 10년간 보존됩니다. <a>전문 보기</a></span></label>
+          <label><span class="ck"></span><span class="opt">선택</span><span>(선택) 마케팅 수신 동의 — 진료 결과·이벤트 안내 등을 SMS/카카오톡으로 받겠습니다. <a>전문 보기</a></span></label>
+        </div>
+
+        <div class="legal">
+          <p><strong>⚖ 의료법 준수 안내</strong></p>
+          <p>본 폼은 의료법에 따라 비대면 진료 <strong>접수 안내</strong>를 위한 것이며, 본 폼의 제출 자체로 처방·결제·배송이 확정되지 않습니다. 처방·조제·발송은 한의사의 유선 진료 이후 결정됩니다.</p>
+          <p>한의사 면허번호 ○○○○○ · 의료기관 등록번호 ○○○○○○ · 의료광고 자율심의 통과(○○○-○○-○○○).</p>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="form-actions">
+        <span class="meta">5 / 6 단계 — 다음에서 입력 정보를 확인하실 수 있어요</span>
+        <div style="display:flex;gap:10px;">
+          <button class="btn btn--ghost">이전</button>
+          <button class="btn btn--accent btn--lg">다음 — 입력 확인 →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MOBILE -->
+  <div>
+    <div class="frame-label">
+      <span class="name">접수 폼 · Mobile</span>
+      <span>390 × auto</span>
+    </div>
+
+    <div class="form-m">
+      <div class="form-m__notch"></div>
+
+      <div class="form-hero">
+        <div class="form-hero__inner">
+          <span class="form-hero__chip">📝 INTAKE</span>
+          <h1>부개 감비환<br/>바로 처방 받기</h1>
+          <p>한의사 1:1 유선 진료 후 자택 발송. 4분이면 끝나요.</p>
+        </div>
+      </div>
+
+      <div class="progress">
+        <div class="progress__step progress__step--done"><div class="num"></div>동의</div>
+        <div class="progress__step progress__step--active"><div class="num">2</div>기본</div>
+        <div class="progress__step"><div class="num">3</div>다이어트</div>
+        <div class="progress__step"><div class="num">4</div>건강</div>
+        <div class="progress__step"><div class="num">5</div>배송</div>
+        <div class="progress__step"><div class="num">6</div>확인</div>
+      </div>
+
+      <div class="form-body">
+        <div class="form-step__head">
+          <span class="form-step__num">02 · BASIC</span>
+          <h2 class="form-step__title">기본 정보</h2>
+        </div>
+
+        <div class="field">
+          <label class="field__label">이름 <span class="req">필수</span></label>
+          <input class="input" placeholder="홍길동" />
+        </div>
+        <div class="field">
+          <label class="field__label">휴대전화 <span class="req">필수</span></label>
+          <input class="input" placeholder="010-1234-5678" />
+        </div>
+        <div class="field">
+          <label class="field__label">생년월일 <span class="req">필수</span></label>
+          <input class="input" placeholder="1990-03-15" />
+        </div>
+        <div class="field">
+          <label class="field__label">성별 <span class="req">필수</span></label>
+          <div class="pills">
+            <span class="pill is-active">여성</span>
+            <span class="pill">남성</span>
+            <span class="pill">기타</span>
+          </div>
+        </div>
+
+        <div class="form-step__head" style="margin-top: 32px; padding-top: 24px; border-top: 0.5px solid var(--border-subtle);">
+          <span class="form-step__num">03 · DIET</span>
+          <h2 class="form-step__title">다이어트 정보</h2>
+        </div>
+
+        <div class="field">
+          <label class="field__label">키 <span class="req">필수</span></label>
+          <div class="input-suffix"><input class="input" placeholder="165" /><span class="suffix">cm</span></div>
+        </div>
+        <div class="field">
+          <label class="field__label">현재 체중 <span class="req">필수</span></label>
+          <div class="input-suffix"><input class="input" placeholder="62.5" /><span class="suffix">kg</span></div>
+        </div>
+        <div class="field">
+          <label class="field__label">관심 한약 <span class="req">필수</span></label>
+          <div class="check-grid">
+            <label class="check-card is-active"><span class="ck"></span><div class="body"><p class="name">부개 감비환</p><p class="desc">환제</p></div></label>
+            <label class="check-card"><span class="ck"></span><div class="body"><p class="name">부개 감비탕</p><p class="desc">탕약</p></div></label>
+            <label class="check-card"><span class="ck"></span><div class="body"><p class="name">부개 디톡스</p><p class="desc">단기</p></div></label>
+            <label class="check-card"><span class="ck"></span><div class="body"><p class="name">잘 모름</p><p class="desc">진료 시 결정</p></div></label>
+          </div>
+        </div>
+        <div class="field">
+          <label class="field__label">주요 고민 <span class="req">필수</span></label>
+          <textarea class="textarea" placeholder="살이 잘 찌는 부위, 동반 증상 등"></textarea>
+        </div>
+
+        <div class="legal">
+          <p><strong>⚖ 비대면 진료 접수 안내</strong></p>
+          <p>본 제출은 처방 확정이 아니며, 한의사 유선 진료 이후 처방·발송이 결정됩니다.</p>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button class="btn btn--accent btn--lg" style="width:100%;">다음 →</button>
+        <button class="btn btn--ghost btn--sm" style="width:100%;">이전</button>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,974 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>메인 — 부개원 한의원</title>
+  <link rel="stylesheet" href="./_base.css" />
+  <link rel="stylesheet" href="./_assets.css" />
+  <style>
+    body { background: linear-gradient(180deg, #FAF6F1 0%, #F1E8DB 100%); }
+
+    .canvas-toolbar {
+      position: sticky; top: 0; z-index: 30;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 14px 24px;
+      background: rgba(255,253,249,0.85);
+      backdrop-filter: saturate(180%) blur(18px);
+      border-bottom: 0.5px solid var(--border-subtle);
+    }
+    .canvas-board {
+      display: grid;
+      grid-template-columns: 1440px 390px;
+      gap: 64px;
+      padding: 64px 32px 120px;
+      align-items: flex-start;
+      justify-content: center;
+      overflow-x: auto;
+      min-width: 100vw;
+    }
+    .frame-label {
+      display: flex; gap: 16px; align-items: baseline;
+      font-family: var(--font-mono); font-size: 12px;
+      color: var(--ink-muted);
+      margin-bottom: 12px;
+      padding-left: 6px;
+    }
+    .frame-label .name { color: var(--ink-primary); font-weight: 500; font-family: var(--font-sans); font-size: 13px; }
+
+    /* ===== DESKTOP HOME (1440) ===== */
+    .home-d { width: 1440px; background: var(--bg-base); border-radius: 16px; overflow: hidden; box-shadow: var(--shadow-lg); }
+
+    .nav-d {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 48px; height: 80px;
+      background: rgba(255,253,249,0.92); backdrop-filter: blur(18px);
+      border-bottom: 0.5px solid var(--border-subtle);
+      position: sticky; top: 0;
+    }
+    .nav-d__brand { display: flex; align-items: center; gap: 12px; }
+    .nav-d__brand .logo-mark { color: var(--brown-700); }
+    .nav-d__brand .name {
+      font-family: var(--font-display); font-weight: 700; font-size: 17px;
+      color: var(--ink-primary); letter-spacing: -0.02em;
+    }
+    .nav-d__brand .name small {
+      display: block; font-size: 9px; font-weight: 500;
+      color: var(--ink-muted); letter-spacing: 0.18em; margin-top: 2px;
+    }
+    .nav-d__menu { display: flex; gap: 28px; font-size: 14px; color: var(--ink-secondary); font-weight: 500; }
+    .nav-d__menu a { padding: 28px 0; }
+    .nav-d__menu a:hover { color: var(--brand); }
+    .nav-d__cta { display: flex; align-items: center; gap: 8px; }
+
+    /* Hero */
+    .hero-d {
+      position: relative;
+      padding: 80px 48px 96px;
+      background:
+        radial-gradient(circle at 80% 20%, rgba(206, 61, 69, 0.08), transparent 40%),
+        linear-gradient(180deg, var(--cream-50) 0%, var(--cream-100) 100%);
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 48px;
+      align-items: center;
+    }
+    .hero-d__copy { max-width: 580px; }
+    .hero-d__copy .eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 12px;
+      background: var(--vermilion-100);
+      color: var(--vermilion-700);
+      border-radius: 999px;
+      font-size: 11px; font-weight: 600; letter-spacing: 0.1em;
+    }
+    .hero-d__title {
+      font-family: var(--font-display);
+      font-size: 60px; font-weight: 700; letter-spacing: -0.04em;
+      line-height: 1.12; color: var(--ink-primary);
+      margin: 18px 0 16px;
+    }
+    .hero-d__title em {
+      font-style: normal; color: var(--brand);
+      background: linear-gradient(180deg, transparent 70%, var(--vermilion-100) 70%);
+      padding: 0 4px;
+    }
+    .hero-d__sub {
+      font-size: 18px; line-height: 1.75; color: var(--ink-secondary);
+      max-width: 480px; margin: 0 0 28px;
+    }
+    .hero-d__ctas { display: flex; gap: 12px; align-items: center; }
+    .hero-d__trust {
+      margin-top: 36px; display: flex; gap: 32px;
+      font-size: 13px; color: var(--ink-muted);
+    }
+    .hero-d__trust span { display: inline-flex; align-items: center; gap: 6px; }
+    .hero-d__trust .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--sage-400); }
+
+    /* Hero side card stack */
+    .hero-d__cards { display: flex; flex-direction: column; gap: 12px; }
+    .product-card {
+      background: var(--surface);
+      border: 0.5px solid var(--border-subtle);
+      border-radius: 18px;
+      padding: 18px 20px;
+      display: flex; align-items: center; gap: 16px;
+      box-shadow: var(--shadow-sm);
+      transition: all 200ms var(--ease-standard);
+      border-left: 3px solid var(--category-diet);
+    }
+    .product-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+    .product-card__chr {
+      width: 56px; height: 56px; border-radius: 16px;
+      background: var(--sage-100); color: var(--sage-600);
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-serif); font-weight: 700; font-size: 24px;
+      flex-shrink: 0;
+    }
+    .product-card__body { flex: 1; min-width: 0; }
+    .product-card__name {
+      font-size: 17px; font-weight: 600; color: var(--ink-primary);
+      letter-spacing: -0.02em; margin: 0 0 2px;
+    }
+    .product-card__desc {
+      font-size: 13px; color: var(--ink-muted); margin: 0; line-height: 1.55;
+    }
+    .product-card__arrow {
+      color: var(--brand); font-size: 18px;
+      transition: transform 200ms var(--ease-standard);
+    }
+    .product-card:hover .product-card__arrow { transform: translateX(4px); }
+
+    /* Hero KPI strip */
+    .hero-strip {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: var(--border-subtle);
+      border-top: 0.5px solid var(--border-subtle);
+    }
+    .hero-strip > div {
+      background: var(--bg-base);
+      padding: 24px 28px;
+    }
+    .hero-strip h4 {
+      font-size: 11px; letter-spacing: 0.12em; font-weight: 600;
+      color: var(--vermilion-600); margin: 0 0 4px;
+    }
+    .hero-strip p { font-size: 14px; color: var(--ink-secondary); margin: 0; line-height: 1.5; }
+
+    /* Section */
+    .sec { padding: 96px 48px; }
+    .sec--alt { background: var(--surface-alt); }
+    .sec__head { max-width: 720px; margin-bottom: 48px; }
+    .sec__eyebrow {
+      font-size: 11px; letter-spacing: 0.12em; font-weight: 600;
+      color: var(--brand); text-transform: uppercase;
+    }
+    .sec__title {
+      font-family: var(--font-display);
+      font-size: 40px; font-weight: 700; letter-spacing: -0.03em;
+      line-height: 1.2; color: var(--ink-primary); margin: 12px 0 12px;
+    }
+    .sec__sub {
+      font-size: 17px; line-height: 1.75; color: var(--ink-secondary); margin: 0;
+      max-width: 60ch;
+    }
+
+    /* Diet 3 cards (large) */
+    .diet-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .diet-card {
+      background: var(--surface); border: 0.5px solid var(--border-subtle);
+      border-radius: 24px; padding: 32px;
+      transition: all 240ms var(--ease-standard);
+      position: relative; overflow: hidden;
+      display: flex; flex-direction: column; gap: 20px;
+    }
+    .diet-card::before {
+      content: ""; position: absolute; left: 0; top: 0; bottom: 0;
+      width: 3px; background: var(--category-diet);
+    }
+    .diet-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+    .diet-card__header { display: flex; gap: 14px; align-items: center; }
+    .diet-card__chr {
+      width: 56px; height: 56px; border-radius: 16px;
+      background: var(--sage-100); color: var(--sage-600);
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-serif); font-weight: 700; font-size: 24px;
+    }
+    .diet-card__name { margin: 0; font-size: 22px; font-weight: 700; letter-spacing: -0.02em; color: var(--ink-primary); }
+    .diet-card__name small { display: block; font-size: 11px; font-weight: 500; color: var(--ink-muted); letter-spacing: 0.08em; margin-top: 2px; }
+    .diet-card__essence {
+      font-size: 16px; line-height: 1.65; color: var(--ink-secondary);
+      margin: 0;
+    }
+    .diet-card__points { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+    .diet-card__points li {
+      display: flex; gap: 10px; align-items: flex-start;
+      font-size: 14px; line-height: 1.6; color: var(--ink-secondary);
+    }
+    .diet-card__points li::before {
+      content: "·"; color: var(--sage-400); font-weight: 700; font-size: 18px; line-height: 1;
+    }
+    .diet-card__cta {
+      margin-top: auto; display: inline-flex; align-items: center; gap: 6px;
+      color: var(--brand); font-weight: 500; font-size: 14px;
+      padding-top: 8px;
+    }
+
+    /* Immune row */
+    .immune-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .immune-card {
+      background: var(--surface); border: 0.5px solid var(--border-subtle);
+      border-radius: 18px; padding: 28px;
+      display: flex; gap: 16px; align-items: flex-start;
+      border-left: 3px solid var(--category-immune);
+    }
+    .immune-card__chr {
+      width: 52px; height: 52px; border-radius: 14px;
+      background: var(--vermilion-100); color: var(--vermilion-700);
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-serif); font-weight: 700; font-size: 22px;
+      flex-shrink: 0;
+    }
+    .immune-card h4 { margin: 0 0 4px; font-size: 17px; letter-spacing: -0.02em; }
+    .immune-card p { margin: 0; font-size: 13px; color: var(--ink-secondary); line-height: 1.6; }
+
+    /* Process timeline */
+    .process { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; position: relative; }
+    .process::before {
+      content: ""; position: absolute; left: 24px; right: 24px; top: 24px; height: 1px;
+      background: var(--border-default);
+    }
+    .process-step { background: var(--bg-base); position: relative; padding: 0 8px; }
+    .process-step__num {
+      width: 48px; height: 48px; border-radius: 50%;
+      background: var(--brand); color: var(--ink-inverse);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 17px;
+      margin: 0 auto 14px;
+      border: 4px solid var(--bg-base);
+    }
+    .process-step h5 { font-size: 14px; margin: 0 0 4px; text-align: center; letter-spacing: -0.01em; }
+    .process-step p { font-size: 12px; color: var(--ink-muted); margin: 0; line-height: 1.6; text-align: center; }
+
+    /* Clinic info bar */
+    .clinic-bar {
+      display: grid; grid-template-columns: 1.2fr 1fr 1fr 1fr; gap: 32px;
+      padding: 32px 36px;
+      background: var(--brown-700); color: var(--cream-100);
+      border-radius: 24px;
+    }
+    .clinic-bar h4 {
+      font-size: 11px; letter-spacing: 0.12em; font-weight: 600;
+      color: var(--brown-300); text-transform: uppercase; margin: 0 0 6px;
+    }
+    .clinic-bar p { margin: 0; font-size: 15px; line-height: 1.7; color: var(--cream-50); }
+    .clinic-bar .big { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; }
+
+    /* Blog teaser */
+    .blog-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .blog-card {
+      background: var(--surface); border: 0.5px solid var(--border-subtle);
+      border-radius: 18px; overflow: hidden;
+      transition: all 240ms var(--ease-standard);
+    }
+    .blog-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+    .blog-card__cover {
+      aspect-ratio: 16 / 9;
+      background: linear-gradient(135deg, var(--brown-200), var(--vermilion-100));
+    }
+    .blog-card__body { padding: 22px 24px; }
+    .blog-card__tag {
+      font-size: 11px; color: var(--vermilion-600); font-weight: 600;
+      letter-spacing: 0.08em;
+    }
+    .blog-card h4 {
+      font-size: 18px; margin: 6px 0 8px; letter-spacing: -0.02em;
+      color: var(--ink-primary); font-weight: 600;
+    }
+    .blog-card p {
+      font-size: 13px; color: var(--ink-muted); margin: 0; line-height: 1.6;
+    }
+
+    /* Footer */
+    .footer-d {
+      background: var(--brown-900); color: var(--cream-200);
+      padding: 80px 48px 40px;
+    }
+    .footer-d__grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 64px;
+      padding-bottom: 56px;
+      border-bottom: 0.5px solid rgba(250, 246, 241, 0.08);
+    }
+    .footer-d h4 { font-size: 13px; color: var(--cream-50); margin: 0 0 16px; letter-spacing: 0.04em; }
+    .footer-d p, .footer-d li { font-size: 13px; line-height: 1.85; color: var(--cream-200); }
+    .footer-d ul { list-style: none; padding: 0; margin: 0; }
+    .footer-d a:hover { color: var(--cream-50); }
+    .footer-d__legal {
+      display: flex; justify-content: space-between; padding-top: 32px;
+      font-size: 11px; color: var(--brown-400);
+    }
+
+    /* ===== MOBILE HOME (390) ===== */
+    .home-m {
+      width: 390px;
+      background: var(--bg-base);
+      border-radius: 36px;
+      overflow: hidden;
+      box-shadow: var(--shadow-xl);
+      border: 8px solid var(--neutral-900);
+      position: relative;
+    }
+    .home-m__notch {
+      height: 28px;
+      background: var(--neutral-900);
+      display: flex; justify-content: center; align-items: flex-start; padding-top: 8px;
+    }
+    .home-m__notch::after {
+      content: ""; width: 110px; height: 22px;
+      background: var(--neutral-900); border-radius: 0 0 16px 16px;
+    }
+
+    .nav-m {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 20px;
+      background: rgba(255,253,249,0.92); backdrop-filter: blur(14px);
+      border-bottom: 0.5px solid var(--border-subtle);
+    }
+    .nav-m__brand { display: flex; align-items: center; gap: 8px; }
+    .nav-m__icons { display: flex; gap: 14px; align-items: center; }
+
+    .hero-m {
+      padding: 36px 24px 28px;
+      background: linear-gradient(180deg, var(--cream-50), var(--cream-100));
+    }
+    .hero-m__eyebrow {
+      display: inline-block; padding: 5px 10px;
+      background: var(--vermilion-100); color: var(--vermilion-700);
+      font-size: 10px; font-weight: 600; letter-spacing: 0.1em;
+      border-radius: 999px;
+    }
+    .hero-m__title {
+      font-family: var(--font-display);
+      font-size: 32px; font-weight: 700; letter-spacing: -0.04em;
+      line-height: 1.18; color: var(--ink-primary);
+      margin: 14px 0 14px;
+    }
+    .hero-m__title em {
+      font-style: normal; color: var(--brand);
+      background: linear-gradient(180deg, transparent 72%, var(--vermilion-100) 72%);
+      padding: 0 3px;
+    }
+    .hero-m__sub { font-size: 14px; line-height: 1.7; color: var(--ink-secondary); margin: 0 0 18px; }
+    .hero-m__ctas { display: flex; flex-direction: column; gap: 8px; }
+
+    .sec-m { padding: 36px 24px; }
+    .sec-m__title { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; margin: 0 0 6px; line-height: 1.3; }
+    .sec-m__sub { font-size: 13px; color: var(--ink-secondary); margin: 0 0 20px; line-height: 1.6; }
+    .sec-m__eyebrow { font-size: 10px; letter-spacing: 0.12em; color: var(--brand); font-weight: 600; }
+
+    .stack-12 > * + * { margin-top: 12px; }
+
+    .card-m {
+      background: var(--surface); border: 0.5px solid var(--border-subtle);
+      border-radius: 16px; padding: 16px;
+      display: flex; gap: 14px; align-items: flex-start;
+      border-left: 3px solid var(--category-diet);
+    }
+    .card-m--immune { border-left-color: var(--category-immune); }
+    .card-m__chr {
+      width: 48px; height: 48px; border-radius: 14px;
+      background: var(--sage-100); color: var(--sage-600);
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-serif); font-weight: 700; font-size: 20px;
+      flex-shrink: 0;
+    }
+    .card-m--immune .card-m__chr { background: var(--vermilion-100); color: var(--vermilion-700); }
+    .card-m h4 { margin: 0 0 2px; font-size: 15px; letter-spacing: -0.02em; }
+    .card-m p { margin: 0; font-size: 12px; color: var(--ink-muted); line-height: 1.5; }
+
+    .clinic-m {
+      background: var(--brown-700); color: var(--cream-50);
+      border-radius: 20px; padding: 24px;
+    }
+    .clinic-m h4 { font-size: 11px; letter-spacing: 0.1em; color: var(--brown-300); margin: 0 0 4px; font-weight: 600; }
+    .clinic-m p { margin: 0 0 14px; font-size: 14px; line-height: 1.6; color: var(--cream-100); }
+
+    .process-m { display: flex; flex-direction: column; gap: 14px; }
+    .process-m__step {
+      display: flex; gap: 14px; align-items: flex-start;
+      padding-left: 6px; position: relative;
+    }
+    .process-m__num {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: var(--brand); color: var(--ink-inverse);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 13px; flex-shrink: 0;
+    }
+    .process-m__step h5 { margin: 6px 0 2px; font-size: 14px; letter-spacing: -0.01em; }
+    .process-m__step p { margin: 0; font-size: 12px; color: var(--ink-muted); line-height: 1.55; }
+
+    .footer-m {
+      padding: 36px 24px 90px;
+      background: var(--brown-900); color: var(--cream-200);
+    }
+    .footer-m h4 { font-size: 12px; color: var(--cream-50); margin: 0 0 6px; letter-spacing: 0.04em; }
+    .footer-m p { font-size: 12px; line-height: 1.7; color: var(--cream-200); margin: 0 0 16px; }
+
+    /* sticky CTA dock at bottom */
+    .home-m .cta-dock {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      background: rgba(255,253,249,0.95);
+    }
+    .disclaimer-bar {
+      padding: 10px 24px;
+      background: var(--cream-200);
+      font-size: 11px; color: var(--brown-700);
+      text-align: center;
+      border-top: 0.5px solid var(--border-subtle);
+    }
+    .disclaimer-bar strong { color: var(--brown-900); font-weight: 600; }
+  </style>
+</head>
+<body>
+
+<div class="canvas-toolbar">
+  <a class="toolbar__back" href="./index.html" style="font-size:12px;color:var(--ink-secondary);text-decoration:none;">← Mockups</a>
+  <span class="t-eyebrow ink-secondary">SCREEN P-01 · HOME · DESKTOP 1440 + MOBILE 390</span>
+  <span style="font-family:var(--font-mono);font-size:11px;color:var(--ink-muted);">/ · ISR 5min</span>
+</div>
+
+<div class="canvas-board">
+
+  <!-- ============================================================ -->
+  <!-- DESKTOP -->
+  <!-- ============================================================ -->
+  <div>
+    <div class="frame-label">
+      <span class="name">메인 (Home) · Desktop</span>
+      <span>1440 × auto</span>
+      <span>Hero · 다이어트 라인업 · 면역한약 · 한의원 안내 · 비대면 절차 · 블로그 · 푸터</span>
+    </div>
+
+    <div class="home-d">
+      <!-- Top strip (announcement) -->
+      <div style="background:var(--brown-900);color:var(--cream-200);text-align:center;padding:8px 16px;font-size:12px;letter-spacing:0.02em;">
+        ☎ 032-361-9991 · 평일 09:00–20:00 · 비대면 진료 접수는 <strong style="color:var(--vermilion-300);">네이버폼</strong>이 가장 빠릅니다 →
+      </div>
+
+      <!-- Header -->
+      <div class="nav-d">
+        <div class="nav-d__brand">
+          <span class="logo-mark" style="font-family:var(--font-serif);">梄</span>
+          <div class="name">
+            부개원 한의원
+            <small>BUGAEWON KOREAN MEDICINE CLINIC</small>
+          </div>
+        </div>
+        <nav class="nav-d__menu">
+          <a>다이어트</a><a>면역한약</a><a>진료과목</a><a>한의원 소개</a><a>비대면 진료</a><a>블로그</a>
+        </nav>
+        <div class="nav-d__cta">
+          <button class="btn btn--ghost btn--sm">카카오 상담</button>
+          <button class="btn btn--accent btn--sm">비대면 진료 접수 →</button>
+        </div>
+      </div>
+
+      <!-- Hero -->
+      <section class="hero-d">
+        <div class="hero-d__copy">
+          <span class="t-eyebrow hero-d__copy" style="display:inline-block;background:var(--vermilion-100);color:var(--vermilion-700);padding:6px 12px;border-radius:999px;font-size:11px;letter-spacing:0.12em;font-weight:600;">DIET · IMMUNITY · NON-CONTACT CARE</span>
+          <h1 class="hero-d__title">체질을 살피는 한방 다이어트,<br/>오시지 않아도 <em>시작할 수 있도록</em>.</h1>
+          <p class="hero-d__sub">부개 감비환·감비탕·디톡스를 비대면 진료를 통해 처방해 드립니다. 한의사 1:1 유선 상담 후, 체질에 맞춰 조제된 한약을 자택으로 보내드려요.</p>
+          <div class="hero-d__ctas">
+            <button class="btn btn--accent btn--xl">비대면 진료 접수 →</button>
+            <button class="btn btn--outline btn--xl">한의원 둘러보기</button>
+          </div>
+          <div class="hero-d__trust">
+            <span><span class="dot"></span> 한의사 1:1 유선 진료</span>
+            <span><span class="dot"></span> 자택 택배 발송</span>
+            <span><span class="dot"></span> 부평 부개동</span>
+          </div>
+        </div>
+
+        <div class="hero-d__cards">
+          <div class="product-card">
+            <div class="product-card__chr">減</div>
+            <div class="product-card__body">
+              <p class="product-card__name">부개 감비환</p>
+              <p class="product-card__desc">휴대 간편한 환제 다이어트 — 직장인·외식 잦은 분께 권장</p>
+            </div>
+            <span class="product-card__arrow">→</span>
+          </div>
+          <div class="product-card">
+            <div class="product-card__chr">湯</div>
+            <div class="product-card__body">
+              <p class="product-card__name">부개 감비탕</p>
+              <p class="product-card__desc">체질·증상에 맞춘 정밀 처방 탕약 — 근본 케어가 필요한 분께</p>
+            </div>
+            <span class="product-card__arrow">→</span>
+          </div>
+          <div class="product-card">
+            <div class="product-card__chr">淨</div>
+            <div class="product-card__body">
+              <p class="product-card__name">부개 디톡스</p>
+              <p class="product-card__desc">노폐물 케어 한방 처방 — 다이어트 시작 단계에 권장</p>
+            </div>
+            <span class="product-card__arrow">→</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- KPI/trust strip -->
+      <div class="hero-strip">
+        <div><h4>Step 01</h4><p>접수 — 네이버폼·카톡·전화 중 편한 방법</p></div>
+        <div><h4>Step 02</h4><p>유선 진료 — 한의사 1:1, 평균 12분</p></div>
+        <div><h4>Step 03</h4><p>처방·조제 — 체질·증상별 맞춤</p></div>
+        <div><h4>Step 04</h4><p>택배 발송 — 보냉포장, 1–2일 내 수령</p></div>
+      </div>
+
+      <!-- Section: Diet -->
+      <section class="sec sec--alt">
+        <div class="sec__head">
+          <span class="sec__eyebrow">01 · 다이어트 라인업</span>
+          <h2 class="sec__title">한방 다이어트, 무리하지 않는 방향으로.</h2>
+          <p class="sec__sub">식욕·체질·기력을 함께 살피는 부개원 한방 다이어트 3종. 어떤 한약이 적합한지는 한의사 진료 후 결정됩니다.</p>
+        </div>
+        <div class="diet-grid">
+          <article class="diet-card">
+            <header class="diet-card__header">
+              <span class="diet-card__chr">減</span>
+              <h3 class="diet-card__name">부개 감비환<small>BUGAE GAMBIHWAN · 富梄 減肥丸</small></h3>
+            </header>
+            <p class="diet-card__essence">휴대가 간편하고 일상 다이어트에 부드럽게 녹아드는 환제 한약입니다.</p>
+            <ul class="diet-card__points">
+              <li>식욕 조절·기초대사 케어 중심</li>
+              <li>1일 ○회 식전 복용 (정확한 복용법은 진료 후 안내)</li>
+              <li>외식·야근 잦은 직장인에 권장</li>
+            </ul>
+            <a class="diet-card__cta">자세히 보기 →</a>
+          </article>
+          <article class="diet-card">
+            <header class="diet-card__header">
+              <span class="diet-card__chr">湯</span>
+              <h3 class="diet-card__name">부개 감비탕<small>BUGAE GAMBITANG · 富梄 減肥湯</small></h3>
+            </header>
+            <p class="diet-card__essence">체질·증상에 따라 가장 정밀하게 조정 가능한 탕제 한방 다이어트.</p>
+            <ul class="diet-card__points">
+              <li>약재 비율을 한의사가 진료 후 결정</li>
+              <li>근본 체질 케어 / 호르몬·식욕·대사 동반</li>
+              <li>꾸준한 복용이 가능한 분께 권장</li>
+            </ul>
+            <a class="diet-card__cta">자세히 보기 →</a>
+          </article>
+          <article class="diet-card">
+            <header class="diet-card__header">
+              <span class="diet-card__chr">淨</span>
+              <h3 class="diet-card__name">부개 디톡스<small>BUGAE DETOX · 富梄 淨化</small></h3>
+            </header>
+            <p class="diet-card__essence">노폐물 배출과 속 비움 케어 — 다이어트의 시작 단계나 회복기에.</p>
+            <ul class="diet-card__points">
+              <li>부기·소화 문제 동반 시</li>
+              <li>식이 회복기 보조</li>
+              <li>단기 집중 복용 형태</li>
+            </ul>
+            <a class="diet-card__cta">자세히 보기 →</a>
+          </article>
+        </div>
+      </section>
+
+      <!-- Section: Immune -->
+      <section class="sec">
+        <div class="sec__head">
+          <span class="sec__eyebrow">02 · 면역 한약</span>
+          <h2 class="sec__title">기력과 면역을 받쳐주는 한약.</h2>
+          <p class="sec__sub">공진단·경옥고·녹용보약 — 비대면 진료를 통해 처방받으실 수 있습니다.</p>
+        </div>
+        <div class="immune-grid">
+          <article class="immune-card">
+            <span class="immune-card__chr">拱</span>
+            <div>
+              <h4>공진단</h4>
+              <p>전통 처방의 대표격. 기력 회복·집중력·체력이 떨어지는 분께.</p>
+            </div>
+          </article>
+          <article class="immune-card">
+            <span class="immune-card__chr">瓊</span>
+            <div>
+              <h4>경옥고</h4>
+              <p>호흡·기관지가 약하거나 마른 체형으로 잔병이 잦으신 분께.</p>
+            </div>
+          </article>
+          <article class="immune-card">
+            <span class="immune-card__chr">鹿</span>
+            <div>
+              <h4>녹용보약</h4>
+              <p>성장기·갱년기·산후 회복 시기에 체력을 보강하는 처방.</p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- Section: 원장 메시지 (Doctor) -->
+      <section class="sec" style="background: var(--brown-900); color: var(--cream-100); padding: 96px 48px; position: relative; overflow: hidden;">
+        <div style="position:absolute;inset:0;opacity:0.4;background-image:radial-gradient(at 20% 30%, rgba(206,61,69,0.18), transparent 40%),radial-gradient(at 80% 70%, rgba(255,253,249,0.04), transparent 50%);"></div>
+        <div style="display: grid; grid-template-columns: 0.9fr 1.1fr; gap: 64px; align-items: center; max-width: 1280px; margin: 0 auto; position: relative;">
+
+          <!-- Doctor portrait + bookshelf -->
+          <div style="position: relative;">
+            <div style="aspect-ratio: 4/5; border-radius: 24px; overflow: hidden; position: relative; box-shadow: var(--shadow-xl);">
+              <!-- Bookshelf backdrop -->
+              <div style="position: absolute; right: 0; top: 0; bottom: 0; width: 38%; background: var(--brown-950);">
+                <div class="bookshelf" style="height: 100%; padding: 14px 6px; grid-template-columns: repeat(4, 1fr); gap: 2px;">
+                  <div class="book book--brown">東醫</div>
+                  <div class="book book--maroon">寶鑑</div>
+                  <div class="book book--cream">本草</div>
+                  <div class="book book--gold">方劑</div>
+                  <div class="book book--green">經穴</div>
+                  <div class="book book--black">鍼灸</div>
+                  <div class="book book--brown">湯液</div>
+                  <div class="book book--maroon">皇帝</div>
+                </div>
+              </div>
+              <!-- Portrait area -->
+              <div style="position: absolute; left: 0; top: 0; bottom: 0; right: 38%; background: linear-gradient(180deg, var(--neutral-100) 0%, var(--cream-200) 100%);">
+                <!-- Stylized portrait -->
+                <div style="position: absolute; left: 50%; bottom: 0; transform: translateX(-50%); width: 80%; max-width: 280px;">
+                  <!-- White coat shoulders -->
+                  <svg viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;">
+                    <!-- White coat body -->
+                    <path d="M40 240 L40 180 Q40 130 80 120 L100 110 L120 120 Q160 130 160 180 L160 240 Z" fill="#FFFDF9" stroke="#C7BFB2" stroke-width="0.8"/>
+                    <!-- Shoulders detail -->
+                    <path d="M80 120 L100 130 L120 120" fill="none" stroke="#C7BFB2" stroke-width="0.6"/>
+                    <!-- Coat collar -->
+                    <path d="M85 130 L100 145 L115 130 L100 122 Z" fill="#FAF8F5" stroke="#C7BFB2" stroke-width="0.6"/>
+                    <!-- Inner shirt -->
+                    <path d="M90 140 L100 155 L110 140 L110 240 L90 240 Z" fill="#F1EEE8"/>
+                    <!-- Name tag -->
+                    <rect x="115" y="155" width="30" height="14" fill="#FFFDF9" stroke="#C7BFB2" stroke-width="0.5" rx="1"/>
+                    <text x="130" y="161" text-anchor="middle" font-family="IBM Plex Sans KR, sans-serif" font-size="4.5" font-weight="500" fill="#492E14">한의사</text>
+                    <text x="130" y="167" text-anchor="middle" font-family="IBM Plex Sans KR, sans-serif" font-size="5.5" font-weight="700" fill="#492E14">윤정호</text>
+                    <!-- Head -->
+                    <ellipse cx="100" cy="78" rx="22" ry="26" fill="#E8C9A8"/>
+                    <!-- Hair (short) -->
+                    <path d="M78 70 Q78 52 100 50 Q122 52 122 72 Q122 75 120 76 L80 76 Q78 75 78 70Z" fill="#2A1B0E"/>
+                    <!-- Glasses -->
+                    <circle cx="91" cy="80" r="6" fill="none" stroke="#492E14" stroke-width="1.2"/>
+                    <circle cx="109" cy="80" r="6" fill="none" stroke="#492E14" stroke-width="1.2"/>
+                    <line x1="97" y1="80" x2="103" y2="80" stroke="#492E14" stroke-width="1"/>
+                    <!-- Mask -->
+                    <path d="M86 86 Q100 92 114 86 L116 96 Q100 102 84 96 Z" fill="#FAFCFE" stroke="#C7BFB2" stroke-width="0.6"/>
+                    <line x1="86" y1="86" x2="84" y2="84" stroke="#C7BFB2" stroke-width="0.4"/>
+                    <line x1="114" y1="86" x2="116" y2="84" stroke="#C7BFB2" stroke-width="0.4"/>
+                    <!-- Subtle shadow under -->
+                    <ellipse cx="100" cy="105" rx="20" ry="2" fill="#000" fill-opacity="0.06"/>
+                  </svg>
+                </div>
+              </div>
+              <!-- Stamp overlay -->
+              <div style="position: absolute; bottom: 16px; right: calc(38% + 16px); background: var(--vermilion-500); color: var(--cream-50); padding: 8px 10px; border-radius: 4px; font-family: var(--font-serif); font-weight: 700; font-size: 10px; line-height: 1.2; writing-mode: vertical-rl; box-shadow: var(--shadow-md);">富梄<br/>開印</div>
+            </div>
+            <!-- Caption -->
+            <p style="margin-top: 14px; font-size: 12px; color: var(--brown-300); font-family: var(--font-mono); letter-spacing: 0.04em;">PORTRAIT · BUGAEWON KMC</p>
+          </div>
+
+          <!-- Quote -->
+          <div>
+            <span class="t-eyebrow" style="color: var(--vermilion-300);">FROM THE DIRECTOR · 원장의 말</span>
+            <p style="font-family: var(--font-serif); font-size: 36px; line-height: 1.45; letter-spacing: -0.03em; color: var(--cream-50); margin: 18px 0 24px; font-weight: 500;">
+              "한약은 표준 처방이 아니라,<br/>
+              환자 한 분 한 분의 체질 위에<br/>
+              <em style="font-style: normal; color: var(--vermilion-300);">다시 짜이는 처방</em>이라 믿습니다."
+            </p>
+            <p style="font-size: 16px; line-height: 1.85; color: var(--brown-200); margin: 0 0 28px; max-width: 56ch;">
+              부개원 한의원은 부평 부개동에서 지역 환자분들과 함께 자라온 한의원입니다. 다이어트·면역·자동차보험 진료를 중심으로, 환자분 개개인의 체질·증상·생활 환경을 깊이 살펴 처방하는 것이 우리의 원칙입니다.
+            </p>
+            <div style="display: flex; align-items: center; gap: 18px; padding-top: 24px; border-top: 0.5px solid rgba(250,246,241,0.12);">
+              <div>
+                <p style="margin: 0; font-size: 18px; font-weight: 600; letter-spacing: -0.02em; color: var(--cream-50);">윤정호 <span style="font-family:var(--font-serif);color:var(--brown-300);font-size:14px;font-weight:400;">尹正鎬</span></p>
+                <p style="margin: 2px 0 0; font-size: 13px; color: var(--brown-300);">대표 원장 · 한의사 KMD</p>
+              </div>
+              <div style="margin-left: auto; display: flex; gap: 8px; flex-wrap: wrap;">
+                <span style="background: rgba(250,246,241,0.08); border: 0.5px solid rgba(250,246,241,0.18); color: var(--cream-100); padding: 5px 11px; border-radius: 999px; font-size: 11px; letter-spacing: 0.04em;">한방비만학회 정회원</span>
+                <span style="background: rgba(250,246,241,0.08); border: 0.5px solid rgba(250,246,241,0.18); color: var(--cream-100); padding: 5px 11px; border-radius: 999px; font-size: 11px; letter-spacing: 0.04em;">대한한의학회 정회원</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section: Clinic info bar -->
+      <section class="sec sec--alt">
+        <div class="clinic-bar">
+          <div>
+            <h4>위치</h4>
+            <p class="big">부흥로 414 · 모아빌딩 401호</p>
+            <p style="font-size:13px;color:var(--brown-200);">파리바게뜨 4층 · 1호선 부개역 12분</p>
+          </div>
+          <div>
+            <h4>진료시간</h4>
+            <p>평일 09:00 — 20:00<br/>토요일 09:00 — 14:00<br/><span style="color:var(--brown-300);">일·공휴일 휴진 · 점심 13:00–14:00</span></p>
+          </div>
+          <div>
+            <h4>대표번호</h4>
+            <p class="big">032-361-9991</p>
+            <p style="font-size:13px;color:var(--brown-200);">자동차보험 진료 가능</p>
+          </div>
+          <div>
+            <h4>외부 채널</h4>
+            <p>네이버 플레이스<br/>카카오톡 채널<br/>네이버 블로그</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section: Process timeline -->
+      <section class="sec">
+        <div class="sec__head">
+          <span class="sec__eyebrow">03 · 비대면 진료 절차</span>
+          <h2 class="sec__title">접수에서 수령까지, 5단계로 단순하게.</h2>
+        </div>
+        <div class="process">
+          <div class="process-step"><div class="process-step__num">1</div><h5>접수</h5><p>네이버폼·카카오·전화</p></div>
+          <div class="process-step"><div class="process-step__num">2</div><h5>확인 통화</h5><p>영업시간 내 연락</p></div>
+          <div class="process-step"><div class="process-step__num">3</div><h5>유선 진료</h5><p>한의사 1:1 상담</p></div>
+          <div class="process-step"><div class="process-step__num">4</div><h5>처방·조제</h5><p>체질에 맞춰 조제</p></div>
+          <div class="process-step"><div class="process-step__num">5</div><h5>택배 수령</h5><p>자택 안전 포장 발송</p></div>
+        </div>
+      </section>
+
+      <!-- Section: Blog teaser -->
+      <section class="sec sec--alt">
+        <div class="sec__head">
+          <span class="sec__eyebrow">04 · 부개원 노트</span>
+          <h2 class="sec__title">한방·다이어트, 자주 묻는 이야기.</h2>
+          <p class="sec__sub">한의사가 직접 정리하는 글. 단정형 효능 보장보다는 원리와 주의사항을 함께 안내합니다.</p>
+        </div>
+        <div class="blog-grid">
+          <article class="blog-card">
+            <div class="blog-card__cover" style="background: linear-gradient(135deg, var(--sage-200), var(--cream-200));position:relative;display:flex;align-items:center;justify-content:center;">
+              <svg viewBox="0 0 80 80" width="48%" height="48%" style="color:var(--sage-600);" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+                <path d="M40 64c0-16 8-26 18-32-2 14-8 22-18 32z"/>
+                <path d="M40 64c0-16-8-26-18-32 2 14 8 22 18 32z"/>
+                <path d="M40 64v-32"/>
+                <path d="M30 50c4-2 8-2 10-2M50 50c-4-2-8-2-10-2"/>
+              </svg>
+            </div>
+            <div class="blog-card__body">
+              <span class="blog-card__tag">DIET · 한약 이야기</span>
+              <h4>맞춤 한약과 기성 한약의 차이, 제대로 알고 선택하세요</h4>
+              <p>같은 증상이라도 환자마다 다르게 처방되는 이유. 부개원의 한방 처방 원칙을 정리합니다.</p>
+            </div>
+          </article>
+          <article class="blog-card">
+            <div class="blog-card__cover" style="background: linear-gradient(135deg, var(--vermilion-200), var(--cream-200));position:relative;display:flex;align-items:center;justify-content:center;">
+              <svg viewBox="0 0 80 80" width="48%" height="48%" style="color:var(--vermilion-600);" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+                <path d="M16 16l40 40M14 18l4-2 2 4-4 2z" fill="currentColor" fill-opacity="0.15"/>
+                <circle cx="56" cy="56" r="6"/>
+                <path d="M56 50v-4M56 66v-4M50 56h-4M66 56h-4" stroke-dasharray="2 2"/>
+              </svg>
+            </div>
+            <div class="blog-card__body">
+              <span class="blog-card__tag">자동차보험 · 통증</span>
+              <h4>교통사고 한의원 치료, 언제부터 받아야 할까요?</h4>
+              <p>사고 직후 어떻게 한방 치료를 시작해야 하는지, 부개동 한의원의 안내.</p>
+            </div>
+          </article>
+          <article class="blog-card">
+            <div class="blog-card__cover" style="background: linear-gradient(135deg, var(--brown-200), var(--cream-200));position:relative;display:flex;align-items:center;justify-content:center;">
+              <svg viewBox="0 0 80 80" width="48%" height="48%" style="color:var(--brown-700);" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+                <path d="M16 22h22c2 0 4 2 4 4v34"/>
+                <path d="M64 22H42c-2 0-4 2-4 4v34"/>
+                <path d="M16 22v36h22"/>
+                <path d="M64 22v36H42"/>
+                <path d="M22 30h12M22 36h12M22 42h12"/>
+                <path d="M48 30h12M48 36h12M48 42h12"/>
+              </svg>
+            </div>
+            <div class="blog-card__body">
+              <span class="blog-card__tag">맞춤 한약</span>
+              <h4>부개동 한의원 맞춤한약, 왜 사람마다 다를까?</h4>
+              <p>한약은 표준 처방이 아닌, 환자의 체질 위에 다시 짜이는 처방. 그 원리를 풀어드립니다.</p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- Section: Final CTA -->
+      <section class="sec" style="background:var(--brown-700);color:var(--cream-50);text-align:center;padding:96px 48px;">
+        <span class="t-eyebrow" style="color:var(--vermilion-300);">START YOUR CARE</span>
+        <h2 style="font-family:var(--font-display);font-size:44px;letter-spacing:-0.04em;line-height:1.2;margin:14px auto 14px;max-width:680px;font-weight:700;">
+          체질에 맞는 한약을, 자택에서.
+        </h2>
+        <p style="max-width:560px;margin:0 auto 28px;color:var(--cream-200);font-size:16px;line-height:1.75;">
+          부개원 한의원의 비대면 진료 접수는 한 번에 끝납니다. 가장 편한 채널로 시작해 보세요.
+        </p>
+        <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+          <button class="btn btn--accent btn--xl">비대면 진료 접수 →</button>
+          <button class="btn btn--xl" style="background:transparent;color:var(--cream-50);border:1.5px solid var(--cream-200);">카카오 채널 상담</button>
+        </div>
+      </section>
+
+      <!-- Footer -->
+      <footer class="footer-d">
+        <div class="footer-d__grid">
+          <div>
+            <div style="display:flex;gap:10px;align-items:center;margin-bottom:18px;">
+              <span class="logo-mark" style="color:var(--cream-50);">梄</span>
+              <strong style="color:var(--cream-50);font-size:15px;letter-spacing:-0.02em;">부개원 한의원</strong>
+            </div>
+            <p>인천 부평구 부개동 부흥로 414, 모아빌딩 401호 · 1호선 부개역 도보 12분</p>
+            <p>대표 032-361-9991  ·  business@bugaewon.kr</p>
+            <p style="margin-top:18px;color:var(--brown-300);font-size:11px;line-height:1.7;">
+              ※ 본 사이트는 비대면 진료 <strong style="color:var(--cream-50);font-weight:500;">접수 안내</strong>만 제공합니다.<br/>
+              처방·조제·발송은 한의사의 유선 진료 이후 이루어집니다.
+            </p>
+          </div>
+          <div>
+            <h4>진료</h4>
+            <ul>
+              <li>다이어트</li><li>면역한약</li><li>자동차보험</li><li>추나요법</li><li>비염 / 성장 / 여성</li>
+            </ul>
+          </div>
+          <div>
+            <h4>한의원</h4>
+            <ul><li>소개</li><li>의료진</li><li>오시는길</li><li>진료시간</li><li>블로그</li></ul>
+          </div>
+          <div>
+            <h4>외부 채널</h4>
+            <ul><li>네이버 플레이스</li><li>카카오톡 채널</li><li>네이버 블로그</li></ul>
+          </div>
+        </div>
+        <div class="footer-d__legal">
+          <span>© 2026 BUGAEWON Korean Medicine Clinic. All rights reserved.</span>
+          <span style="display:flex;gap:18px;">
+            <a>개인정보처리방침</a><a>이용약관</a><a>의료광고 자율심의 통과</a>
+          </span>
+        </div>
+      </footer>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- MOBILE -->
+  <!-- ============================================================ -->
+  <div>
+    <div class="frame-label">
+      <span class="name">메인 (Home) · Mobile</span>
+      <span>390 × auto · iPhone 15</span>
+    </div>
+
+    <div class="home-m">
+      <div class="home-m__notch"></div>
+
+      <!-- Top announcement -->
+      <div style="background:var(--brown-900);color:var(--cream-200);text-align:center;padding:6px 12px;font-size:11px;">
+        ☎ 032-361-9991 · 평일 09:00–20:00
+      </div>
+
+      <!-- Nav -->
+      <div class="nav-m">
+        <div class="nav-m__brand">
+          <span class="logo-mark" style="color:var(--brown-700);width:28px;height:28px;font-size:13px;">梄</span>
+          <strong style="font-size:14px;letter-spacing:-0.02em;">부개원 한의원</strong>
+        </div>
+        <div class="nav-m__icons">
+          <span style="font-size:18px;color:var(--brand);">📞</span>
+          <span style="font-size:18px;color:var(--ink-primary);">≡</span>
+        </div>
+      </div>
+
+      <!-- Hero -->
+      <section class="hero-m">
+        <span class="hero-m__eyebrow">DIET · IMMUNITY</span>
+        <h1 class="hero-m__title">체질을 살피는 한방 다이어트,<br/><em>오시지 않아도</em> 시작.</h1>
+        <p class="hero-m__sub">부개 감비환·감비탕·디톡스를 한의사 1:1 비대면 진료로 처방받고 자택에서 받으세요.</p>
+        <div class="hero-m__ctas">
+          <button class="btn btn--accent btn--lg">비대면 진료 접수 →</button>
+          <button class="btn btn--outline btn--lg">한의원 둘러보기</button>
+        </div>
+      </section>
+
+      <!-- Diet cards -->
+      <section class="sec-m">
+        <span class="sec-m__eyebrow">DIET LINEUP</span>
+        <h2 class="sec-m__title">한방 다이어트 3종</h2>
+        <p class="sec-m__sub">한의사가 체질·증상을 살피고 적합한 처방을 결정합니다.</p>
+        <div class="stack-12">
+          <a class="card-m"><span class="card-m__chr">減</span><div><h4>부개 감비환</h4><p>휴대 간편한 환제 — 직장인·외식 잦은 분</p></div></a>
+          <a class="card-m"><span class="card-m__chr">湯</span><div><h4>부개 감비탕</h4><p>체질에 맞춘 정밀 처방 탕약</p></div></a>
+          <a class="card-m"><span class="card-m__chr">淨</span><div><h4>부개 디톡스</h4><p>노폐물 배출 · 속 비움 케어</p></div></a>
+        </div>
+      </section>
+
+      <!-- Immune -->
+      <section class="sec-m" style="background:var(--surface-alt);">
+        <span class="sec-m__eyebrow">IMMUNE CARE</span>
+        <h2 class="sec-m__title">면역 한약</h2>
+        <div class="stack-12">
+          <a class="card-m card-m--immune"><span class="card-m__chr">拱</span><div><h4>공진단</h4><p>기력·집중력·체력 보강</p></div></a>
+          <a class="card-m card-m--immune"><span class="card-m__chr">瓊</span><div><h4>경옥고</h4><p>호흡·기관지·잔병이 잦을 때</p></div></a>
+          <a class="card-m card-m--immune"><span class="card-m__chr">鹿</span><div><h4>녹용보약</h4><p>성장·갱년기·산후 회복</p></div></a>
+        </div>
+      </section>
+
+      <!-- Clinic info -->
+      <section class="sec-m">
+        <div class="clinic-m">
+          <h4>위치</h4>
+          <p>부흥로 414, 모아빌딩 401호<br/>파리바게뜨 4층 · 1호선 부개역 12분</p>
+          <h4>진료시간</h4>
+          <p>평일 09:00–20:00<br/>토 09:00–14:00 / 일·공휴일 휴진</p>
+          <h4>전화</h4>
+          <p style="font-size:18px;font-weight:700;">032-361-9991</p>
+        </div>
+      </section>
+
+      <!-- Process -->
+      <section class="sec-m" style="background:var(--surface-alt);">
+        <span class="sec-m__eyebrow">PROCESS</span>
+        <h2 class="sec-m__title">5단계 비대면 진료</h2>
+        <div class="process-m">
+          <div class="process-m__step"><div class="process-m__num">1</div><div><h5>접수</h5><p>네이버폼·카톡·전화</p></div></div>
+          <div class="process-m__step"><div class="process-m__num">2</div><div><h5>확인 통화</h5><p>영업시간 내 연락</p></div></div>
+          <div class="process-m__step"><div class="process-m__num">3</div><div><h5>유선 진료</h5><p>한의사 1:1 상담 평균 12분</p></div></div>
+          <div class="process-m__step"><div class="process-m__num">4</div><div><h5>처방·조제</h5><p>체질·증상에 맞춰 조제</p></div></div>
+          <div class="process-m__step"><div class="process-m__num">5</div><div><h5>택배 수령</h5><p>자택 안전 포장 발송</p></div></div>
+        </div>
+      </section>
+
+      <!-- Final CTA -->
+      <section class="sec-m" style="background:var(--brown-700);color:var(--cream-50);text-align:center;">
+        <h2 style="font-family:var(--font-display);font-size:24px;letter-spacing:-0.03em;line-height:1.25;margin:0 0 10px;">체질에 맞는 한약을, 자택에서.</h2>
+        <p style="font-size:13px;color:var(--cream-200);margin:0 0 18px;line-height:1.7;">가장 편한 채널로 시작하세요.</p>
+        <button class="btn btn--accent btn--lg" style="width:100%;">비대면 진료 접수 →</button>
+      </section>
+
+      <!-- Footer -->
+      <footer class="footer-m">
+        <div style="display:flex;gap:10px;align-items:center;margin-bottom:14px;">
+          <span class="logo-mark" style="color:var(--cream-50);width:28px;height:28px;font-size:13px;">梄</span>
+          <strong style="color:var(--cream-50);font-size:13px;">부개원 한의원</strong>
+        </div>
+        <p>인천 부평구 부개동 부흥로 414 · 032-361-9991</p>
+        <p style="color:var(--brown-300);font-size:10px;">© 2026 BUGAEWON Korean Medicine Clinic.</p>
+      </footer>
+
+      <!-- Disclaimer bar above dock -->
+      <div class="disclaimer-bar">
+        ※ 한의사 진료 후 처방되며, 본 사이트는 비대면 진료 <strong>접수 안내</strong>만 제공합니다.
+      </div>
+
+      <!-- Floating CTA dock -->
+      <div class="cta-dock">
+        <div class="cta-dock-item">카톡 상담</div>
+        <div class="cta-dock-item cta-dock-item--accent">비대면 접수</div>
+        <div class="cta-dock-item">전화 걸기</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>부개원 한의원 — Mockups</title>
+  <link rel="stylesheet" href="./_base.css" />
+  <style>
+    .hero {
+      padding: 96px 32px 64px;
+      background: var(--brown-700);
+      color: var(--cream-50);
+      border-radius: 0 0 var(--radius-2xl) var(--radius-2xl);
+    }
+    .hero h1 {
+      font-family: var(--font-display);
+      font-size: clamp(40px, 5vw, 64px);
+      letter-spacing: -0.04em;
+      line-height: 1.1;
+      margin: 16px 0 12px;
+      font-weight: 700;
+    }
+    .hero p { color: var(--brown-200); max-width: 56ch; line-height: 1.75; margin: 0; }
+    .hero .meta {
+      margin-top: 32px; display: flex; gap: 24px; flex-wrap: wrap;
+      font-family: var(--font-mono); font-size: 12px; color: var(--brown-300);
+    }
+    .grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+      max-width: var(--container-2xl);
+      margin: 64px auto;
+      padding: 0 32px;
+    }
+    .tile {
+      display: block;
+      padding: 28px;
+      background: var(--surface);
+      border: 0.5px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      transition: all 200ms var(--ease-standard);
+      text-decoration: none;
+    }
+    .tile:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--brand);
+    }
+    .tile__num {
+      font-family: var(--font-mono); font-size: 11px; color: var(--brand);
+      letter-spacing: 0.12em;
+    }
+    .tile__title {
+      margin: 6px 0 4px; font-size: 20px; font-weight: 700;
+      color: var(--ink-primary); letter-spacing: -0.02em;
+    }
+    .tile__desc { font-size: 13px; color: var(--ink-secondary); line-height: 1.6; margin: 0 0 16px; }
+    .tile__chips { display: flex; gap: 6px; flex-wrap: wrap; }
+    .chip {
+      padding: 3px 8px; border-radius: 6px;
+      font-size: 11px; background: var(--bg-muted); color: var(--ink-secondary);
+      font-family: var(--font-mono);
+    }
+    .section-title {
+      max-width: var(--container-2xl); margin: 64px auto 16px; padding: 0 32px;
+      font-size: 14px; letter-spacing: 0.12em; color: var(--ink-secondary);
+      text-transform: uppercase; font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="hero">
+    <div style="max-width: var(--container-2xl); margin: 0 auto;">
+      <span class="t-eyebrow" style="color: var(--vermilion-300);">BUGAEWON · KOREAN MEDICINE CLINIC · MOCKUP DELIVERY</span>
+      <h1>부개원 한의원<br/>웹앱 디자인 목업</h1>
+      <p>코드와 1:1 매핑되는 토큰 기반 고해상도 시안. CSS 변수, Tailwind 클래스명이 그대로 적용 가능하며 라이트·다크 모드와 모바일 뷰가 함께 들어있습니다.</p>
+      <div class="meta">
+        <span>VERSION · 1.0</span>
+        <span>UPDATED · 2026-04-30</span>
+        <span>OWNER · Yonn Kim</span>
+        <span>FILE PATH · /mockups</span>
+      </div>
+    </div>
+  </div>
+
+  <h2 class="section-title">01 · Design Foundations</h2>
+  <div class="grid" style="margin-top: 16px;">
+    <a class="tile" href="./foundations.html">
+      <span class="tile__num">F-01</span>
+      <h3 class="tile__title">Foundations</h3>
+      <p class="tile__desc">컬러 팔레트, 타이포그래피, 스페이싱, 라운딩, 섀도우, 모션 토큰 시각화. 다크모드 토글 포함.</p>
+      <div class="tile__chips">
+        <span class="chip">tokens</span><span class="chip">color</span><span class="chip">type</span><span class="chip">motion</span>
+      </div>
+    </a>
+    <a class="tile" href="./components.html">
+      <span class="tile__num">F-02</span>
+      <h3 class="tile__title">Components</h3>
+      <p class="tile__desc">버튼·뱃지·카드·인풋·헤더·푸터·플로팅 CTA·의무 고지 등 핵심 UI 프리미티브.</p>
+      <div class="tile__chips">
+        <span class="chip">button</span><span class="chip">card</span><span class="chip">nav</span>
+      </div>
+    </a>
+    <a class="tile" href="./_illustrations.html">
+      <span class="tile__num">F-03</span>
+      <h3 class="tile__title">Illustrations</h3>
+      <p class="tile__desc">한약재·약탕기·침·약절구·인장 등 SVG 일러스트와 한지·단청·책장 모티프 패턴 라이브러리.</p>
+      <div class="tile__chips">
+        <span class="chip">svg</span><span class="chip">한방</span><span class="chip">pattern</span>
+      </div>
+    </a>
+  </div>
+
+  <h2 class="section-title">02 · Public Screens</h2>
+  <div class="grid">
+    <a class="tile" href="./home.html">
+      <span class="tile__num">P-01</span>
+      <h3 class="tile__title">메인 (Home)</h3>
+      <p class="tile__desc">Hero · 다이어트 라인업 · 면역 한약 · 한의원 안내 · 비대면 절차 · 블로그 티저. 데스크톱 1440 + 모바일 390.</p>
+      <div class="tile__chips">
+        <span class="chip">/</span><span class="chip">desktop</span><span class="chip">mobile</span>
+      </div>
+    </a>
+    <a class="tile" href="./diet-hub.html">
+      <span class="tile__num">P-02</span>
+      <h3 class="tile__title">다이어트 허브</h3>
+      <p class="tile__desc">감비환·감비탕·디톡스 3종 비교 표 + FAQ + 비대면 절차.</p>
+      <div class="tile__chips">
+        <span class="chip">/diet</span><span class="chip">compare</span>
+      </div>
+    </a>
+    <a class="tile" href="./product-detail.html">
+      <span class="tile__num">P-03</span>
+      <h3 class="tile__title">제품 상세 · 부개 감비환</h3>
+      <p class="tile__desc">10단계 표준 한약 상세 구조. KeyPoints, 처방 원리, 절차, FAQ, MedicalDisclaimer.</p>
+      <div class="tile__chips">
+        <span class="chip">/diet/gambihwan</span><span class="chip">template</span>
+      </div>
+    </a>
+    <a class="tile" href="./telemedicine.html">
+      <span class="tile__num">P-04</span>
+      <h3 class="tile__title">비대면 진료 안내</h3>
+      <p class="tile__desc">네이버폼·카카오톡·전화 3채널 분기 + 절차 5단계 + FAQ + 법적 근거.</p>
+      <div class="tile__chips">
+        <span class="chip">/telemedicine</span><span class="chip">conversion</span>
+      </div>
+    </a>
+    <a class="tile" href="./clinic.html">
+      <span class="tile__num">P-05</span>
+      <h3 class="tile__title">한의원 소개 (원페이지)</h3>
+      <p class="tile__desc">소개 · 의료진 (윤정호 원장) · 내부 전경 · 오시는길 · 진료시간 앵커 네비.</p>
+      <div class="tile__chips">
+        <span class="chip">/clinic</span><span class="chip">onepage</span>
+      </div>
+    </a>
+    <a class="tile" href="./intake-form.html">
+      <span class="tile__num">P-06</span>
+      <h3 class="tile__title">자체 비대면 진료 접수 폼</h3>
+      <p class="tile__desc">네이버폼 "부개 감비환 바로 처방 받기" 미러링. 동의·기본정보·다이어트·건강·배송 6단계 통합 폼.</p>
+      <div class="tile__chips">
+        <span class="chip">/intake</span><span class="chip">conversion</span><span class="chip">6 steps</span>
+      </div>
+    </a>
+    <a class="tile" href="./clinic-map.html">
+      <span class="tile__num">P-08</span>
+      <h3 class="tile__title">커스텀 약도 (Clinic Map)</h3>
+      <p class="tile__desc">SVG 약도 일러스트 — 1·7호선·인천1호선·고속도로·도보 반경·펄스 핀 + 네이버/카카오/T맵 길찾기 버튼. 애니메이션 동선 포함.</p>
+      <div class="tile__chips">
+        <span class="chip">/clinic#access</span><span class="chip">SVG</span><span class="chip">animated</span>
+      </div>
+    </a>
+  </div>
+
+  <h2 class="section-title">03 · Admin Screens</h2>
+  <div class="grid">
+    <a class="tile" href="./admin-intakes.html">
+      <span class="tile__num">A-01</span>
+      <h3 class="tile__title">관리자 · 접수 관리</h3>
+      <p class="tile__desc">채널·상태 필터, KPI, 리스트 + 상세 drawer. 통화/카톡/상태변경 액션. 윤정호 원장 admin 계정.</p>
+      <div class="tile__chips">
+        <span class="chip">/admin/intakes</span><span class="chip">staff/admin</span>
+      </div>
+    </a>
+  </div>
+
+  <h2 class="section-title">04 · Reference</h2>
+  <div class="grid" style="margin-bottom: 96px;">
+    <a class="tile" href="../docs/01-blueprint.md" target="_blank">
+      <span class="tile__num">DOC</span>
+      <h3 class="tile__title">앱 블루프린트</h3>
+      <p class="tile__desc">IA · 사이트맵 · 데이터 모델 · 외부 연동 · 아키텍처. 마크다운.</p>
+    </a>
+    <a class="tile" href="../docs/02-design-system.md" target="_blank">
+      <span class="tile__num">DOC</span>
+      <h3 class="tile__title">디자인 시스템 문서</h3>
+      <p class="tile__desc">토큰 정의, 컴포넌트 명세, Code↔Figma 매핑.</p>
+    </a>
+    <a class="tile" href="../docs/03-compliance-and-copy.md" target="_blank">
+      <span class="tile__num">DOC</span>
+      <h3 class="tile__title">컴플라이언스 + 카피</h3>
+      <p class="tile__desc">보건의료법·자율심의 체크리스트, 페이지별 카피 템플릿.</p>
+    </a>
+  </div>
+</body>
+</html>

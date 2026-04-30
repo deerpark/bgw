@@ -1,0 +1,334 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <title>Illustration Library — 부개원 한의원</title>
+  <link rel="stylesheet" href="./_base.css" />
+  <link rel="stylesheet" href="./_assets.css" />
+  <style>
+    .page { max-width: 1280px; margin: 0 auto; padding: 80px 32px 120px; }
+    .toolbar { position: sticky; top: 0; display: flex; justify-content: space-between; padding: 14px 24px; background: rgba(255,253,249,0.85); backdrop-filter: blur(18px); border-bottom: 0.5px solid var(--border-subtle); margin: -80px -32px 64px; }
+    h1 { font-family: var(--font-display); font-size: 48px; letter-spacing: -0.04em; margin: 0 0 12px; font-weight: 700; }
+    .sub { color: var(--ink-secondary); margin: 0 0 64px; line-height: 1.75; max-width: 60ch; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 64px; }
+    .item {
+      background: var(--surface); border: 0.5px solid var(--border-subtle);
+      border-radius: 14px; padding: 24px; display: flex; flex-direction: column; align-items: center; gap: 10px;
+    }
+    .item .frame {
+      width: 100%; aspect-ratio: 1;
+      display: grid; place-items: center;
+      background: var(--bg-subtle); border-radius: 10px; padding: 20px;
+    }
+    .item h3 { margin: 0; font-size: 13px; letter-spacing: -0.01em; font-weight: 500; }
+    .item code { font-family: var(--font-mono); font-size: 10px; color: var(--ink-muted); }
+    h2 { font-size: 14px; letter-spacing: 0.12em; color: var(--ink-secondary); margin: 0 0 16px; text-transform: uppercase; font-weight: 600; }
+  </style>
+</head>
+<body>
+<div class="page">
+  <div class="toolbar">
+    <a href="./index.html" style="font-size:12px;color:var(--ink-secondary);text-decoration:none;">← Mockups</a>
+    <span class="t-eyebrow ink-secondary">F-03 · ILLUSTRATIONS</span>
+    <span style="font-family:var(--font-mono);font-size:11px;color:var(--ink-muted);">_illustrations.html</span>
+  </div>
+
+  <span class="t-eyebrow ink-secondary">VISUAL ASSETS</span>
+  <h1>한방 일러스트 라이브러리</h1>
+  <p class="sub">한약재·약탕기·침·약절구 등 페이지에서 인라인으로 쓸 수 있는 스폿 SVG. <code>currentColor</code>로 색을 받기 때문에 <code>--brand</code>·<code>--accent</code>·<code>--sage-500</code> 등 어떤 토큰과도 어울립니다.</p>
+
+  <h2>한약재 (Herbs)</h2>
+  <div class="grid">
+    <div class="item">
+      <div class="frame" style="color: var(--sage-500);">
+        <!-- 인삼 -->
+        <svg viewBox="0 0 80 80" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M40 18c-3 6-3 12 0 18s3 12 0 18"/>
+          <path d="M40 22c-4-3-7-3-10 0M40 30c-5-3-9-3-12 0M40 38c-6-3-11-3-14 0M40 22c4-3 7-3 10 0M40 30c5-3 9-3 12 0M40 38c6-3 11-3 14 0"/>
+          <path d="M40 54c-3 4-2 8 0 12M40 54c3 4 2 8 0 12M36 60h8"/>
+          <circle cx="40" cy="14" r="3"/>
+        </svg>
+      </div>
+      <h3>인삼</h3>
+      <code>illust-ginseng</code>
+    </div>
+    <div class="item">
+      <div class="frame" style="color: var(--brown-700);">
+        <!-- 약초 잎 -->
+        <svg viewBox="0 0 80 80" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M40 64c0-16 8-26 18-32-2 14-8 22-18 32z"/>
+          <path d="M40 64c0-16-8-26-18-32 2 14 8 22 18 32z"/>
+          <path d="M40 64v-32"/>
+          <path d="M30 50c4-2 8-2 10-2M50 50c-4-2-8-2-10-2"/>
+        </svg>
+      </div>
+      <h3>약초 잎</h3>
+      <code>illust-leaf</code>
+    </div>
+    <div class="item">
+      <div class="frame" style="color: var(--vermilion-500);">
+        <!-- 대추 -->
+        <svg viewBox="0 0 80 80" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <ellipse cx="40" cy="46" rx="14" ry="20"/>
+          <path d="M40 26c2-4 4-6 8-8M40 26c-2-2-4-3-6-4"/>
+          <path d="M40 30c0 4 0 8-2 12M40 36c2-3 4-5 6-6"/>
+        </svg>
+      </div>
+      <h3>대추 (대조)</h3>
+      <code>illust-jujube</code>
+    </div>
+    <div class="item">
+      <div class="frame" style="color: var(--brown-600);">
+        <!-- 감초 뿌리 -->
+        <svg viewBox="0 0 80 80" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M16 22c4-2 8-2 12 2 4 4 4 8 0 12 4 4 4 8 0 12 4 4 4 8 0 12 4 2 8 2 12 0"/>
+          <path d="M40 60c4-2 8-2 12 0 4 2 8 0 12-2"/>
+          <path d="M22 18c-1-3 0-5 4-6M30 30c-2-2-4-2-6 0M44 60c-2-3-2-6 0-10"/>
+        </svg>
+      </div>
+      <h3>감초</h3>
+      <code>illust-licorice</code>
+    </div>
+    <div class="item">
+      <div class="frame" style="color: var(--vermilion-600);">
+        <!-- 구기자 -->
+        <svg viewBox="0 0 80 80" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M40 14c-12 8-20 18-22 32 0 10 8 18 22 18s22-8 22-18c-2-14-10-24-22-32z"/>
+          <circle cx="32" cy="50" r="3" fill="currentColor"/>
+          <circle cx="46" cy="44" r="3" fill="currentColor"/>
+          <circle cx="40" cy="58" r="3" fill="currentColor"/>
+          <path d="M40 14v8"/>
+        </svg>
+      </div>
+      <h3>구기자</h3>
+      <code>illust-goji</code>
+    </div>
+    <div class="item">
+      <div class="frame" style="color: var(--sage-600);">
+        <!-- 황기 -->
+        <svg viewBox="0 0 80 80" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M40 64v-50"/>
+          <path d="M40 22c-4-2-8-2-12 0M40 30c-5-2-10-2-14 0M40 38c-6-2-12-2-16 0M40 22c4-2 8-2 12 0M40 30c5-2 10-2 14 0M40 38c6-2 12-2 16 0"/>
+          <path d="M30 64h20" stroke-width="2"/>
+        </svg>
+      </div>
+      <h3>황기</h3>
+      <code>illust-astragalus</code>
+    </div>
+  </div>
+
+  <h2>한방 도구 (Tools)</h2>
+  <div class="grid">
+    <div class="item">
+      <div class="frame" style="color: var(--brown-700);">
+        <!-- 약탕기 -->
+        <svg viewBox="0 0 80 80" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 36h36c0 14-6 24-14 24h-8c-8 0-14-10-14-24z"/>
+          <path d="M58 40h6c2 0 4 1 4 3v6c0 2-2 3-4 3h-4"/>
+          <path d="M22 36v-2c0-2 2-4 4-4h28c2 0 4 2 4 4v2"/>
+          <path d="M30 22c2-3 0-6-2-8M40 22c2-3 0-6-2-8M50 22c2-3 0-6-2-8" stroke-dasharray="2 3"/>
+        </svg>
+      </div>
+      <h3>약탕기</h3>
+      <code>illust-decoction-pot</code>
+    </div>
+    <div class="item">
+      <div class="frame" style="color: var(--brown-600);">
+        <!-- 약절구 -->
+        <svg viewBox="0 0 80 80" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 36c0 14 9 22 20 22s20-8 20-22"/>
+          <path d="M16 36h48"/>
+          <path d="M40 36V18l-6-4M40 18l6-4"/>
+          <path d="M28 42c4 4 8 6 12 6s8-2 12-6"/>
+        </svg>
+      </div>
+      <h3>약절구</h3>
+      <code>illust-mortar</code>
+    </div>
+    <div class="item">
+      <div class="frame" style="color: var(--vermilion-500);">
+        <!-- 침 -->
+        <svg viewBox="0 0 80 80" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M16 16l40 40M14 18l4-2 2 4-4 2z" fill="currentColor" fill-opacity="0.15"/>
+          <circle cx="56" cy="56" r="6"/>
+          <path d="M56 50v-4M56 66v-4M50 56h-4M66 56h-4" stroke-dasharray="2 2"/>
+          <path d="M22 22c4-4 10-4 14 0" stroke-width="1"/>
+        </svg>
+      </div>
+      <h3>침구</h3>
+      <code>illust-needle</code>
+    </div>
+    <div class="item">
+      <div class="frame" style="color: var(--brown-700);">
+        <!-- 한약 환제 -->
+        <svg viewBox="0 0 80 80" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="28" cy="32" r="10" fill="currentColor" fill-opacity="0.18"/>
+          <circle cx="28" cy="32" r="10"/>
+          <circle cx="50" cy="44" r="14" fill="currentColor" fill-opacity="0.28"/>
+          <circle cx="50" cy="44" r="14"/>
+          <circle cx="32" cy="58" r="6" fill="currentColor" fill-opacity="0.14"/>
+          <circle cx="32" cy="58" r="6"/>
+          <path d="M22 28c2-1 4-1 6 0M44 40c2-1 4-1 6 0" stroke-width="1" opacity="0.4"/>
+        </svg>
+      </div>
+      <h3>환제 (丸藥)</h3>
+      <code>illust-pills</code>
+    </div>
+    <div class="item">
+      <div class="frame" style="color: var(--sage-500);">
+        <!-- 한약 봉지 -->
+        <svg viewBox="0 0 80 80" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 22h36v40c0 2-2 4-4 4H26c-2 0-4-2-4-4V22z"/>
+          <path d="M22 22c-2 0-4-2-4-4s2-4 4-4h36c2 0 4 2 4 4s-2 4-4 4"/>
+          <path d="M30 36h20M30 44h20M30 52h14"/>
+          <circle cx="40" cy="62" r="3"/>
+        </svg>
+      </div>
+      <h3>한약 팩</h3>
+      <code>illust-herb-pack</code>
+    </div>
+    <div class="item">
+      <div class="frame" style="color: var(--brown-700);">
+        <!-- 부항 -->
+        <svg viewBox="0 0 80 80" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <ellipse cx="40" cy="50" rx="18" ry="14"/>
+          <ellipse cx="40" cy="50" rx="14" ry="10"/>
+          <path d="M28 38c0-4 4-8 12-8s12 4 12 8"/>
+          <circle cx="40" cy="50" r="3" fill="currentColor"/>
+        </svg>
+      </div>
+      <h3>부항</h3>
+      <code>illust-cupping</code>
+    </div>
+  </div>
+
+  <h2>한방 모티프 (Motifs)</h2>
+  <div class="grid">
+    <div class="item">
+      <div class="frame" style="color: var(--vermilion-500);">
+        <!-- 인장 (富梄開印) -->
+        <svg viewBox="0 0 80 80" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+          <rect x="20" y="20" width="40" height="40" fill="currentColor" rx="3"/>
+          <text x="40" y="34" text-anchor="middle" font-family="Noto Serif KR, serif" font-size="11" font-weight="700" fill="#FFFDF9">富梄</text>
+          <text x="40" y="50" text-anchor="middle" font-family="Noto Serif KR, serif" font-size="11" font-weight="700" fill="#FFFDF9">開印</text>
+          <rect x="20" y="20" width="40" height="40" fill="none" stroke="#FFFDF9" stroke-width="0.8" stroke-opacity="0.4" rx="3"/>
+        </svg>
+      </div>
+      <h3>인장</h3>
+      <code>illust-stamp</code>
+    </div>
+    <div class="item">
+      <div class="frame" style="color: var(--brown-700);">
+        <!-- 한 (韓) 도장 -->
+        <svg viewBox="0 0 80 80" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="40" cy="40" r="28"/>
+          <circle cx="40" cy="40" r="22" stroke-dasharray="3 3" opacity="0.4"/>
+          <text x="40" y="48" text-anchor="middle" font-family="Noto Serif KR, serif" font-size="22" font-weight="700" fill="currentColor">梄</text>
+        </svg>
+      </div>
+      <h3>로고 마크</h3>
+      <code>illust-logo-mark</code>
+    </div>
+    <div class="item">
+      <div class="frame" style="color: var(--sage-500);">
+        <!-- 음양 -->
+        <svg viewBox="0 0 80 80" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="40" cy="40" r="26" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M40 14a26 26 0 0 1 0 52a13 13 0 0 1 0 -26a13 13 0 0 0 0 -26z" fill="currentColor"/>
+          <circle cx="40" cy="27" r="3" fill="var(--cream-50)"/>
+          <circle cx="40" cy="53" r="3" fill="currentColor"/>
+        </svg>
+      </div>
+      <h3>음양</h3>
+      <code>illust-yinyang</code>
+    </div>
+    <div class="item">
+      <div class="frame" style="color: var(--brown-600);">
+        <!-- 책 (의서) -->
+        <svg viewBox="0 0 80 80" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M16 22h22c2 0 4 2 4 4v34"/>
+          <path d="M64 22H42c-2 0-4 2-4 4v34"/>
+          <path d="M16 22v36h22"/>
+          <path d="M64 22v36H42"/>
+          <path d="M22 30h12M22 36h12M22 42h12M22 48h8"/>
+          <path d="M48 30h12M48 36h12M48 42h12M48 48h8"/>
+        </svg>
+      </div>
+      <h3>의서</h3>
+      <code>illust-book</code>
+    </div>
+    <div class="item">
+      <div class="frame" style="color: var(--vermilion-500);">
+        <!-- 처방전 -->
+        <svg viewBox="0 0 80 80" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="18" y="14" width="44" height="52" rx="2"/>
+          <path d="M26 26h28M26 32h28M26 38h22M26 44h28M26 50h18"/>
+          <path d="M46 56h12v8h-12z" fill="currentColor" fill-opacity="0.15"/>
+          <text x="52" y="62" text-anchor="middle" font-family="Noto Serif KR" font-size="6" fill="currentColor" font-weight="700">梄印</text>
+        </svg>
+      </div>
+      <h3>처방전</h3>
+      <code>illust-prescription</code>
+    </div>
+    <div class="item">
+      <div class="frame" style="color: var(--brown-700);">
+        <!-- 택배 박스 -->
+        <svg viewBox="0 0 80 80" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 28l26-12 26 12v24l-26 12-26-12z"/>
+          <path d="M14 28l26 12 26-12M40 40v24"/>
+          <path d="M30 22v12" stroke="currentColor" stroke-width="2"/>
+          <text x="40" y="48" text-anchor="middle" font-family="Noto Serif KR" font-size="10" font-weight="700" fill="currentColor">藥</text>
+        </svg>
+      </div>
+      <h3>택배 발송</h3>
+      <code>illust-package</code>
+    </div>
+  </div>
+
+  <h2>패턴 · 텍스처 (Backgrounds)</h2>
+  <div class="grid">
+    <div class="item">
+      <div class="frame tex-hanji" style="padding: 0;"></div>
+      <h3>한지 텍스처 라이트</h3>
+      <code>.tex-hanji</code>
+    </div>
+    <div class="item">
+      <div class="frame tex-hanji-dark" style="padding: 0;"></div>
+      <h3>한지 텍스처 다크</h3>
+      <code>.tex-hanji-dark</code>
+    </div>
+    <div class="item">
+      <div class="frame pattern-dancheong" style="padding: 0;"></div>
+      <h3>단청 사선 패턴</h3>
+      <code>.pattern-dancheong</code>
+    </div>
+    <div class="item">
+      <div class="frame pattern-circles" style="padding: 0;"></div>
+      <h3>도트 패턴</h3>
+      <code>.pattern-circles</code>
+    </div>
+    <div class="item">
+      <div class="frame pattern-grid" style="padding: 0;"></div>
+      <h3>그리드 패턴 (지도)</h3>
+      <code>.pattern-grid</code>
+    </div>
+    <div class="item">
+      <div class="frame" style="padding: 0; background: var(--brown-800); position: relative;">
+        <div class="bookshelf" style="padding: 8px;">
+          <div class="book book--brown">東醫</div>
+          <div class="book book--maroon">寶鑑</div>
+          <div class="book book--cream">本草</div>
+          <div class="book book--green">經穴</div>
+          <div class="book book--gold">方劑</div>
+          <div class="book book--black">鍼灸</div>
+          <div class="book book--brown">湯液</div>
+          <div class="book book--cream">藥性</div>
+        </div>
+      </div>
+      <h3>한방 도서 책장</h3>
+      <code>.bookshelf</code>
+    </div>
+  </div>
+</div>
+</body>
+</html>

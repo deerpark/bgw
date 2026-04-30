@@ -1,0 +1,612 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>부개 감비환 — 부개원 한의원</title>
+  <link rel="stylesheet" href="./_base.css" />
+  <style>
+    body { background: linear-gradient(180deg, #FAF6F1 0%, #F1E8DB 100%); }
+    .canvas-toolbar { position: sticky; top: 0; z-index: 30; display: flex; justify-content: space-between; align-items: center; padding: 14px 24px; background: rgba(255,253,249,0.85); backdrop-filter: saturate(180%) blur(18px); border-bottom: 0.5px solid var(--border-subtle); }
+    .canvas-board { display: grid; grid-template-columns: 1440px 390px; gap: 64px; padding: 64px 32px 120px; align-items: flex-start; justify-content: center; min-width: 100vw; }
+    .frame-label { display: flex; gap: 16px; align-items: baseline; font-family: var(--font-mono); font-size: 12px; color: var(--ink-muted); margin-bottom: 12px; padding-left: 6px; }
+    .frame-label .name { color: var(--ink-primary); font-weight: 500; font-family: var(--font-sans); font-size: 13px; }
+
+    .page-d { width: 1440px; background: var(--bg-base); border-radius: 16px; overflow: hidden; box-shadow: var(--shadow-lg); }
+
+    .breadcrumb { padding: 16px 48px; font-size: 13px; color: var(--ink-muted); background: var(--bg-base); border-bottom: 0.5px solid var(--border-subtle); }
+    .breadcrumb a { color: var(--ink-secondary); }
+    .breadcrumb .sep { padding: 0 8px; color: var(--neutral-300); }
+    .breadcrumb .current { color: var(--ink-primary); }
+
+    .product-hero {
+      display: grid; grid-template-columns: 1.1fr 0.9fr;
+      gap: 64px;
+      padding: 80px 48px 64px;
+      background: linear-gradient(180deg, var(--cream-50) 0%, var(--cream-100) 100%);
+    }
+    .product-hero__copy { padding-top: 24px; max-width: 580px; }
+    .product-hero__chip { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; background: var(--sage-100); color: var(--sage-600); border-radius: 999px; font-size: 11px; letter-spacing: 0.12em; font-weight: 600; }
+    .product-hero__title { font-family: var(--font-display); font-size: 56px; font-weight: 700; letter-spacing: -0.04em; line-height: 1.1; color: var(--ink-primary); margin: 18px 0 4px; }
+    .product-hero__hanja { font-family: var(--font-serif); font-size: 22px; color: var(--brown-500); letter-spacing: 0.06em; margin: 0 0 22px; }
+    .product-hero__essence { font-size: 22px; line-height: 1.55; color: var(--ink-primary); margin: 0 0 24px; font-weight: 500; letter-spacing: -0.02em; max-width: 520px; }
+    .product-hero__sub { font-size: 16px; line-height: 1.85; color: var(--ink-secondary); margin: 0 0 32px; }
+    .product-hero__ctas { display: flex; gap: 10px; }
+    .product-hero__meta { margin-top: 36px; display: flex; gap: 24px; font-size: 13px; color: var(--ink-muted); }
+    .product-hero__meta div { display: flex; flex-direction: column; gap: 2px; }
+    .product-hero__meta strong { color: var(--ink-primary); font-weight: 500; font-size: 14px; }
+
+    .product-hero__visual {
+      background: linear-gradient(135deg, var(--sage-200), var(--cream-200));
+      border-radius: 32px;
+      aspect-ratio: 1;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow-lg);
+    }
+    .product-hero__visual::before, .product-hero__visual::after {
+      content: ""; position: absolute;
+      border: 1px dashed rgba(73,46,20,0.18);
+      border-radius: 50%;
+    }
+    .product-hero__visual::before { inset: 12%; }
+    .product-hero__visual::after { inset: 28%; }
+    .product-hero__visual .pill {
+      position: absolute; inset: 38%;
+      background: var(--brown-700); border-radius: 50%;
+      box-shadow: var(--shadow-xl), inset -10px -10px 30px rgba(0,0,0,0.3), inset 10px 10px 30px rgba(255,253,249,0.1);
+    }
+    .product-hero__visual .pill-2 {
+      position: absolute; left: 22%; top: 26%; width: 16%; height: 16%;
+      background: var(--brown-600); border-radius: 50%;
+      box-shadow: var(--shadow-md);
+    }
+    .product-hero__visual .pill-3 {
+      position: absolute; right: 18%; bottom: 24%; width: 12%; height: 12%;
+      background: var(--brown-800); border-radius: 50%;
+      box-shadow: var(--shadow-sm);
+    }
+    .product-hero__visual .stamp-mark {
+      position: absolute; right: 28px; bottom: 28px;
+      background: var(--vermilion-500); color: var(--cream-50);
+      padding: 10px 14px; border-radius: 8px;
+      font-family: var(--font-serif); font-weight: 700; font-size: 12px;
+      writing-mode: vertical-rl; line-height: 1.3;
+    }
+    .product-hero__visual .han {
+      position: absolute; top: 28px; left: 28px;
+      font-family: var(--font-serif); font-size: 56px; font-weight: 700;
+      color: rgba(73,46,20,0.18);
+    }
+
+    .anchor-nav {
+      position: sticky; top: 0; z-index: 20;
+      background: rgba(255,253,249,0.92);
+      backdrop-filter: blur(18px);
+      border-bottom: 0.5px solid var(--border-subtle);
+      display: flex; justify-content: center; gap: 32px;
+      padding: 14px 48px;
+      font-size: 13px; color: var(--ink-secondary); font-weight: 500;
+    }
+    .anchor-nav a { padding: 4px 0; }
+    .anchor-nav a.active { color: var(--brand); border-bottom: 2px solid var(--brand); }
+
+    .sec { padding: 80px 48px; }
+    .sec__inner { max-width: 1080px; margin: 0 auto; }
+    .sec__head { text-align: center; margin-bottom: 48px; }
+    .sec__eyebrow { font-size: 11px; letter-spacing: 0.12em; font-weight: 600; color: var(--brand); text-transform: uppercase; }
+    .sec__title { font-family: var(--font-display); font-size: 36px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.2; color: var(--ink-primary); margin: 12px 0 12px; }
+    .sec__sub { font-size: 16px; line-height: 1.85; color: var(--ink-secondary); margin: 0 auto; max-width: 60ch; }
+
+    /* Key points */
+    .keypoints { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; }
+    .keypoint {
+      background: var(--surface); border: 0.5px solid var(--border-subtle);
+      border-radius: 16px; padding: 24px; text-align: center;
+    }
+    .keypoint__num { font-family: var(--font-serif); font-size: 28px; font-weight: 700; color: var(--sage-500); margin-bottom: 12px; }
+    .keypoint h4 { font-size: 15px; letter-spacing: -0.02em; margin: 0 0 8px; line-height: 1.45; }
+    .keypoint p { font-size: 12px; color: var(--ink-muted); margin: 0; line-height: 1.6; }
+
+    /* Target */
+    .target-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .target-card {
+      background: var(--surface-alt); border-radius: 18px; padding: 28px;
+      display: flex; gap: 16px; align-items: flex-start;
+    }
+    .target-card__chr {
+      width: 44px; height: 44px; border-radius: 12px;
+      background: var(--cream-50);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; flex-shrink: 0;
+    }
+    .target-card h4 { font-size: 16px; margin: 0 0 6px; letter-spacing: -0.02em; }
+    .target-card p { font-size: 13px; color: var(--ink-secondary); line-height: 1.7; margin: 0; }
+
+    /* Principle (3 ingredient groups) */
+    .principle {
+      display: grid; grid-template-columns: 0.8fr 1.2fr; gap: 48px;
+      align-items: center;
+    }
+    .principle__visual {
+      background: var(--surface); border-radius: 24px; padding: 36px;
+      border: 0.5px solid var(--border-subtle);
+    }
+    .principle__circle {
+      aspect-ratio: 1; max-width: 320px; margin: 0 auto;
+      border-radius: 50%;
+      background: conic-gradient(var(--sage-400) 0% 33%, var(--brown-400) 33% 67%, var(--vermilion-400) 67% 100%);
+      position: relative;
+    }
+    .principle__circle::after {
+      content: "";
+      position: absolute; inset: 16%;
+      border-radius: 50%;
+      background: var(--surface);
+    }
+    .principle__circle .label-1, .principle__circle .label-2, .principle__circle .label-3 {
+      position: absolute; font-size: 11px; font-weight: 600; letter-spacing: 0.04em; color: var(--ink-primary); z-index: 2;
+      background: var(--surface); padding: 4px 10px; border-radius: 999px; box-shadow: var(--shadow-sm);
+    }
+    .principle__circle .label-1 { top: 10%; left: 50%; transform: translateX(-50%); }
+    .principle__circle .label-2 { bottom: 22%; left: 6%; }
+    .principle__circle .label-3 { bottom: 22%; right: 6%; }
+    .principle__list { display: flex; flex-direction: column; gap: 16px; }
+    .principle__item { background: var(--surface); border: 0.5px solid var(--border-subtle); border-radius: 16px; padding: 22px 24px; border-left: 3px solid currentColor; }
+    .principle__item h4 { display: flex; gap: 10px; align-items: center; margin: 0 0 6px; font-size: 16px; letter-spacing: -0.02em; }
+    .principle__item h4 .num { font-family: var(--font-mono); font-size: 11px; padding: 3px 7px; background: currentColor; color: var(--cream-50); border-radius: 4px; }
+    .principle__item p { margin: 0; font-size: 13px; color: var(--ink-secondary); line-height: 1.7; }
+
+    /* Process */
+    .process-detail { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; position: relative; }
+    .process-detail::before { content: ""; position: absolute; left: 24px; right: 24px; top: 24px; height: 1px; background: var(--border-default); }
+    .process-detail-step { background: var(--bg-base); position: relative; padding: 0 12px; }
+    .process-detail-step__num { width: 48px; height: 48px; border-radius: 50%; background: var(--brand); color: var(--ink-inverse); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 17px; margin: 0 auto 14px; border: 4px solid var(--bg-base); }
+    .process-detail-step h5 { font-size: 14px; margin: 0 0 4px; text-align: center; letter-spacing: -0.01em; }
+    .process-detail-step p { font-size: 12px; color: var(--ink-muted); margin: 0; line-height: 1.6; text-align: center; }
+
+    /* Cautions */
+    .cautions { background: var(--bg-subtle); border-left: 4px solid var(--accent); border-radius: 16px; padding: 32px 36px; }
+    .cautions h3 { display: flex; align-items: center; gap: 10px; font-size: 18px; letter-spacing: -0.02em; margin: 0 0 16px; color: var(--ink-primary); }
+    .cautions ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+    .cautions li { display: flex; gap: 12px; font-size: 14px; color: var(--ink-secondary); line-height: 1.75; }
+    .cautions li::before { content: "·"; color: var(--accent); font-weight: 700; font-size: 22px; line-height: 1; }
+
+    /* FAQ */
+    .faq { max-width: 880px; margin: 0 auto; }
+    .faq-item { background: var(--surface); border: 0.5px solid var(--border-subtle); border-radius: 16px; margin-bottom: 12px; overflow: hidden; }
+    .faq-q { padding: 22px 28px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-size: 16px; font-weight: 500; letter-spacing: -0.02em; }
+    .faq-q .marker { color: var(--brand); font-size: 20px; transition: transform 200ms var(--ease-standard); }
+    details[open] .faq-q .marker { transform: rotate(45deg); }
+    details summary::-webkit-details-marker { display: none; }
+    .faq-a { padding: 0 28px 24px; color: var(--ink-secondary); font-size: 14px; line-height: 1.85; }
+
+    /* Related */
+    .related-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+    .related-card { background: var(--surface); border: 0.5px solid var(--border-subtle); border-radius: 24px; padding: 32px; display: flex; gap: 20px; align-items: center; transition: all 240ms var(--ease-standard); }
+    .related-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+    .related-card__chr { width: 64px; height: 64px; border-radius: 18px; background: var(--sage-100); color: var(--sage-600); display: flex; align-items: center; justify-content: center; font-family: var(--font-serif); font-weight: 700; font-size: 28px; flex-shrink: 0; }
+    .related-card__body { flex: 1; }
+    .related-card h4 { font-size: 20px; letter-spacing: -0.02em; margin: 0 0 4px; }
+    .related-card p { font-size: 13px; color: var(--ink-muted); margin: 0; line-height: 1.6; }
+
+    /* Sticky CTA bottom */
+    .sticky-cta {
+      position: sticky; bottom: 0;
+      background: rgba(255,253,249,0.92); backdrop-filter: blur(18px);
+      border-top: 0.5px solid var(--border-subtle);
+      padding: 16px 48px;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .sticky-cta__left { display: flex; gap: 14px; align-items: center; }
+    .sticky-cta__chr { width: 40px; height: 40px; border-radius: 12px; background: var(--sage-100); color: var(--sage-600); display: flex; align-items: center; justify-content: center; font-family: var(--font-serif); font-weight: 700; font-size: 18px; }
+    .sticky-cta__name { font-size: 15px; font-weight: 600; letter-spacing: -0.02em; }
+    .sticky-cta__name small { display: block; font-size: 11px; color: var(--ink-muted); font-weight: 400; letter-spacing: 0.04em; }
+
+    /* MOBILE */
+    .page-m { width: 390px; background: var(--bg-base); border-radius: 36px; overflow: hidden; box-shadow: var(--shadow-xl); border: 8px solid var(--neutral-900); position: relative; }
+    .page-m__notch { height: 28px; background: var(--neutral-900); }
+    .nav-m { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; background: rgba(255,253,249,0.92); backdrop-filter: blur(14px); border-bottom: 0.5px solid var(--border-subtle); }
+    .breadcrumb-m { padding: 12px 20px; font-size: 12px; color: var(--ink-muted); border-bottom: 0.5px solid var(--border-subtle); }
+    .product-hero-m { padding: 28px 20px 0; text-align: left; background: linear-gradient(180deg, var(--cream-50), var(--cream-100)); }
+    .product-hero-m .chip { display: inline-block; padding: 5px 10px; background: var(--sage-100); color: var(--sage-600); border-radius: 999px; font-size: 10px; letter-spacing: 0.12em; font-weight: 600; }
+    .product-hero-m h1 { font-family: var(--font-display); font-size: 32px; line-height: 1.15; letter-spacing: -0.04em; margin: 12px 0 4px; font-weight: 700; }
+    .product-hero-m .hanja { font-family: var(--font-serif); font-size: 14px; color: var(--brown-500); letter-spacing: 0.06em; margin: 0 0 14px; }
+    .product-hero-m .essence { font-size: 16px; line-height: 1.55; color: var(--ink-primary); margin: 0 0 16px; font-weight: 500; letter-spacing: -0.02em; }
+    .product-hero-m .visual { aspect-ratio: 1; border-radius: 24px; margin: 16px 0; background: linear-gradient(135deg, var(--sage-200), var(--cream-200)); position: relative; }
+    .product-hero-m .visual .pill { position: absolute; inset: 38%; background: var(--brown-700); border-radius: 50%; box-shadow: 0 12px 30px rgba(0,0,0,0.2); }
+    .product-hero-m .visual .pill-2 { position: absolute; left: 22%; top: 26%; width: 16%; height: 16%; background: var(--brown-600); border-radius: 50%; }
+    .product-hero-m .visual .pill-3 { position: absolute; right: 18%; bottom: 24%; width: 12%; height: 12%; background: var(--brown-800); border-radius: 50%; }
+    .product-hero-m .visual .han { position: absolute; top: 16px; left: 16px; font-family: var(--font-serif); font-size: 32px; color: rgba(73,46,20,0.2); font-weight: 700; }
+
+    .sec-m { padding: 32px 20px; }
+    .sec-m h3 { font-size: 11px; letter-spacing: 0.12em; color: var(--brand); margin: 0 0 4px; font-weight: 600; }
+    .sec-m h2 { font-size: 22px; letter-spacing: -0.03em; margin: 0 0 16px; line-height: 1.3; }
+
+    .key-m { display: flex; flex-direction: column; gap: 10px; }
+    .key-m__item { background: var(--surface); border: 0.5px solid var(--border-subtle); border-radius: 12px; padding: 16px; }
+    .key-m__item .num { font-family: var(--font-serif); font-weight: 700; color: var(--sage-500); font-size: 14px; }
+    .key-m__item h4 { font-size: 14px; margin: 4px 0; letter-spacing: -0.02em; }
+    .key-m__item p { font-size: 12px; color: var(--ink-muted); margin: 0; line-height: 1.6; }
+
+    .cautions-m { background: var(--bg-subtle); border-left: 3px solid var(--accent); border-radius: 12px; padding: 18px 20px; }
+    .cautions-m h3 { color: var(--ink-primary); font-size: 14px; letter-spacing: -0.02em; margin: 0 0 10px; }
+    .cautions-m ul { list-style: none; padding: 0; margin: 0; }
+    .cautions-m li { font-size: 12px; color: var(--ink-secondary); line-height: 1.7; padding-left: 12px; position: relative; }
+    .cautions-m li::before { content: "·"; position: absolute; left: 0; color: var(--accent); font-weight: 700; }
+
+    .disclaimer-bar { padding: 10px 20px; background: var(--cream-200); font-size: 11px; color: var(--brown-700); text-align: center; }
+    .page-m .cta-dock { position: absolute; bottom: 0; left: 0; right: 0; background: rgba(255,253,249,0.95); }
+  </style>
+</head>
+<body>
+
+<div class="canvas-toolbar">
+  <a class="toolbar__back" href="./index.html" style="font-size:12px;color:var(--ink-secondary);text-decoration:none;">← Mockups</a>
+  <span class="t-eyebrow ink-secondary">SCREEN P-03 · PRODUCT DETAIL · 부개 감비환 · STANDARD TEMPLATE</span>
+  <span style="font-family:var(--font-mono);font-size:11px;color:var(--ink-muted);">/diet/gambihwan</span>
+</div>
+
+<div class="canvas-board">
+
+  <!-- DESKTOP -->
+  <div>
+    <div class="frame-label">
+      <span class="name">제품 상세 — 부개 감비환 (표준 템플릿)</span>
+      <span>1440 × auto</span>
+      <span>이 구조가 6개 한약 페이지에 그대로 사용됩니다.</span>
+    </div>
+
+    <div class="page-d">
+      <!-- Header -->
+      <div style="background:var(--brown-900);color:var(--cream-200);text-align:center;padding:8px 16px;font-size:12px;">☎ 032-361-9991 · 평일 09:00–20:00 · 비대면 진료 접수는 네이버폼이 가장 빠릅니다 →</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:0 48px;height:80px;background:rgba(255,253,249,0.92);backdrop-filter:blur(18px);border-bottom:0.5px solid var(--border-subtle);">
+        <div style="display:flex;align-items:center;gap:12px;"><span class="logo-mark" style="font-family:var(--font-serif);color:var(--brown-700);">梄</span><strong style="font-family:var(--font-display);font-weight:700;letter-spacing:-0.02em;">부개원 한의원</strong></div>
+        <nav style="display:flex;gap:28px;font-size:14px;color:var(--ink-secondary);font-weight:500;">
+          <a style="color:var(--brand);font-weight:600;">다이어트</a><a>면역한약</a><a>진료과목</a><a>한의원 소개</a><a>비대면 진료</a>
+        </nav>
+        <button class="btn btn--accent btn--sm">비대면 진료 접수 →</button>
+      </div>
+
+      <div class="breadcrumb">
+        <a>홈</a><span class="sep">/</span><a>다이어트</a><span class="sep">/</span><span class="current">부개 감비환</span>
+      </div>
+
+      <!-- Hero -->
+      <section class="product-hero">
+        <div class="product-hero__copy">
+          <span class="product-hero__chip">DIET CARE · 환제 한약</span>
+          <h1 class="product-hero__title">부개 감비환</h1>
+          <p class="product-hero__hanja">BUGAE GAMBIHWAN · 富梄 減肥丸</p>
+          <p class="product-hero__essence">체질을 살피는 환제(丸劑) 한방 다이어트.<br/>일상에 부드럽게 녹아드는 휴대 가능한 처방.</p>
+          <p class="product-hero__sub">한의사가 환자의 체질·생활습관·복약 이력을 진료하여 처방하는 환약 한약입니다. 환자의 상황에 맞춰 약재 비율이 조정되며, 비대면 진료를 통해 자택에서 받으실 수 있습니다.</p>
+          <div class="product-hero__ctas">
+            <button class="btn btn--accent btn--xl">비대면 진료 접수 →</button>
+            <button class="btn btn--outline btn--xl">감비탕과 비교하기</button>
+          </div>
+          <div class="product-hero__meta">
+            <div><span>형태</span><strong>환제 (丸劑)</strong></div>
+            <div><span>중점 케어</span><strong>식욕·기초대사</strong></div>
+            <div><span>권장 기간</span><strong>1–3개월</strong></div>
+            <div><span>견적</span><strong>진료 후 안내</strong></div>
+          </div>
+        </div>
+        <div class="product-hero__visual">
+          <span class="han">減</span>
+          <div class="pill"></div>
+          <div class="pill-2"></div>
+          <div class="pill-3"></div>
+          <div class="stamp-mark">富梄<br/>監製</div>
+        </div>
+      </section>
+
+      <!-- Anchor nav -->
+      <div class="anchor-nav">
+        <a class="active">개요</a>
+        <a>핵심</a>
+        <a>처방 원리</a>
+        <a>복용 안내</a>
+        <a>비대면 절차</a>
+        <a>주의사항</a>
+        <a>FAQ</a>
+      </div>
+
+      <!-- 02 Key Points -->
+      <section class="sec sec--alt" style="background: var(--surface-alt);">
+        <div class="sec__inner">
+          <div class="sec__head">
+            <span class="sec__eyebrow">02 · KEY POINTS</span>
+            <h2 class="sec__title">부개 감비환의 핵심 다섯</h2>
+          </div>
+          <div class="keypoints">
+            <div class="keypoint"><div class="keypoint__num">01</div><h4>한의사 1:1 처방</h4><p>체질·생활습관·복약 이력을 살핀 뒤 처방됩니다.</p></div>
+            <div class="keypoint"><div class="keypoint__num">02</div><h4>식욕·대사·배출 통합</h4><p>식욕 조절, 기초대사, 노폐물 배출이 함께 다뤄지도록 설계.</p></div>
+            <div class="keypoint"><div class="keypoint__num">03</div><h4>휴대 간편한 환제</h4><p>외출·외식이 잦은 직장인에게 부담이 적습니다.</p></div>
+            <div class="keypoint"><div class="keypoint__num">04</div><h4>비대면으로 자택에서</h4><p>유선 진료 후 자택으로 보냉 포장 발송됩니다.</p></div>
+            <div class="keypoint"><div class="keypoint__num">05</div><h4>진료 기반 조정</h4><p>처방의 강도와 조성은 진료 시 한의사가 결정합니다.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 03 Target -->
+      <section class="sec">
+        <div class="sec__inner">
+          <div class="sec__head">
+            <span class="sec__eyebrow">03 · 어떤 분께 권해드리나요</span>
+            <h2 class="sec__title">생활과 체질이 이런 분께 적합합니다</h2>
+          </div>
+          <div class="target-grid">
+            <div class="target-card">
+              <div class="target-card__chr">🍱</div>
+              <div>
+                <h4>야근·외식이 잦은 직장인</h4>
+                <p>식이 관리가 매번 무너지지만, 무리한 다이어트는 피하고 싶은 분.</p>
+              </div>
+            </div>
+            <div class="target-card">
+              <div class="target-card__chr">🔁</div>
+              <div>
+                <h4>꾸준한 한방 케어를 선호</h4>
+                <p>짧은 기간 무리한 감량보다, 부담 없는 한약을 일상에 두고 싶은 분.</p>
+              </div>
+            </div>
+            <div class="target-card">
+              <div class="target-card__chr">⏱</div>
+              <div>
+                <h4>탕약 챙김이 어려움</h4>
+                <p>탕약을 매일 데워 마시기 어려운 환경, 출장·외근이 잦은 분.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 04 Principle -->
+      <section class="sec sec--alt" style="background: var(--surface-alt);">
+        <div class="sec__inner">
+          <div class="sec__head">
+            <span class="sec__eyebrow">04 · 처방의 원리</span>
+            <h2 class="sec__title">세 가지 약재군이 함께 다뤄지도록 설계</h2>
+            <p class="sec__sub">정확한 약재 비율은 한의사가 진료 시 결정하며, 본 페이지의 설명은 일반적인 안내입니다.</p>
+          </div>
+          <div class="principle">
+            <div class="principle__visual">
+              <div class="principle__circle">
+                <span class="label-1">식욕 조절군</span>
+                <span class="label-2">대사 보조군</span>
+                <span class="label-3">배출 조정군</span>
+              </div>
+            </div>
+            <div class="principle__list">
+              <div class="principle__item" style="color: var(--sage-500);">
+                <h4><span class="num">01</span><span style="color:var(--ink-primary);">식욕 조절군</span></h4>
+                <p style="color: var(--ink-secondary);">식욕의 기복을 다스리는 약재 군. 한의사가 식습관·스트레스 양상 등을 살핀 뒤 비율을 결정합니다.</p>
+              </div>
+              <div class="principle__item" style="color: var(--brown-500);">
+                <h4><span class="num">02</span><span style="color:var(--ink-primary);">대사 보조군</span></h4>
+                <p style="color: var(--ink-secondary);">기초대사와 에너지 흐름을 받쳐주는 약재 군. 체력·기력 상태에 따라 조정.</p>
+              </div>
+              <div class="principle__item" style="color: var(--vermilion-500);">
+                <h4><span class="num">03</span><span style="color:var(--ink-primary);">배출 조정군</span></h4>
+                <p style="color: var(--ink-secondary);">노폐물·부기를 다듬는 약재 군. 변·소변·부기 양상을 살펴 조정합니다.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 05 Usage -->
+      <section class="sec">
+        <div class="sec__inner">
+          <div class="sec__head">
+            <span class="sec__eyebrow">05 · 복용 안내</span>
+            <h2 class="sec__title">기본 복용법 (정확한 안내는 진료 후)</h2>
+          </div>
+          <div class="when-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:1080px;margin:0 auto;">
+            <div class="target-card"><div class="target-card__chr">⏰</div><div><h4>1일 ○회 식전 ○분</h4><p>정확한 복용 횟수와 타이밍은 한의사가 처방 시 안내합니다.</p></div></div>
+            <div class="target-card"><div class="target-card__chr">💧</div><div><h4>충분한 물과 함께</h4><p>물을 충분히 드시고 평소 식습관을 함께 유지해 주세요.</p></div></div>
+            <div class="target-card"><div class="target-card__chr">📦</div><div><h4>서늘하고 건조한 곳</h4><p>직사광선을 피해 보관하시고 어린이 손이 닿지 않는 곳에 두세요.</p></div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 06 Process -->
+      <section class="sec sec--alt" style="background: var(--surface-alt);">
+        <div class="sec__inner">
+          <div class="sec__head">
+            <span class="sec__eyebrow">06 · 비대면 진료 절차</span>
+            <h2 class="sec__title">접수에서 수령까지 5단계</h2>
+          </div>
+          <div class="process-detail">
+            <div class="process-detail-step"><div class="process-detail-step__num">1</div><h5>접수</h5><p>네이버폼 / 카톡 / 전화</p></div>
+            <div class="process-detail-step"><div class="process-detail-step__num">2</div><h5>확인 통화</h5><p>영업시간 내 연락</p></div>
+            <div class="process-detail-step"><div class="process-detail-step__num">3</div><h5>유선 진료</h5><p>한의사 1:1 상담</p></div>
+            <div class="process-detail-step"><div class="process-detail-step__num">4</div><h5>처방·조제</h5><p>체질에 맞춰 조제</p></div>
+            <div class="process-detail-step"><div class="process-detail-step__num">5</div><h5>택배 수령</h5><p>자택 안전 포장 발송</p></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 07 Cautions -->
+      <section class="sec">
+        <div class="sec__inner" style="max-width: 880px;">
+          <div class="cautions">
+            <h3>⚠ 복용 전 반드시 알려주세요 / 주의사항</h3>
+            <ul>
+              <li>임신·수유 중이시거나 임신을 계획 중인 경우 반드시 사전에 알려주세요.</li>
+              <li>고혈압·당뇨·갑상선 등 만성 질환으로 약을 복용 중인 경우 반드시 알려주세요.</li>
+              <li>한약 복용 중 알레르기 반응(발진, 호흡 곤란)이 나타나면 즉시 복용을 중단하고 한의원으로 연락주세요.</li>
+              <li>복용 초기에 변의 양상 변화나 가벼운 소화기 증상이 있을 수 있습니다. 지속될 경우 알려주세요.</li>
+              <li>다른 한의원·병원에서 처방받은 약과 함께 복용 시 반드시 두 곳 모두에 알려주세요.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- 08 FAQ -->
+      <section class="sec sec--alt" style="background: var(--surface-alt);">
+        <div class="sec__inner">
+          <div class="sec__head">
+            <span class="sec__eyebrow">07 · 자주 묻는 질문</span>
+            <h2 class="sec__title">감비환을 시작하기 전에</h2>
+          </div>
+          <div class="faq">
+            <details class="faq-item" open>
+              <summary class="faq-q"><span>다른 다이어트 약과 함께 먹어도 되나요?</span><span class="marker">+</span></summary>
+              <p class="faq-a">현재 복용 중인 약(처방약·체중 감량제·영양제 포함)이 있다면 진료 시 반드시 알려주세요. 한의사가 상호작용 가능성을 확인한 뒤 처방 가부를 결정합니다.</p>
+            </details>
+            <details class="faq-item">
+              <summary class="faq-q"><span>운동을 꼭 같이 해야 하나요?</span><span class="marker">+</span></summary>
+              <p class="faq-a">한약은 식욕·대사 흐름을 다스리도록 설계되며, 식습관과 일상 활동을 함께 유지하시면 더 자연스러운 변화를 기대할 수 있습니다. 무리한 운동을 권장하지 않습니다.</p>
+            </details>
+            <details class="faq-item">
+              <summary class="faq-q"><span>효과는 언제부터 느낄 수 있나요?</span><span class="marker">+</span></summary>
+              <p class="faq-a">개인차가 있어 일률적으로 말씀드리기 어렵습니다. 한의사 처방에 따라 일반적으로 ○주 차부터 변화를 체감하시는 분이 있으나, 체질·생활습관에 따라 다를 수 있습니다.</p>
+            </details>
+            <details class="faq-item">
+              <summary class="faq-q"><span>탕약과 비교했을 때 차이는?</span><span class="marker">+</span></summary>
+              <p class="faq-a">감비환은 환제(작은 알약) 형태로 휴대·복용이 간편한 반면, 감비탕은 탕약 형태로 약재 비율을 가장 정밀하게 조정 가능합니다. 진료 시 어떤 형태가 적합한지 함께 결정합니다.</p>
+            </details>
+            <details class="faq-item">
+              <summary class="faq-q"><span>비용은 얼마인가요?</span><span class="marker">+</span></summary>
+              <p class="faq-a">처방의 약재 구성·기간에 따라 달라지므로, 정확한 견적은 진료 시 안내해 드립니다.</p>
+            </details>
+          </div>
+        </div>
+      </section>
+
+      <!-- 09 Related -->
+      <section class="sec">
+        <div class="sec__inner">
+          <div class="sec__head">
+            <span class="sec__eyebrow">08 · 다른 옵션</span>
+            <h2 class="sec__title">감비환과 함께 살펴보세요</h2>
+          </div>
+          <div class="related-grid">
+            <a class="related-card">
+              <span class="related-card__chr">湯</span>
+              <div class="related-card__body">
+                <h4>부개 감비탕</h4>
+                <p>체질에 맞춘 정밀 처방 탕약. 근본 케어가 필요한 분께.</p>
+              </div>
+              <span style="color:var(--brand);font-size:18px;">→</span>
+            </a>
+            <a class="related-card">
+              <span class="related-card__chr">淨</span>
+              <div class="related-card__body">
+                <h4>부개 디톡스</h4>
+                <p>노폐물 배출·속 비움 케어. 시작 단계나 회복기에.</p>
+              </div>
+              <span style="color:var(--brand);font-size:18px;">→</span>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- Final disclaimer -->
+      <section class="sec" style="background: var(--brown-700); color: var(--cream-200); padding: 64px 48px;">
+        <div class="sec__inner" style="max-width:880px;">
+          <h3 style="color:var(--cream-50);font-size:18px;letter-spacing:-0.02em;margin:0 0 18px;">⚖ 의료광고 자율심의 준수 안내</h3>
+          <p style="font-size:13px;line-height:2;color:var(--brown-200);margin:0;">
+            ※ 본 한약은 한의사의 진료 후 체질·증상·복약 이력에 따라 개별 처방되며, 개인에 따라 효과 및 반응은 다를 수 있습니다.<br/>
+            ※ 임신·수유 중이거나 만성질환이 있는 경우 반드시 사전에 알려주십시오.<br/>
+            ※ 본 사이트는 의료법에 따라 비대면 진료 <strong style="color:var(--cream-50);font-weight:500;">접수 안내</strong>만 제공하며, 처방·조제·발송은 한의사의 유선 진료 이후 이루어집니다.<br/>
+            ※ 본 페이지는 의료광고 자율심의 기준을 준수하여 작성되었습니다.
+          </p>
+        </div>
+      </section>
+
+      <!-- Sticky CTA bottom -->
+      <div class="sticky-cta">
+        <div class="sticky-cta__left">
+          <div class="sticky-cta__chr">減</div>
+          <div class="sticky-cta__name">부개 감비환<small>BUGAE GAMBIHWAN · 富梄 減肥丸</small></div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;">
+          <span style="font-size:13px;color:var(--ink-muted);">상세 견적은 진료 후 안내</span>
+          <button class="btn btn--outline btn--lg">카카오 문의</button>
+          <button class="btn btn--accent btn--lg">비대면 진료 접수 →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MOBILE -->
+  <div>
+    <div class="frame-label">
+      <span class="name">제품 상세 — 부개 감비환 · Mobile</span>
+      <span>390 × auto</span>
+    </div>
+
+    <div class="page-m">
+      <div class="page-m__notch"></div>
+      <div class="nav-m">
+        <div style="display:flex;gap:8px;align-items:center;"><span style="font-size:18px;color:var(--ink-primary);">←</span><strong style="font-size:14px;letter-spacing:-0.02em;">감비환</strong></div>
+        <span style="font-size:18px;color:var(--ink-primary);">≡</span>
+      </div>
+      <div class="breadcrumb-m"><a>홈</a> / <a>다이어트</a> / <span style="color:var(--ink-primary);">감비환</span></div>
+
+      <section class="product-hero-m">
+        <span class="chip">DIET CARE · 환제</span>
+        <h1>부개 감비환</h1>
+        <p class="hanja">富梄 減肥丸</p>
+        <p class="essence">체질을 살피는 환제 한방 다이어트.</p>
+        <div class="visual">
+          <span class="han">減</span>
+          <div class="pill"></div>
+          <div class="pill-2"></div>
+          <div class="pill-3"></div>
+        </div>
+      </section>
+
+      <section class="sec-m">
+        <h3>KEY POINTS</h3>
+        <h2>핵심 다섯</h2>
+        <div class="key-m">
+          <div class="key-m__item"><span class="num">01</span><h4>한의사 1:1 처방</h4><p>체질·생활습관·복약 이력 기반.</p></div>
+          <div class="key-m__item"><span class="num">02</span><h4>식욕·대사·배출 통합</h4><p>세 약재군이 함께 다뤄집니다.</p></div>
+          <div class="key-m__item"><span class="num">03</span><h4>휴대 간편한 환제</h4><p>외식·외출 잦은 분께 부담이 적습니다.</p></div>
+          <div class="key-m__item"><span class="num">04</span><h4>비대면 자택 수령</h4><p>유선 진료 후 보냉 포장 발송.</p></div>
+          <div class="key-m__item"><span class="num">05</span><h4>진료 기반 조정</h4><p>강도와 조성은 진료 시 결정.</p></div>
+        </div>
+      </section>
+
+      <section class="sec-m" style="background:var(--surface-alt);">
+        <h3>PROCESS</h3>
+        <h2>5단계 비대면 진료</h2>
+        <div style="display:flex;flex-direction:column;gap:14px;">
+          <div style="display:flex;gap:14px;align-items:flex-start;"><div style="width:32px;height:32px;border-radius:50%;background:var(--brand);color:var(--ink-inverse);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0;">1</div><div><h5 style="margin:6px 0 2px;font-size:14px;letter-spacing:-0.01em;">접수</h5><p style="margin:0;font-size:12px;color:var(--ink-muted);line-height:1.55;">네이버폼·카톡·전화</p></div></div>
+          <div style="display:flex;gap:14px;align-items:flex-start;"><div style="width:32px;height:32px;border-radius:50%;background:var(--brand);color:var(--ink-inverse);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0;">2</div><div><h5 style="margin:6px 0 2px;font-size:14px;">확인 통화</h5><p style="margin:0;font-size:12px;color:var(--ink-muted);">영업시간 내 연락</p></div></div>
+          <div style="display:flex;gap:14px;align-items:flex-start;"><div style="width:32px;height:32px;border-radius:50%;background:var(--brand);color:var(--ink-inverse);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0;">3</div><div><h5 style="margin:6px 0 2px;font-size:14px;">유선 진료</h5><p style="margin:0;font-size:12px;color:var(--ink-muted);">한의사 1:1 상담</p></div></div>
+          <div style="display:flex;gap:14px;align-items:flex-start;"><div style="width:32px;height:32px;border-radius:50%;background:var(--brand);color:var(--ink-inverse);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0;">4</div><div><h5 style="margin:6px 0 2px;font-size:14px;">처방·조제</h5><p style="margin:0;font-size:12px;color:var(--ink-muted);">체질에 맞춰 조제</p></div></div>
+          <div style="display:flex;gap:14px;align-items:flex-start;"><div style="width:32px;height:32px;border-radius:50%;background:var(--brand);color:var(--ink-inverse);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0;">5</div><div><h5 style="margin:6px 0 2px;font-size:14px;">택배 수령</h5><p style="margin:0;font-size:12px;color:var(--ink-muted);">자택 안전 포장 발송</p></div></div>
+        </div>
+      </section>
+
+      <section class="sec-m">
+        <div class="cautions-m">
+          <h3>⚠ 주의사항</h3>
+          <ul>
+            <li>임신·수유 중이시면 반드시 사전 고지</li>
+            <li>만성질환·복용 중인 약 모두 알려주세요</li>
+            <li>알레르기 반응 시 복용 즉시 중단</li>
+            <li>복용 초기 가벼운 변화 가능</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="sec-m" style="background:var(--brown-700);color:var(--cream-100);">
+        <p style="font-size:11px;line-height:1.85;color:var(--brown-200);margin:0;">※ 본 한약은 한의사의 진료 후 체질·증상에 따라 개별 처방되며, 개인에 따라 효과는 다를 수 있습니다. 본 사이트는 비대면 진료 <strong style="color:var(--cream-50);font-weight:500;">접수</strong> 안내만 제공합니다. 의료광고 자율심의 기준 준수.</p>
+      </section>
+
+      <div class="disclaimer-bar">상세 견적은 진료 후 안내</div>
+      <div class="cta-dock">
+        <div class="cta-dock-item">카톡</div>
+        <div class="cta-dock-item cta-dock-item--accent">비대면 접수</div>
+        <div class="cta-dock-item">전화</div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
