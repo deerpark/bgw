@@ -1,0 +1,467 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* ──────────────────────────────────────────────────────────────
+ * 부개원 한의원 — Design Tokens
+ * Tier 1 (palette) → Tier 2 (semantic) → Tier 3 (shadcn slots)
+ * mockups/_tokens.css 가 단일 진실. 변경 시 양쪽 모두 갱신.
+ * ────────────────────────────────────────────────────────────── */
+
+:root {
+	/* ─── Tier 1 · Primitive Color ─── */
+
+	/* Brown — primary brand */
+	--brown-50: #faf6f1;
+	--brown-100: #f1e8db;
+	--brown-200: #e2d2bb;
+	--brown-300: #c9b08c;
+	--brown-400: #a6855e;
+	--brown-500: #80633f;
+	--brown-600: #5f4a2f;
+	--brown-700: #492e14;
+	--brown-800: #3a2613;
+	--brown-900: #2a1b0e;
+	--brown-950: #1a1109;
+
+	/* Vermilion — 단청 인장 accent */
+	--vermilion-50: #fbf1f1;
+	--vermilion-100: #f6dede;
+	--vermilion-200: #ecb8b8;
+	--vermilion-300: #dd8c8e;
+	--vermilion-400: #ce3d45;
+	--vermilion-500: #b0303a;
+	--vermilion-600: #8e222c;
+	--vermilion-700: #6b1a22;
+	--vermilion-800: #4a1219;
+	--vermilion-900: #2c0b0f;
+
+	/* Cream — 한지 surface */
+	--cream-50: #fffdf9;
+	--cream-100: #fbf6ec;
+	--cream-200: #f4ecd9;
+	--cream-300: #e9dbbe;
+
+	/* Sage — 한약재 그린 */
+	--sage-50: #f2f6f2;
+	--sage-100: #dde7dd;
+	--sage-200: #b8cdb8;
+	--sage-300: #8aae8c;
+	--sage-400: #5e8c61;
+	--sage-500: #466b49;
+	--sage-600: #344f36;
+
+	/* Neutral — warm gray */
+	--neutral-50: #faf8f5;
+	--neutral-100: #f2eee8;
+	--neutral-200: #e2dcd2;
+	--neutral-300: #c7bfb2;
+	--neutral-400: #9b9182;
+	--neutral-500: #6e6557;
+	--neutral-600: #4f483d;
+	--neutral-700: #3a3530;
+	--neutral-800: #25221e;
+	--neutral-900: #14120f;
+
+	/* System */
+	--system-success: #4f8c5e;
+	--system-warning: #c99632;
+	--system-danger: #b0303a;
+	--system-info: #4f6b8c;
+
+	/* ─── Tier 2 · Semantic (Light) ─── */
+
+	--bg-base: var(--cream-50);
+	--bg-subtle: var(--cream-100);
+	--bg-muted: var(--neutral-100);
+	--surface-base: #ffffff;
+	--surface-alt: var(--cream-100);
+
+	--ink-primary: var(--brown-800);
+	--ink-secondary: var(--brown-600);
+	--ink-muted: var(--neutral-500);
+	--ink-inverse: var(--cream-50);
+
+	--border-subtle: var(--neutral-200);
+	--border-default: var(--neutral-300);
+	--border-strong: var(--brown-700);
+
+	--brand: var(--brown-700);
+	--brand-hover: var(--brown-800);
+	--brand-pressed: var(--brown-900);
+	--brand-soft: var(--brown-100);
+
+	--vermilion: var(--vermilion-500);
+	--vermilion-hover: var(--vermilion-600);
+	--vermilion-soft: var(--vermilion-100);
+
+	--category-diet: var(--sage-500);
+	--category-diet-soft: var(--sage-100);
+	--category-immune: var(--vermilion-500);
+	--category-immune-soft: var(--vermilion-100);
+
+	--focus-ring: var(--vermilion-400);
+
+	/* ─── Tier 3 · shadcn slot mapping (Light) ─── */
+	--background: var(--bg-base);
+	--foreground: var(--ink-primary);
+	--card: var(--surface-base);
+	--card-foreground: var(--ink-primary);
+	--popover: var(--surface-base);
+	--popover-foreground: var(--ink-primary);
+	--primary: var(--brand);
+	--primary-foreground: var(--ink-inverse);
+	--secondary: var(--brand-soft);
+	--secondary-foreground: var(--brand);
+	--muted: var(--bg-muted);
+	--muted-foreground: var(--ink-muted);
+	--accent: var(--bg-muted);
+	--accent-foreground: var(--ink-primary);
+	--destructive: var(--system-danger);
+	--destructive-foreground: var(--ink-inverse);
+	--border: var(--border-subtle);
+	--input: var(--border-default);
+	--ring: var(--focus-ring);
+
+	--chart-1: var(--brand);
+	--chart-2: var(--vermilion);
+	--chart-3: var(--sage-500);
+	--chart-4: var(--brown-400);
+	--chart-5: var(--neutral-500);
+
+	--sidebar: var(--surface-base);
+	--sidebar-foreground: var(--ink-primary);
+	--sidebar-primary: var(--brand);
+	--sidebar-primary-foreground: var(--ink-inverse);
+	--sidebar-accent: var(--bg-muted);
+	--sidebar-accent-foreground: var(--ink-primary);
+	--sidebar-border: var(--border-subtle);
+	--sidebar-ring: var(--focus-ring);
+
+	/* ─── Spacing (4px base) ─── */
+	--space-0: 0;
+	--space-1: 4px;
+	--space-2: 8px;
+	--space-3: 12px;
+	--space-4: 16px;
+	--space-5: 20px;
+	--space-6: 24px;
+	--space-8: 32px;
+	--space-10: 40px;
+	--space-12: 48px;
+	--space-14: 56px;
+	--space-16: 64px;
+	--space-20: 80px;
+	--space-24: 96px;
+	--space-32: 128px;
+	--space-40: 160px;
+	--space-48: 192px;
+	--space-64: 256px;
+
+	/* ─── Radius ─── */
+	--radius-xs: 4px;
+	--radius-sm: 8px;
+	--radius-md: 12px;
+	--radius-lg: 16px;
+	--radius-xl: 24px;
+	--radius-2xl: 32px;
+	--radius-full: 9999px;
+	--radius: 16px;
+
+	/* ─── Shadow (warm brown) ─── */
+	--shadow-xs: 0 1px 2px rgba(73, 46, 20, 0.06);
+	--shadow-sm: 0 2px 8px rgba(73, 46, 20, 0.06);
+	--shadow-md: 0 8px 20px rgba(73, 46, 20, 0.08);
+	--shadow-lg: 0 16px 40px rgba(73, 46, 20, 0.1);
+	--shadow-xl: 0 24px 60px rgba(73, 46, 20, 0.14);
+	--shadow-inner: inset 0 1px 2px rgba(73, 46, 20, 0.08);
+
+	/* ─── Typography ─── */
+	/* CSS variables --font-pretendard, --font-ibm-plex-sans-kr, --font-noto-serif-kr,
+	 * --font-inter는 src/lib/fonts.ts의 next/font가 <html>에 주입.
+	 */
+	--font-sans:
+		var(--font-pretendard), var(--font-ibm-plex-sans-kr), -apple-system,
+		BlinkMacSystemFont, system-ui, "Apple SD Gothic Neo", "Noto Sans KR",
+		sans-serif;
+	--font-display:
+		var(--font-ibm-plex-sans-kr), var(--font-pretendard), sans-serif;
+	--font-serif: var(--font-noto-serif-kr), "Nanum Myeongjo", serif;
+	--font-mono: "JetBrains Mono", "D2Coding", "Menlo", monospace;
+	--font-eyebrow: var(--font-inter), var(--font-sans);
+
+	--text-xs: 12px;
+	--text-sm: 14px;
+	--text-base: 16px;
+	--text-lg: 18px;
+	--text-xl: 20px;
+	--text-2xl: 24px;
+	--text-3xl: 30px;
+	--text-4xl: 36px;
+	--text-5xl: clamp(40px, 4vw + 1rem, 56px);
+	--text-6xl: clamp(48px, 5vw + 1.25rem, 72px);
+
+	--leading-tight: 1.2;
+	--leading-snug: 1.35;
+	--leading-normal: 1.55;
+	--leading-loose: 1.75;
+
+	--tracking-tight: -0.02em;
+	--tracking-normal: 0;
+	--tracking-wide: 0.02em;
+	--tracking-koh1: -0.04em;
+
+	/* ─── Motion ─── */
+	--ease-standard: cubic-bezier(0.2, 0, 0, 1);
+	--ease-emphasized: cubic-bezier(0.2, 0, 0, 1.2);
+	--ease-decelerate: cubic-bezier(0, 0, 0, 1);
+	--ease-accelerate: cubic-bezier(0.3, 0, 1, 1);
+
+	--duration-instant: 80ms;
+	--duration-fast: 160ms;
+	--duration-base: 240ms;
+	--duration-slow: 320ms;
+	--duration-slower: 480ms;
+
+	/* ─── Container ─── */
+	--container-sm: 640px;
+	--container-md: 768px;
+	--container-lg: 1024px;
+	--container-xl: 1200px;
+	--container-2xl: 1280px;
+	--container-prose: 72ch;
+}
+
+/* ─── Tier 2/3 · Dark theme overrides
+ * Phase 1엔 토글 UI 노출 X. .dark 클래스가 수동으로 붙을 때만 활성.
+ * ────────────────────────────────────────── */
+.dark {
+	--bg-base: var(--neutral-900);
+	--bg-subtle: var(--neutral-800);
+	--bg-muted: var(--neutral-700);
+	--surface-base: #1a1814;
+	--surface-alt: var(--brown-900);
+
+	--ink-primary: var(--cream-100);
+	--ink-secondary: var(--neutral-300);
+	--ink-muted: var(--neutral-400);
+	--ink-inverse: var(--neutral-900);
+
+	--border-subtle: var(--neutral-700);
+	--border-default: var(--neutral-600);
+	--border-strong: var(--brown-300);
+
+	--brand: var(--brown-300);
+	--brand-hover: var(--brown-200);
+	--brand-pressed: var(--brown-100);
+	--brand-soft: rgba(73, 46, 20, 0.32);
+
+	--vermilion: var(--vermilion-300);
+	--vermilion-hover: var(--vermilion-200);
+	--vermilion-soft: rgba(204, 61, 69, 0.18);
+
+	--category-diet-soft: rgba(70, 107, 73, 0.22);
+	--category-immune-soft: rgba(176, 48, 58, 0.18);
+
+	--focus-ring: var(--vermilion-300);
+
+	/* shadcn slots auto-rebind via CSS var aliasing above */
+}
+
+/* ──────────────────────────────────────────────────────────────
+ * @theme inline — Tailwind v4 utility class generation
+ * shadcn slot 매핑 + 부개원 브랜드 utility 확장.
+ * ────────────────────────────────────────────────────────────── */
+@theme inline {
+	/* shadcn semantic slots (bg-background, text-foreground, ...) */
+	--color-background: var(--background);
+	--color-foreground: var(--foreground);
+	--color-card: var(--card);
+	--color-card-foreground: var(--card-foreground);
+	--color-popover: var(--popover);
+	--color-popover-foreground: var(--popover-foreground);
+	--color-primary: var(--primary);
+	--color-primary-foreground: var(--primary-foreground);
+	--color-secondary: var(--secondary);
+	--color-secondary-foreground: var(--secondary-foreground);
+	--color-muted: var(--muted);
+	--color-muted-foreground: var(--muted-foreground);
+	--color-accent: var(--accent);
+	--color-accent-foreground: var(--accent-foreground);
+	--color-destructive: var(--destructive);
+	--color-border: var(--border);
+	--color-input: var(--input);
+	--color-ring: var(--ring);
+	--color-chart-1: var(--chart-1);
+	--color-chart-2: var(--chart-2);
+	--color-chart-3: var(--chart-3);
+	--color-chart-4: var(--chart-4);
+	--color-chart-5: var(--chart-5);
+	--color-sidebar: var(--sidebar);
+	--color-sidebar-foreground: var(--sidebar-foreground);
+	--color-sidebar-primary: var(--sidebar-primary);
+	--color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+	--color-sidebar-accent: var(--sidebar-accent);
+	--color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+	--color-sidebar-border: var(--sidebar-border);
+	--color-sidebar-ring: var(--sidebar-ring);
+
+	/* 부개원 브랜드 utility (bg-brand, text-ink, ...) */
+	--color-brand: var(--brand);
+	--color-brand-hover: var(--brand-hover);
+	--color-brand-pressed: var(--brand-pressed);
+	--color-brand-soft: var(--brand-soft);
+	--color-vermilion: var(--vermilion);
+	--color-vermilion-hover: var(--vermilion-hover);
+	--color-vermilion-soft: var(--vermilion-soft);
+	--color-ink: var(--ink-primary);
+	--color-ink-secondary: var(--ink-secondary);
+	--color-ink-muted: var(--ink-muted);
+	--color-ink-inverse: var(--ink-inverse);
+	--color-surface: var(--surface-base);
+	--color-surface-alt: var(--surface-alt);
+	--color-bg-base: var(--bg-base);
+	--color-bg-subtle: var(--bg-subtle);
+	--color-bg-muted: var(--bg-muted);
+	--color-border-subtle: var(--border-subtle);
+	--color-border-default: var(--border-default);
+	--color-border-strong: var(--border-strong);
+	--color-category-diet: var(--category-diet);
+	--color-category-diet-soft: var(--category-diet-soft);
+	--color-category-immune: var(--category-immune);
+	--color-category-immune-soft: var(--category-immune-soft);
+
+	/* primitive scales — bg-brown-700 등 직접 호출 */
+	--color-brown-50: var(--brown-50);
+	--color-brown-100: var(--brown-100);
+	--color-brown-200: var(--brown-200);
+	--color-brown-300: var(--brown-300);
+	--color-brown-400: var(--brown-400);
+	--color-brown-500: var(--brown-500);
+	--color-brown-600: var(--brown-600);
+	--color-brown-700: var(--brown-700);
+	--color-brown-800: var(--brown-800);
+	--color-brown-900: var(--brown-900);
+	--color-brown-950: var(--brown-950);
+	--color-cream-50: var(--cream-50);
+	--color-cream-100: var(--cream-100);
+	--color-cream-200: var(--cream-200);
+	--color-cream-300: var(--cream-300);
+	--color-vermilion-50: var(--vermilion-50);
+	--color-vermilion-100: var(--vermilion-100);
+	--color-vermilion-200: var(--vermilion-200);
+	--color-vermilion-300: var(--vermilion-300);
+	--color-vermilion-400: var(--vermilion-400);
+	--color-vermilion-500: var(--vermilion-500);
+	--color-vermilion-600: var(--vermilion-600);
+	--color-vermilion-700: var(--vermilion-700);
+	--color-vermilion-800: var(--vermilion-800);
+	--color-vermilion-900: var(--vermilion-900);
+	--color-sage-50: var(--sage-50);
+	--color-sage-100: var(--sage-100);
+	--color-sage-200: var(--sage-200);
+	--color-sage-300: var(--sage-300);
+	--color-sage-400: var(--sage-400);
+	--color-sage-500: var(--sage-500);
+	--color-sage-600: var(--sage-600);
+
+	/* fonts */
+	--font-sans: var(--font-sans);
+	--font-display: var(--font-display);
+	--font-serif: var(--font-serif);
+	--font-mono: var(--font-mono);
+	--font-eyebrow: var(--font-eyebrow);
+
+	/* radius */
+	--radius-xs: var(--radius-xs);
+	--radius-sm: var(--radius-sm);
+	--radius-md: var(--radius-md);
+	--radius-lg: var(--radius-lg);
+	--radius-xl: var(--radius-xl);
+	--radius-2xl: var(--radius-2xl);
+	--radius-full: var(--radius-full);
+
+	/* shadow */
+	--shadow-xs: var(--shadow-xs);
+	--shadow-sm: var(--shadow-sm);
+	--shadow-md: var(--shadow-md);
+	--shadow-lg: var(--shadow-lg);
+	--shadow-xl: var(--shadow-xl);
+
+	/* easing */
+	--ease-standard: var(--ease-standard);
+	--ease-emphasized: var(--ease-emphasized);
+	--ease-decelerate: var(--ease-decelerate);
+	--ease-accelerate: var(--ease-accelerate);
+
+	/* container max-widths */
+	--container-sm: var(--container-sm);
+	--container-md: var(--container-md);
+	--container-lg: var(--container-lg);
+	--container-xl: var(--container-xl);
+	--container-2xl: var(--container-2xl);
+}
+
+/* ──────────────────────────────────────────────────────────────
+ * Base layer — reset + typography + selection + focus
+ * ────────────────────────────────────────────────────────────── */
+@layer base {
+	* {
+		@apply border-border outline-ring/50;
+	}
+	html {
+		-webkit-text-size-adjust: 100%;
+		-webkit-font-smoothing: antialiased;
+		scroll-behavior: smooth;
+		/* sticky Header(h-16=64px) + AnchorNav(~56px) 만큼 anchor 스크롤 시 보정.
+		 * scroll-padding-top은 모든 in-page anchor 점프에 일괄 적용되며
+		 * AnchorNav가 없는 페이지에서도 해롭지 않다 (소수의 추가 여백만 발생).
+		 */
+		scroll-padding-top: 7.5rem;
+	}
+	@media (min-width: 1024px) {
+		html {
+			/* lg: Header h-20=80px + AnchorNav ~64px */
+			scroll-padding-top: 9rem;
+		}
+	}
+	body {
+		@apply bg-background text-foreground font-sans;
+		font-size: var(--text-base);
+		line-height: var(--leading-normal);
+		text-rendering: optimizeLegibility;
+	}
+	img,
+	picture,
+	video,
+	canvas {
+		max-width: 100%;
+		height: auto;
+		display: block;
+	}
+	::selection {
+		background: var(--vermilion-200);
+		color: var(--vermilion-900);
+	}
+	:focus-visible {
+		outline: 2px solid var(--focus-ring);
+		outline-offset: 2px;
+		border-radius: var(--radius-xs);
+	}
+}
+
+/* ──────────────────────────────────────────────────────────────
+ * Reduced motion respect — Framer Motion useReducedMotion 도 함께
+ * ────────────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+		scroll-behavior: auto !important;
+	}
+}
