@@ -70,6 +70,8 @@ const STATIC_ROUTES = [
 		changeFrequency: "monthly" as const,
 	},
 	{ path: "/blog", priority: 0.6, changeFrequency: "daily" as const },
+	{ path: "/privacy", priority: 0.3, changeFrequency: "yearly" as const },
+	{ path: "/terms", priority: 0.3, changeFrequency: "yearly" as const },
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {

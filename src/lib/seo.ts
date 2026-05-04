@@ -104,7 +104,11 @@ export function clinicJsonLd() {
 			postalCode: clinic.address.zip,
 			addressCountry: "KR",
 		},
-		// 정확한 위경도는 운영자가 운영 콘솔에서 보정 (TODO: settings 테이블 도입 후).
+		geo: {
+			"@type": "GeoCoordinates",
+			latitude: clinic.geo.lat,
+			longitude: clinic.geo.lng,
+		},
 		// 한국 한의학(Traditional Korean Medicine)은 Schema.org 표준 enum에 없어서
 		// 가까운 값(`TraditionalChineseMedicine`) + 한글 설명으로 보완.
 		medicalSpecialty: "TraditionalChineseMedicine",

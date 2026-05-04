@@ -1,31 +1,17 @@
-import { DirectorPortrait } from "@/components/sections/DirectorPortrait";
+import Image from "next/image";
 import { SectionHead } from "@/components/sections/SectionHead";
+import { clinicPhoto } from "@/data/clinic-photos";
 import { clinic } from "@/lib/settings";
 
 /**
  * /clinic 의료진 섹션 — mockups/clinic.html #doctors.
  *
  * 2 카드:
- *   1. 윤정호 원장 카드 — DirectorPortrait + 책장 + 인장 + 정보
+ *   1. 윤정호 원장 카드 — 실제 사진(진료실 책장 포함) + 인장 + 정보
  *   2. 인증·활동 카드 — brown-900 다크 배경 + 證 뱃지 3개 (학회 정회원)
  */
 
-interface Book {
-	label: string;
-	color: string;
-	dark?: boolean;
-}
-
-const BOOKS: readonly Book[] = [
-	{ label: "東醫", color: "from-brown-700 to-brown-900" },
-	{ label: "寶鑑", color: "from-vermilion-700 to-vermilion-900" },
-	{ label: "本草", color: "from-cream-300 to-brown-300", dark: true },
-	{ label: "方劑", color: "from-[#B8924A] to-brown-500" },
-	{ label: "經穴", color: "from-sage-500 to-sage-600" },
-	{ label: "鍼灸", color: "from-neutral-700 to-neutral-900" },
-	{ label: "湯液", color: "from-brown-700 to-brown-900" },
-	{ label: "皇帝", color: "from-vermilion-700 to-vermilion-900" },
-];
+const PORTRAIT = clinicPhoto("director");
 
 const CERTIFICATES = [
 	{ name: "한방비만학회", note: "정회원 · 회원증 인증" },
@@ -57,33 +43,15 @@ export function DoctorsSection() {
 				{/* Director portrait card */}
 				<article className="bg-surface border border-border-subtle rounded-3xl overflow-hidden">
 					<figure className="relative aspect-square overflow-hidden bg-brown-950">
-						{/* bookshelf right 40% */}
-						<div className="absolute right-0 top-0 bottom-0 w-[40%] bg-brown-950">
-							<div className="grid grid-cols-4 gap-[2px] h-full p-[14px_6px]">
-								{BOOKS.map((book) => (
-									<div
-										key={book.label}
-										className={`relative rounded-[2px] flex items-center justify-center font-serif font-bold text-[12px] leading-tight tracking-[0.4em] py-3 [writing-mode:vertical-rl] [transform:rotate(180deg)] [text-shadow:0_1px_2px_rgba(0,0,0,0.4)] bg-gradient-to-b ${book.color} ${
-											book.dark
-												? "text-brown-800 [text-shadow:none]"
-												: "text-cream-50/65"
-										}`}
-										aria-hidden="true"
-									>
-										{book.label}
-									</div>
-								))}
-							</div>
-						</div>
-						{/* portrait left 60% */}
-						<div className="absolute left-0 top-0 bottom-0 right-[40%] bg-gradient-to-b from-neutral-100 to-cream-200">
-							<div className="absolute left-1/2 bottom-0 -translate-x-1/2 w-[86%] max-w-[320px]">
-								<DirectorPortrait />
-							</div>
-						</div>
-						{/* stamp */}
+						<Image
+							src={`/photos/clinic/${PORTRAIT.slug}.webp`}
+							alt={`${clinic.director.nameKo} ${clinic.director.title}`}
+							fill
+							sizes="(max-width: 1024px) 100vw, 540px"
+							className="object-cover object-[58%_center]"
+						/>
 						<div
-							className="absolute bottom-4 right-[calc(40%+16px)] bg-vermilion text-cream-50 px-2.5 py-2 rounded font-serif font-bold text-[10px] leading-tight [writing-mode:vertical-rl] shadow-md"
+							className="absolute bottom-4 right-4 bg-vermilion text-cream-50 px-2.5 py-2 rounded font-serif font-bold text-[10px] leading-tight [writing-mode:vertical-rl] shadow-md"
 							role="img"
 							aria-label="인장: 富梄開印"
 						>

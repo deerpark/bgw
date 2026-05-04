@@ -44,3 +44,7 @@ next-env.d.ts
 # supabase
 supabase/.temp/
 supabase/.branches
+
+# 사진 원본(고용량) — 변환된 webp는 public/photos/clinic/에 커밋, 원본은 운영자 로컬 보관.
+# 재최적화: node scripts/optimize-clinic-photos.mjs
+reference/images/

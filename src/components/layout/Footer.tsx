@@ -28,6 +28,11 @@ export function Footer() {
 							{"  ·  "}
 							<a href={`mailto:${clinic.email}`}>{clinic.email}</a>
 						</p>
+						<p className="mt-2 text-[12px] leading-[1.7] text-brown-300">
+							대표자 {clinic.business.representative}
+							{"  ·  "}
+							사업자등록번호 {clinic.business.registrationNo}
+						</p>
 						<p className="mt-5 text-[11px] leading-[1.7] text-brown-300">
 							※ 본 사이트는 비대면 진료{" "}
 							<strong className="text-cream-50 font-medium">접수 안내</strong>만

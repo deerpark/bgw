@@ -1,30 +1,16 @@
+import Image from "next/image";
+import { clinicPhoto } from "@/data/clinic-photos";
 import { clinic } from "@/lib/settings";
-import { DirectorPortrait } from "./DirectorPortrait";
 
 /**
  * 원장 메시지 섹션 — mockups/home.html "원장의 말".
- * brown-900 다크 배경 · 좌 portrait+책장 / 우 인용+이름+소속.
+ * brown-900 다크 배경 · 좌 사진(실제 진료실 책장 포함) / 우 인용+이름+소속.
  *
- * Phase 1: SVG 일러스트 portrait. 실제 사진 도입 시 [DirectorPortrait](./DirectorPortrait.tsx) 교체.
+ * Phase 1 Week 6: 실제 원장 사진(/photos/clinic/director.webp)으로 교체.
+ *   사진 자체에 진료실 책장이 함께 담겨 SVG 책장 backdrop 불필요.
  */
 
-interface Book {
-	label: string;
-	color: string;
-	/** true면 책등 색이 밝아 어두운 글씨 사용. */
-	dark?: boolean;
-}
-
-const BOOKS: readonly Book[] = [
-	{ label: "東醫", color: "from-brown-700 to-brown-900" },
-	{ label: "寶鑑", color: "from-vermilion-700 to-vermilion-900" },
-	{ label: "本草", color: "from-cream-300 to-brown-300", dark: true },
-	{ label: "方劑", color: "from-[#B8924A] to-brown-500" },
-	{ label: "經穴", color: "from-sage-500 to-sage-600" },
-	{ label: "鍼灸", color: "from-neutral-700 to-neutral-900" },
-	{ label: "湯液", color: "from-brown-700 to-brown-900" },
-	{ label: "皇帝", color: "from-vermilion-700 to-vermilion-900" },
-];
+const PORTRAIT = clinicPhoto("director");
 
 export function DirectorMessage() {
 	return (
@@ -36,36 +22,17 @@ export function DirectorMessage() {
 
 			<div className="relative mx-auto max-w-[1280px] grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16 lg:items-center">
 				<figure className="relative">
-					<div className="relative aspect-[4/5] rounded-3xl overflow-hidden shadow-xl">
-						{/* Bookshelf backdrop */}
-						<div className="absolute right-0 top-0 bottom-0 w-[38%] bg-brown-950">
-							<div className="grid grid-cols-4 gap-[2px] h-full p-[14px_6px]">
-								{BOOKS.map((book) => (
-									<div
-										key={book.label}
-										className={`relative rounded-[2px] flex items-center justify-center font-serif font-bold text-[12px] leading-tight tracking-[0.4em] py-3 [writing-mode:vertical-rl] [transform:rotate(180deg)] [text-shadow:0_1px_2px_rgba(0,0,0,0.4)] bg-gradient-to-b ${book.color} ${
-											book.dark
-												? "text-brown-800 [text-shadow:none]"
-												: "text-cream-50/65"
-										}`}
-										aria-hidden="true"
-									>
-										{book.label}
-									</div>
-								))}
-							</div>
-						</div>
-
-						{/* Portrait area */}
-						<div className="absolute left-0 top-0 bottom-0 right-[38%] bg-gradient-to-b from-neutral-100 to-cream-200">
-							<div className="absolute left-1/2 bottom-0 -translate-x-1/2 w-4/5 max-w-[280px]">
-								<DirectorPortrait />
-							</div>
-						</div>
-
-						{/* Stamp overlay */}
+					<div className="relative aspect-[4/5] rounded-3xl overflow-hidden shadow-xl bg-brown-950">
+						<Image
+							src={`/photos/clinic/${PORTRAIT.slug}.webp`}
+							alt={`${clinic.director.nameKo} ${clinic.director.title}`}
+							fill
+							sizes="(max-width: 1024px) 90vw, 45vw"
+							className="object-cover object-[58%_center]"
+						/>
+						{/* Stamp overlay — 사진 우하단 인장 */}
 						<div
-							className="absolute bottom-4 right-[calc(38%+16px)] bg-vermilion text-cream-50 px-2.5 py-2 rounded font-serif font-bold text-[10px] leading-[1.2] [writing-mode:vertical-rl] shadow-md"
+							className="absolute bottom-4 right-4 bg-vermilion text-cream-50 px-2.5 py-2 rounded font-serif font-bold text-[10px] leading-[1.2] [writing-mode:vertical-rl] shadow-md"
 							aria-label="인장: 富梄開印"
 							role="img"
 						>

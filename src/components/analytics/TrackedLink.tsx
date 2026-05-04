@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import type { ComponentProps, MouseEvent } from "react";
-import { type CtaProps, type EventName, track } from "@/lib/analytics";
+import { type CtaProps, EVENT, type EventName, track } from "@/lib/analytics";
+import { isKakaoChatUrl, kakaoChatAppScheme } from "@/lib/settings";
 
 type LinkBaseProps = Omit<ComponentProps<typeof Link>, "onClick">;
 
@@ -24,6 +25,10 @@ interface TrackedLinkProps extends LinkBaseProps {
  *       비대면 진료 접수 →
  *     </TrackedLink>
  *   </Button>
+ *
+ * 카카오 채팅 URL 자동 감지: href가 `https://pf.kakao.com/_<id>/chat`이면 Android에서
+ *   `kakaoplus://` 앱 스킴을 먼저 시도하고 1.5s 내 페이지가 가려지지 않으면 웹 URL로 fallback.
+ *   iOS는 pf.kakao.com 자체가 Universal Link라 별도 처리 불필요.
  */
 export function TrackedLink({
 	event,
@@ -32,9 +37,36 @@ export function TrackedLink({
 	children,
 	...rest
 }: TrackedLinkProps & { onClick?: never }) {
-	const handleClick = (_e: MouseEvent<HTMLAnchorElement>) => {
+	const handleClick = (e: MouseEvent<HTMLAnchorElement>) => {
 		track(event, eventProps);
-		// 네비게이션은 Link가 처리. preventDefault 호출 안 함.
+
+		// 카카오 chat URL + Android면 앱 스킴 우선 시도
+		if (
+			event === EVENT.KAKAO_CHAT_OPEN &&
+			typeof window !== "undefined" &&
+			/Android/i.test(navigator.userAgent)
+		) {
+			const href = typeof rest.href === "string" ? rest.href : "";
+			if (isKakaoChatUrl(href)) {
+				const appUrl = kakaoChatAppScheme();
+				if (appUrl) {
+					e.preventDefault();
+					// 1.5s 내 페이지가 hidden 되지 않으면(=앱 전환 실패) 웹 URL로 fallback.
+					const fallback = window.setTimeout(() => {
+						window.location.href = href;
+					}, 1500);
+					const onVisChange = () => {
+						if (document.hidden) window.clearTimeout(fallback);
+					};
+					document.addEventListener("visibilitychange", onVisChange, {
+						once: true,
+					});
+					window.location.href = appUrl;
+					return;
+				}
+			}
+		}
+		// 그 외는 Link 기본 네비게이션 (preventDefault 호출 안 함)
 	};
 
 	return (

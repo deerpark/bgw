@@ -14,6 +14,14 @@ export const clinic = {
 	nameEn: "BUGAEWON Korean Medicine Clinic",
 	tagline: "부평 비대면 한약 진료",
 
+	/**
+	 * 의료기관 사업자/대표자 표기 — 의료광고법 제 56조 + 부가가치세법 시행령에 따라 푸터 노출.
+	 */
+	business: {
+		registrationNo: "435-09-02847",
+		representative: "윤정호",
+	},
+
 	phone: {
 		display: "032-361-9991",
 		tel: "tel:0323619991",
@@ -26,6 +34,15 @@ export const clinic = {
 		landmark: "파리바게뜨 4층 · 부개주공 5·7단지 사이",
 		district: "인천광역시 부평구 부개동",
 		zip: "21438",
+	},
+	/**
+	 * 위경도 — ClinicMap iframe + JSON-LD geo 속성에서 사용.
+	 * Phase 2 settings 테이블 이관 시 운영자 콘솔에서 보정 가능하게 한다.
+	 * 좌표 출처: 부흥로 414 모아빌딩 (네이버 지도 기준 근사값).
+	 */
+	geo: {
+		lat: 37.4929,
+		lng: 126.7351,
 	},
 
 	transit: {
@@ -65,6 +82,27 @@ export const channels = {
 export function kakaoChatUrl(): string {
 	const id = env.KAKAO_CHANNEL_ID();
 	return id ? `https://pf.kakao.com/_${id}/chat` : "https://pf.kakao.com/";
+}
+
+/**
+ * 카카오톡 앱 deeplink — 모바일 앱이 설치되어 있으면 즉시 채팅창으로 이동.
+ *
+ * iOS는 `pf.kakao.com` 자체가 Universal Link라 웹 URL만으로 앱 전환이 일어남.
+ * Android는 별도 스킴이 필요. 클릭 시 [TrackedLink](src/components/analytics/TrackedLink.tsx)에서
+ * UA 검사 후 이 스킴을 시도하고 1.5s 내 페이지가 안 가려지면 웹 URL로 fallback.
+ *
+ * Channel ID 미설정 시 `null` — TrackedLink는 fallback 없이 웹 URL만 사용.
+ */
+export function kakaoChatAppScheme(): string | null {
+	const id = env.KAKAO_CHANNEL_ID();
+	return id ? `kakaoplus://plusfriend/talk/chat/_${id}` : null;
+}
+
+/**
+ * 카카오 채팅 웹 URL 판별 — TrackedLink 모바일 fallback 트리거.
+ */
+export function isKakaoChatUrl(href: string): boolean {
+	return /^https:\/\/pf\.kakao\.com\/_[^/]+\/chat\b/.test(href);
 }
 
 /**

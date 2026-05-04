@@ -1,5 +1,6 @@
 import { ExternalLink } from "lucide-react";
 import { TrackedLink } from "@/components/analytics/TrackedLink";
+import { ClinicMap } from "@/components/sections/clinic/ClinicMap";
 import { SectionHead } from "@/components/sections/SectionHead";
 import { channels, clinic } from "@/lib/settings";
 import { cn } from "@/lib/utils";
@@ -7,7 +8,7 @@ import { cn } from "@/lib/utils";
 /**
  * 오시는길 — mockups/clinic.html #access.
  *
- * Phase 1엔 4개 info card + 3개 외부 지도 deeplink (네이버/카카오/T맵).
+ * Phase 1: ClinicMap(OSM iframe) + 3개 외부 지도 deeplink + 4개 info card.
  * 커스텀 SVG 약도(mockups/clinic-map.html)는 Phase 2 이후 별도 구현.
  */
 
@@ -59,6 +60,8 @@ export function AccessSection() {
 			/>
 
 			<div className="mx-auto max-w-[1080px]">
+				<ClinicMap />
+
 				{/* Map link buttons (3 channels) */}
 				<div className="grid gap-3 sm:grid-cols-3 mb-8">
 					<MapButton
