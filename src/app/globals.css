@@ -179,18 +179,18 @@
 	--shadow-inner: inset 0 1px 2px rgba(73, 46, 20, 0.08);
 
 	/* ─── Typography ─── */
-	/* CSS variables --font-pretendard, --font-ibm-plex-sans-kr, --font-noto-serif-kr,
-	 * --font-inter는 src/lib/fonts.ts의 next/font가 <html>에 주입.
+	/* Phase 1 Week 6 LCP 최적화 — IBM Plex Sans KR / Inter 제거.
+	 * Pretendard(--font-pretendard)가 sans/display/eyebrow 모두 담당.
+	 * Noto Serif KR(--font-noto-serif-kr)는 한자 도장·책등 라벨에 한해 사용.
+	 * 실제 변수 주입은 src/lib/fonts.ts → next/font가 <html>에서 수행.
 	 */
 	--font-sans:
-		var(--font-pretendard), var(--font-ibm-plex-sans-kr), -apple-system,
-		BlinkMacSystemFont, system-ui, "Apple SD Gothic Neo", "Noto Sans KR",
-		sans-serif;
-	--font-display:
-		var(--font-ibm-plex-sans-kr), var(--font-pretendard), sans-serif;
+		var(--font-pretendard), -apple-system, BlinkMacSystemFont, system-ui,
+		"Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+	--font-display: var(--font-pretendard), sans-serif;
 	--font-serif: var(--font-noto-serif-kr), "Nanum Myeongjo", serif;
 	--font-mono: "JetBrains Mono", "D2Coding", "Menlo", monospace;
-	--font-eyebrow: var(--font-inter), var(--font-sans);
+	--font-eyebrow: var(--font-pretendard), var(--font-sans);
 
 	--text-xs: 12px;
 	--text-sm: 14px;
