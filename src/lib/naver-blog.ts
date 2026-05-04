@@ -22,6 +22,8 @@ export interface NaverBlogPost {
 	excerpt: string;
 	cover: string | null;
 	pubDate: string | null;
+	/** "2026.05.03" 형식의 짧은 날짜 라벨. pubDate 파싱 실패 시 빈 문자열. */
+	pubDateLabel: string;
 }
 
 /**
@@ -69,13 +71,15 @@ function parseRssItems(xml: string): NaverBlogPost[] {
 
 		if (title && link) {
 			const description = extractTag(block, "description") ?? "";
+			const pubDate = extractTag(block, "pubDate");
 			items.push({
 				title,
 				link,
 				category: extractTag(block, "category") ?? "",
 				excerpt: stripHtml(description).slice(0, 110).trim(),
 				cover: extractFirstImage(description),
-				pubDate: extractTag(block, "pubDate"),
+				pubDate,
+				pubDateLabel: formatPubDate(pubDate),
 			});
 		}
 		match = itemRegex.exec(xml);
@@ -119,6 +123,21 @@ function stripHtml(html: string): string {
  * 네이버 RSS의 link는 ?fromRss=true&trackingCode=rss 파라미터가 붙어 있다.
  * 외부 노출용으로 깔끔한 URL을 만들기 위해 제거.
  */
+/**
+ * "Sun, 03 May 2026 12:00:00 +0900" → "2026.05.03"
+ * 파싱 실패 시 빈 문자열.
+ */
+function formatPubDate(raw: string | null): string {
+	if (!raw) return "";
+	const t = Date.parse(raw);
+	if (Number.isNaN(t)) return "";
+	const d = new Date(t);
+	const yyyy = d.getFullYear();
+	const mm = String(d.getMonth() + 1).padStart(2, "0");
+	const dd = String(d.getDate()).padStart(2, "0");
+	return `${yyyy}.${mm}.${dd}`;
+}
+
 function cleanLink(link: string | null): string | null {
 	if (!link) return null;
 	try {

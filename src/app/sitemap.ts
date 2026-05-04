@@ -39,6 +39,7 @@ const STATIC_ROUTES = [
 		changeFrequency: "monthly" as const,
 	},
 	{ path: "/clinic", priority: 0.85, changeFrequency: "monthly" as const },
+	{ path: "/treatments", priority: 0.8, changeFrequency: "monthly" as const },
 	{
 		path: "/treatments/insurance",
 		priority: 0.7,
