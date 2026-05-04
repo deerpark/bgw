@@ -17,7 +17,7 @@ export const metadata = buildMetadata({
 	og: {
 		category: "다이어트",
 		title: "다이어트 한약 3종",
-		subtitle: "부개 감비환·감비탕·디톡스 — 한의사 비대면 처방",
+		subtitle: "부개 감비환·감비탕·디톡스 — 한의사 비대면 진료 후 처방",
 	},
 });
 

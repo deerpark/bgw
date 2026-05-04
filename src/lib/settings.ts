@@ -64,6 +64,8 @@ export const clinic = {
 	director: {
 		nameKo: "윤정호",
 		title: "대표 한의사",
+		/** 보건복지부 발급 한의사 면허번호 — 의료법 §17·§42에 따라 표기 의무. */
+		licenseNo: "24721",
 		memberships: [
 			"한방비만학회 정회원",
 			"대한한의학회 정회원",

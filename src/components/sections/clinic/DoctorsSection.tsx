@@ -70,7 +70,9 @@ export function DoctorsSection() {
 								尹正鎬 · YOON Jeong-ho
 							</small>
 						</h3>
-						<p className="mt-2 text-sm text-ink-muted">한의사 면허번호 ○○○○○</p>
+						<p className="mt-2 text-sm text-ink-muted">
+							한의사 면허번호 제 {clinic.director.licenseNo}호
+						</p>
 						<dl className="mt-5 flex flex-col gap-2.5 text-sm">
 							<div className="flex gap-3">
 								<dt className="font-semibold text-ink-primary min-w-[48px]">

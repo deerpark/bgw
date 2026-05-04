@@ -13,7 +13,7 @@ import { buildMetadata } from "@/lib/seo";
 export const metadata = buildMetadata({
 	title: "부개원 한의원 — 부평 비대면 한약 진료",
 	description:
-		"부개 감비환·감비탕·디톡스 다이어트 한약과 공진단·경옥고·녹용보약 면역 한약을 한의사 비대면 진료로 처방받고 자택에서 수령하세요.",
+		"부개 감비환·감비탕·디톡스 다이어트 한약과 공진단·경옥고·녹용보약 면역 한약. 한의사 비대면 진료 접수 후 처방이 결정되며, 처방된 한약은 자택에서 수령하실 수 있습니다.",
 	path: "/",
 	og: {
 		category: "부평 한의원",

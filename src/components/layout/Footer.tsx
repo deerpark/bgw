@@ -127,7 +127,7 @@ export function Footer() {
 					<span className="flex flex-wrap gap-4 md:gap-5">
 						<Link href="/privacy">개인정보처리방침</Link>
 						<Link href="/terms">이용약관</Link>
-						<span>의료광고 자율심의 통과</span>
+						<span>의료광고 자율심의 기준 준수</span>
 					</span>
 				</div>
 			</div>
