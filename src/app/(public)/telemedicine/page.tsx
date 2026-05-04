@@ -15,6 +15,11 @@ export const metadata = buildMetadata({
 	description:
 		"네이버폼·카카오톡·전화 3채널로 비대면 한의사 진료를 접수하세요. 5단계 절차·문진표 미리보기·자주 묻는 질문 안내.",
 	path: "/telemedicine",
+	og: {
+		category: "비대면 진료",
+		title: "비대면 진료 접수",
+		subtitle: "네이버폼·카카오톡·전화 — 한의사 통화 진료 후 처방·택배",
+	},
 });
 
 const FAQ_ITEMS = [

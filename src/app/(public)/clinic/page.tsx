@@ -13,6 +13,11 @@ export const metadata = buildMetadata({
 	description:
 		"부평 부개동 부개원 한의원 소개. 윤정호 원장의 학력·경력·소속 학회, 진료시간, 오시는길(1호선 부개역 도보 12분).",
 	path: "/clinic",
+	og: {
+		category: "한의원 소개",
+		title: "부개원 한의원",
+		subtitle: "부평 부개동 · 윤정호 원장 · 1호선 부개역 도보 12분",
+	},
 });
 
 const ANCHOR_ITEMS = [

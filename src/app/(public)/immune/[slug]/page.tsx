@@ -44,6 +44,11 @@ export async function generateMetadata({ params }: PageProps) {
 		title: `${product.nameKo} — ${product.compare.formShort}`,
 		description: `${product.essence} ${product.compare.audience} 분께 권장. 한의사 비대면 진료 후 처방됩니다.`,
 		path: product.href,
+		og: {
+			category: "면역 한약",
+			title: product.nameKo,
+			subtitle: product.compare.formShort,
+		},
 	});
 }
 

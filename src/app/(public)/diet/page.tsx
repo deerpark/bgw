@@ -14,6 +14,11 @@ export const metadata = buildMetadata({
 	description:
 		"부개원 한의원의 한방 다이어트 3종(부개 감비환·감비탕·디톡스)을 한자리에서 비교해 보세요. 한의사 비대면 진료 후 체질·증상에 맞춰 처방됩니다.",
 	path: "/diet",
+	og: {
+		category: "다이어트",
+		title: "다이어트 한약 3종",
+		subtitle: "부개 감비환·감비탕·디톡스 — 한의사 비대면 처방",
+	},
 });
 
 /**

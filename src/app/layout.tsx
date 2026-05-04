@@ -1,3 +1,5 @@
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata, Viewport } from "next";
 import { PostHogProvider } from "@/components/analytics/PostHogProvider";
 import { env } from "@/lib/env";
@@ -30,6 +32,15 @@ export default function RootLayout({
 		<html lang="ko" className={fontVariables} suppressHydrationWarning>
 			<body className="min-h-dvh bg-background text-foreground antialiased">
 				<PostHogProvider>{children}</PostHogProvider>
+				{/*
+				 * Vercel Analytics — 페이지뷰·트래픽. PostHog와 보완 관계:
+				 *   PostHog          — 퍼널·코호트·커스텀 이벤트(CTA 클릭 5종)
+				 *   Vercel Analytics — 라우트별 방문량/리퍼러 (Vercel 콘솔 통합)
+				 *   Speed Insights   — Core Web Vitals(LCP/INP/CLS) 라우트별 측정
+				 * Vercel 환경 외(로컬)에서는 자동 no-op.
+				 */}
+				<Analytics />
+				<SpeedInsights />
 			</body>
 		</html>
 	);

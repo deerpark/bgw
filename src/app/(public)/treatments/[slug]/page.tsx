@@ -41,6 +41,11 @@ export async function generateMetadata({ params }: PageProps) {
 		title: `${treatment.nameKo} — 부개원 한의원`,
 		description: treatment.essence,
 		path: `/treatments/${treatment.slug}`,
+		og: {
+			category: "진료과목",
+			title: treatment.nameKo,
+			subtitle: treatment.essence,
+		},
 	});
 }
 

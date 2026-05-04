@@ -15,6 +15,11 @@ export const metadata = buildMetadata({
 	description:
 		"부개 감비환·감비탕·디톡스 다이어트 한약과 공진단·경옥고·녹용보약 면역 한약을 한의사 비대면 진료로 처방받고 자택에서 수령하세요.",
 	path: "/",
+	og: {
+		category: "부평 한의원",
+		title: "부평 비대면 한약 진료",
+		subtitle: "다이어트·면역 한약을 한의사 비대면 진료 후 처방",
+	},
 });
 
 /**

@@ -8,19 +8,43 @@ import { channels, clinic } from "@/lib/settings";
  * 각 페이지의 generateMetadata에서 호출하여 일관된 OG·Twitter·canonical을
  * 자동으로 채운다. metadataBase는 root layout에서 한 번만 설정.
  */
+export interface OgImageParams {
+	/** 메인 헤딩 — 한글 가능. 미지정 시 정적 영문 OG 폴백. */
+	title?: string;
+	/** 서브 라인. */
+	subtitle?: string;
+	/** 상단 eyebrow 라벨 (예: "다이어트", "면역", "진료과목"). */
+	category?: string;
+}
+
+/**
+ * 동적 OG 이미지 URL — `/og?title=...&subtitle=...&category=...`.
+ * 모든 값이 비면 `/og` (정적 영문 OG)로 폴백.
+ */
+export function buildOgPath(params: OgImageParams = {}): string {
+	const search = new URLSearchParams();
+	if (params.title) search.set("title", params.title);
+	if (params.subtitle) search.set("subtitle", params.subtitle);
+	if (params.category) search.set("category", params.category);
+	const query = search.toString();
+	return query ? `/og?${query}` : "/og";
+}
+
 export function buildMetadata(opts: {
 	/** 페이지 고유 제목. layout에 정의된 template("%s · 부개원 한의원")이 자동 적용. */
 	title: string;
 	description: string;
 	/** 절대 또는 상대 경로 — sitemap/canonical에 사용. */
 	path: string;
-	/** OG 이미지 절대 URL 또는 경로. 기본은 사이트 공통 OG(/og). */
+	/** OG 이미지 절대 URL 또는 경로. 우선순위: ogImage > og(객체) > 기본 /og. */
 	ogImage?: string;
+	/** 동적 OG 파라미터 — `/og?title=...&category=...`로 변환. */
+	og?: OgImageParams;
 	/** 검색 결과에 노출 안 시키려면 true. */
 	noindex?: boolean;
 }): Metadata {
 	const url = new URL(opts.path, env.SITE_URL()).toString();
-	const ogImage = opts.ogImage ?? "/og";
+	const ogImage = opts.ogImage ?? buildOgPath(opts.og);
 
 	return {
 		title: opts.title,

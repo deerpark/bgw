@@ -14,6 +14,11 @@ export const metadata = buildMetadata({
 	description:
 		"부개원 한의원의 면역 한약 3종(공진단·경옥고·녹용보약)을 한자리에서 비교해 보세요. 한의사 비대면 진료 후 체질·기력 상태에 맞춰 처방됩니다.",
 	path: "/immune",
+	og: {
+		category: "면역",
+		title: "면역 한약 3종",
+		subtitle: "공진단·경옥고·녹용보약 — 한의사 비대면 처방",
+	},
 });
 
 /**
