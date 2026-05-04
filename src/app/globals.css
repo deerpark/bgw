@@ -179,16 +179,18 @@
 	--shadow-inner: inset 0 1px 2px rgba(73, 46, 20, 0.08);
 
 	/* ─── Typography ─── */
-	/* Phase 1 Week 6 LCP 최적화 — IBM Plex Sans KR / Inter 제거.
-	 * Pretendard(--font-pretendard)가 sans/display/eyebrow 모두 담당.
-	 * Noto Serif KR(--font-noto-serif-kr)는 한자 도장·책등 라벨에 한해 사용.
+	/* Phase 1 Week 6 LCP 최적화 — IBM Plex Sans KR / Inter / Noto Serif KR 제거.
+	 * Pretendard(--font-pretendard) 단일 폰트가 sans/display/eyebrow 담당.
+	 * --font-serif는 한자 도장·serif 라벨용 system serif stack — 추가 webfont 다운로드 0.
 	 * 실제 변수 주입은 src/lib/fonts.ts → next/font가 <html>에서 수행.
 	 */
 	--font-sans:
 		var(--font-pretendard), -apple-system, BlinkMacSystemFont, system-ui,
 		"Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
 	--font-display: var(--font-pretendard), sans-serif;
-	--font-serif: var(--font-noto-serif-kr), "Nanum Myeongjo", serif;
+	--font-serif:
+		"Apple SD Gothic Neo", "Nanum Myeongjo", "Batang", "Noto Serif KR",
+		ui-serif, Georgia, serif;
 	--font-mono: "JetBrains Mono", "D2Coding", "Menlo", monospace;
 	--font-eyebrow: var(--font-pretendard), var(--font-sans);
 
